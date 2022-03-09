@@ -2,4 +2,4 @@
 neurotools/__pycache__/*
 neurotools/activation/__pycache__/
 neurotools/plotting/__pycache__/
-
+*.pyc
