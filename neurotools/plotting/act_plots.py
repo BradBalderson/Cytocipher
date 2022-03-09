@@ -45,6 +45,35 @@ def ieg_plot(data: AnnData, ieg: str,
     else:
         return ax
 
+def ieg_counts(data: AnnData,
+               figsize: tuple=(6.48, 4.8), vmin: float=0, vmax: float=None,
+               point_scaler: float=1000, point_scale_exp: float=1,
+               cmap: str='Reds', show: bool=True):
+    """ Plots the counts of significant IEGs per cell type.
+    """
+    # Retrieving the information from the AnnData #
+    ieg_counts = data.uns['ieg_sig_counts']
+
+    # Rank by no. of significant DE genes #
+    ct_sums = ieg_counts.values.sum(axis=1)
+    ct_order = np.argsort(-ct_sums)
+    social_sums = ieg_counts.values.sum(axis=0)
+    social_order = np.argsort(social_sums)
+
+    ieg_counts_ordered = ieg_counts.iloc[ct_order, social_order]
+
+    flat_df = create_flat_df(ieg_counts_ordered, ieg_counts_ordered )
+
+    ax = _marker_map(flat_df['x'], flat_df['y'],
+                     flat_df['values'].astype(float),
+                     flat_df['color_values'].values.astype(float), cmap=cmap,
+                     vmin=vmin, vmax=vmax, figsize=figsize,
+                     square_scaler=point_scaler, square_exp=point_scale_exp,
+                     )
+    if show:
+        plt.show()
+    else:
+        return ax
 
 
 

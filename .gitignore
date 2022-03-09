@@ -1,3 +1,5 @@
 .DS_Store
 neurotools/__pycache__/*
+neurotools/activation/__pycache__/
+neurotools/plotting/__pycache__/
 

@@ -43,6 +43,7 @@ def ieg_activation(data: AnnData, iegs: np.array,
 
     #### Calling de iegs between behaviour & control #####
     ct_ieg_stats = {}
+    ieg_sigs = pd.DataFrame(index=ct_set, columns=socials[socials!='Control'])
     ieg_logfcs = {}
     ieg_prop_exprs = {}
     ieg_prop_expr_diffs = {}
@@ -66,6 +67,7 @@ def ieg_activation(data: AnnData, iegs: np.array,
         ### Adding the IEG Expression information for fast plotting ###
         col_indices = list(range(logfcs_df.shape[1]))
         for ieg in iegs_:
+            ### Adding in individual IEG information ###
             ieg_logfc = ieg_logfcs[ieg]
             ieg_prop_expr = ieg_prop_exprs[ieg]
             ieg_prop_expr_diff = ieg_prop_expr_diffs[ieg]
@@ -84,6 +86,12 @@ def ieg_activation(data: AnnData, iegs: np.array,
         padj_bool = padjs_df.values < padj_cutoff
         sig_bool = np.logical_and(fc_bool, padj_bool)
 
+        ### Counts significant IEGs per cell type ###
+        order = [np.where(logfcs_df.columns==social)[0][0]
+                                                 for social in ieg_sigs.columns]
+        ieg_sigs.loc[ct,:] = sig_bool.sum(axis=1)[order]
+
+        ### Saving overall IEG information per cell type ###
         ieg_info = pd.DataFrame(columns=logfcs_df.columns,
                                 index=['IEG_counts', 'IEGs', 'logfcs',
                                        '-log10(padjs)'])
@@ -115,6 +123,7 @@ def ieg_activation(data: AnnData, iegs: np.array,
     data.uns['ieg_logfcs'] = ieg_logfcs
     data.uns['ieg_prop_exprs'] = ieg_prop_exprs
     data.uns['ieg_prop_expr_diffs'] = ieg_prop_expr_diffs
+    data.uns['ieg_sig_counts'] = ieg_sigs
 
     if verbose:
         print("Added data.uns['ieg_stats']")
@@ -122,7 +131,7 @@ def ieg_activation(data: AnnData, iegs: np.array,
         print("Added data.uns['ieg_logfcs']")
         print("Added data.uns['ieg_prop_exprs']")
         print("Added data.uns['ieg_prop_expr_diffs']")
-
+        print("Added data.uns['ieg_sig_counts']")
 
 
 
