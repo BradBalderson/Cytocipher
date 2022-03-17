@@ -7,9 +7,12 @@ on user's variation of interest.
 import os
 import numpy as np
 import pandas as pd
+import scanpy as sc
 from scanpy import AnnData
 
-from numba import njit
+from .bbknn_functions import bbknn_modified
+from .bfs_helpers import pearson_r,  get_selected_dist, get_selected_corr, \
+                         add_selected_to_anndata, calc_coexpr_odds, odds_cutoff
 
 def load_nps():
     """ Loads the neuropeptidergic/dopaminergic genes.
@@ -18,23 +21,147 @@ def load_nps():
     nps = pd.read_csv(path+'/../dbs/NP-DA_markers.txt', header=None).values[:, 0]
     return nps
 
-@njit
-def pearson_r(vals1, vals2):
-    """ Calculates Pearson's correlation coefficient.
+def balanced_feature_select_graph(data: AnnData, reference_genes: np.array,
+                                  n_total: int=500,
+                                  pca: bool=False, n_pcs: int=100,
+                                  recompute_pca: bool=True,
+                                  use_annoy: bool=False,
+                                  metric: str='correlation',
+                                  approx: bool=True,
+                                  neighbors_within_batch: int=None,
+                                  bg_size: int=10000,
+                                  padj_method: str='fdr_bh',
+                                  padj_cutoff: float=.01,
+                                  verbose: bool=True,
+                                  ):
+    """ Performs balanced feature selection, except instead of using Pearson
+        correlation across all genes (which won't scale well), performs more
+        similar to BBKNN except each "batch" is actually a gene, & the
+        neighbours we are getting are the neighbouring genes, & when we get the
+        closest neighbourhood genes we make sure they aren't already selected.
+        NOTE: Settings of use_annoy=False, metric='correlation' produces results
+                almost identical to balanced_feature_select_v2.
     """
-    mean1, mean2 = np.mean(vals1), np.mean(vals2)
-    diff1 = vals1 - mean1
-    diff2 = vals2 - mean2
-    std1, std2 = np.std(vals1), np.std(vals2)
+    if type(neighbors_within_batch)==type(None):
+        neighbors_within_batch = n_total
 
-    return np.mean( (diff1/std1)*(diff2/std2) )
+    ###### Deciding which features we will compute the neighbourhood graph on
+    if pca and ('X_pca' not in data.varm or recompute_pca):
+        genes_data = sc.AnnData(data.to_df().transpose())
+        sc.tl.pca(genes_data, n_comps=n_pcs)
 
-def balanced_feature_select(data: AnnData, reference_genes: np.array,
-                            n_total: int=500, verbose=bool):
-    """Performs balanced feature selection using inputted genes as reference
-       to select additional genes which displays similar expression patterns.
+        gene_features = genes_data.obsm['X_pca']
+        data.varm['X_pca'] = gene_features
+        if verbose:
+            print("Added data.varm['X_pca']")
+
+    elif 'X_pca' in data.varm:
+        gene_features = data.varm['X_pca']
+
+    else:
+        expr = data.X if type(data.X)==np.ndarray else data.X.toarray()
+        gene_features = expr.transpose()
+
+    # Let's make each of the reference genes a batch #
+    batch_list = np.array(["-1"] * data.shape[1])
+    ref_indices = [np.where(data.var_names.values == ref_gene)[0][0]
+                   for ref_gene in reference_genes]
+    batch_list[ref_indices] = "1"
+
+    ####### Getting the nearest neighbours & their resepective distances
+    if verbose:
+        print("Getting distances between reference genes & remaining genes...")
+    knn_indices, knn_distances = bbknn_modified(gene_features,
+                                             batch_list, use_annoy=use_annoy,
+                                             n_pcs=gene_features.shape[1],
+                                             metric=metric,
+                                             approx=approx,
+                                             neighbors_within_batch=
+                                                         neighbors_within_batch)
+
+    # Let's check if the ranked genes have similar correlations #
+    graph_refs = data.var_names.values[batch_list == "1"]  # was out of order!!!
+
+    # Getting genes to select per reference gene #
+    expr_genes = data.var_names.values.astype(str)
+
+    # Now getting the balanced selected genes #
+    selected, selected_corrs, selected_match = get_selected_dist(
+                                                    knn_indices,
+                                                    knn_distances, graph_refs,
+                                                    expr_genes, n_total,
+                                                    verbose)
+
+    # Adding the results to AnnData #
+    add_selected_to_anndata(data, expr_genes, selected, selected_corrs,
+                            selected_match, verbose)
+
+    # Post-hoc metric of method performance; odds-score
+    if verbose:
+        print("Calculating odds-score of coexpression between selected genes & reference genes..")
+    calc_coexpr_odds(data, verbose=verbose)
+
+    # Using the odds-score & randomisation to determine cutoff
+    if verbose:
+        print(
+            "Dynamically determining odds-score based cutoff using random genes..")
+    odds_cutoff(data, bg_size=bg_size, verbose=verbose,
+                padj_method=padj_method, padj_cutoff=padj_cutoff)
+
+def balanced_feature_select_v2(data: AnnData, reference_genes: np.array,
+                            n_total: int=500, verbose: bool=True):
+    """Similar to the development version, except in this case we don't select
+    one gene for each reference gene per iteration, instead select all genes
+    for reference at once. Is fater than the original, but still not fast
+    enough.
     """
-    expr_vals = data.X.toarray()
+    expr_vals = data.X if type(data.X)==np.ndarray else data.X.toarray()
+    expr_genes = np.array(data.var_names, dtype=str)
+
+    # Getting locations of the reference & non-reference genes #
+    ref_indices = [np.where(expr_genes == ref_gene)[0][0]
+                   for ref_gene in reference_genes]
+    not_ref_indices = [i for i in list(range(len(expr_genes)))
+                       if i not in ref_indices]
+    not_ref_genes = expr_genes[not_ref_indices]
+
+    expr_not_ref = expr_vals[:, not_ref_indices]
+
+    # Correlations between ref genes (rows) & non-ref genes (cols)
+    corrs = np.zeros((len(ref_indices), len(not_ref_indices)))
+    for i, ref_index in enumerate(ref_indices):
+        ref_expr = expr_vals[:, ref_index]
+        ref_corrs = np.apply_along_axis(pearson_r, 0, expr_not_ref, ref_expr)
+
+        corrs[i, :] = ref_corrs
+
+    ##### Take the best correlated with each ref until n_total selected ########
+    selected, selected_corrs, selected_match = get_selected_corr(corrs,
+                                                    reference_genes, expr_genes,
+                                                         not_ref_genes, n_total)
+
+    # Adding the results to AnnData #
+    add_selected_to_anndata(data, expr_genes, selected, selected_corrs,
+                            selected_match, verbose)
+
+    # Post-hoc metric of method performance; odds-score
+    if verbose:
+        print(
+            "Calculating odds-score of coexpression between selected genes & reference genes..")
+    calc_coexpr_odds(data, verbose=verbose)
+
+    # Using the odds-score & randomisation to determine cutoff
+    if verbose:
+        print(
+            "Dynamically determining odds-score based cutoff using random genes..")
+    odds_cutoff(data, verbose=verbose)
+
+def balanced_feature_select_original(data: AnnData, reference_genes: np.array,
+                                     n_total: int=500, verbose=bool):
+    """ Original implementation from Development paper.
+        Too slow for big data.
+    """
+    expr_vals = data.X if type(data.X) == np.ndarray else data.X.toarray()
     expr_genes = np.array(data.var_names, dtype=str)
 
     # Getting locations of the reference & non-reference genes #
@@ -87,26 +214,28 @@ def balanced_feature_select(data: AnnData, reference_genes: np.array,
 
         n_selected += 1
 
-    ########## Adding results to AnnData #############
-    ## Getting the information in shape to reference all genes ##
-    selected_indices = [np.where(expr_genes==gene)[0][0] for gene in selected]
-    selected_bool = np.full((data.shape[1]), False, dtype=np.bool_)
-    selected_bool[selected_indices] = True
+        # Adding the results to AnnData #
+        add_selected_to_anndata(data, expr_genes, selected, selected_corrs,
+                                selected_match, verbose)
 
-    selected_corrs_full = np.zeros((data.shape[1]), dtype=np.float_)
-    selected_corrs_full[selected_indices] = selected_corrs
+        # Post-hoc metric of method performance; odds-score
+        if verbose:
+            print(
+                "Calculating odds-score of coexpression between selected genes & reference genes..")
+        calc_coexpr_odds(data, verbose)
 
-    selected_match_full = np.empty((data.shape[1]), dtype=expr_genes.dtype)
-    selected_match_full[selected_indices] = selected_match
+""" Junk Code
+def bfs_run(data: AnnData, reference_genes: np.array,
+            method: str="graphNN", n_total: int=500, verbose: bool=True):
+    Key function running the different balanced feature selection methods.
+    
+    method_to_function = {"graphNN": balanced_feature_select_graph,
+                          "v2": balanced_feature_select_v2,
+                          "original": balanced_feature_select_original}
+    if method not in method_to_function:
+        raise Exception(f"Method must be: {list(method_to_function.keys())}")
 
-    data.var['bfs_selected'] = selected_bool
-    data.var['bfs_corrs'] = selected_corrs_full
-    data.var['bfs_matched'] = selected_match_full
-
-    if verbose:
-        print("Added data.var['bfs_selected'].")
-        print("Added data.var['bfs_corrs'].")
-        print("Added data.var['bfs_matched']")
-
-
+    bfs_function = method_to_function[method]
+    bfs_function(data, reference_genes, n_total=n_total, verbose=verbose)
+"""
 
