@@ -21,6 +21,12 @@ def load_nps():
     nps = pd.read_csv(path+'/../dbs/NP-DA_markers.txt', header=None).values[:, 0]
     return nps
 
+def load_sex():
+    """Loads sex DE genes from development papers"""
+    path = os.path.dirname(os.path.realpath(__file__))
+    sex_df = pd.read_csv(path + '/../dbs/sex_genes.txt', sep='\t', index_col=0)
+    return sex_df
+
 def balanced_feature_select_graph(data: AnnData, reference_genes: np.array,
                                   n_total: int=500,
                                   pca: bool=False, n_pcs: int=100,
