@@ -4,12 +4,15 @@ Helper functions for the BFS method.
 
 import numpy as np
 import pandas as pd
+import scanpy as sc
 from scanpy import AnnData
 from numba import njit
 
 from tqdm import tqdm
 
 from statsmodels.stats.multitest import multipletests
+
+from .bbknn_functions import bbknn_modified
 
 @njit
 def pearson_r(vals1, vals2):
@@ -95,6 +98,73 @@ def get_selected_dist(knn_indices: np.ndarray, knn_distances: np.ndarray,
             n_selected = end_index
 
     return selected, selected_corrs, selected_match
+
+def balanced_feature_selection_graph_core(data: AnnData, reference_genes: np.array,
+                                  n_total: int=500, batch_name='X',
+                                  pca: bool=False, n_pcs: int=100,
+                                  recompute_pca: bool=True,
+                                  cache_pca: bool=True,
+                                  use_annoy: bool=False,
+                                  metric: str='correlation',
+                                  approx: bool=True,
+                                  initial_neighbours: int=None,
+                                  verbose: bool=True,
+                                  ):
+    """ Core functionaality of the balanced feature selection when performing on
+        one batch of cells.
+    """
+    ###### Deciding which features we will compute the neighbourhood graph on
+    pca_name = f'{batch_name}_pca'
+    if pca and (pca_name not in data.varm or recompute_pca):
+        genes_data = sc.AnnData(data.to_df().transpose())
+        sc.tl.pca(genes_data, n_comps=n_pcs)
+
+        gene_features = genes_data.obsm[pca_name]
+        if cache_pca: # Saving the PCA!
+            data.varm[pca_name] = gene_features
+            if verbose:
+                print(f"Added data.varm[{pca_name}]")
+
+    elif pca_name in data.varm:
+        gene_features = data.varm[pca_name]
+
+    else:
+        expr = data.X if type(data.X) == np.ndarray else data.X.toarray()
+        gene_features = expr.transpose()
+
+    # Labelling genes as reference or not, -1 not reference, 1 reference #
+    gene_labels = np.array(["-1"] * data.shape[1])
+    ref_indices = [np.where(data.var_names.values == ref_gene)[0][0]
+                   for ref_gene in reference_genes]
+    gene_labels[ref_indices] = "1"
+
+    ####### Getting the nearest neighbours & their resepective distances
+    if verbose:
+        print("Getting distances between reference genes & remaining genes...")
+    knn_indices, knn_distances = bbknn_modified(gene_features,
+                                                gene_labels,
+                                                use_annoy=use_annoy,
+                                                n_pcs=gene_features.shape[1],
+                                                metric=metric,
+                                                approx=approx,
+                                                neighbors_within_batch=
+                                                initial_neighbours)
+
+    # Let's check if the ranked genes have similar correlations #
+    graph_refs = data.var_names.values[gene_labels == "1"]  # was out of order!!!
+
+    # Getting genes to select per reference gene #
+    expr_genes = data.var_names.values.astype(str)
+
+    # Now getting the balanced selected genes #
+    selected, selected_corrs, selected_match = get_selected_dist(
+                                                    knn_indices,
+                                                    knn_distances, graph_refs,
+                                                    expr_genes, n_total,
+                                                    verbose)
+
+    return selected, selected_corrs, selected_match, expr_genes
+
 
 def get_selected_corr(corrs: np.ndarray, reference_genes: np.array,
                  expr_genes: np.array, not_ref_genes: np.array,

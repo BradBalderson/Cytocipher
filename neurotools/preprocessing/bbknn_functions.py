@@ -295,7 +295,9 @@ def bbknn_modified(pca, batch_list, neighbors_within_batch=3, n_pcs=50, trim=Non
     #so what knn algorithm will be using? sanity check the metrics while at it
     params = check_knn_metric(params, counts)
     #obtain the batch balanced KNN graph
-    knn_distances, knn_indices = get_graph(pca=pca,batch_list=batch_list,params=params)
+    knn_distances, knn_indices = get_graph(pca=pca,
+                                           batch_list=batch_list,
+                                           params=params)
     #sort the neighbours so that they're actually in order from closest to furthest
     newidx = np.argsort(knn_distances, axis=1)
     knn_indices = knn_indices[np.arange(np.shape(knn_indices)[0])[:,np.newaxis],newidx]

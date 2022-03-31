@@ -12,7 +12,8 @@ from scanpy import AnnData
 
 from .bbknn_functions import bbknn_modified
 from .bfs_helpers import pearson_r,  get_selected_dist, get_selected_corr, \
-                         add_selected_to_anndata, calc_coexpr_odds, odds_cutoff
+                       add_selected_to_anndata, calc_coexpr_odds, odds_cutoff, \
+                        balanced_feature_selection_graph_core
 
 def load_nps():
     """ Loads the neuropeptidergic/dopaminergic genes.
@@ -28,13 +29,14 @@ def load_sex():
     return sex_df
 
 def balanced_feature_select_graph(data: AnnData, reference_genes: np.array,
-                                  n_total: int=500,
+                                  batch_key=None, n_total: int=500,
                                   pca: bool=False, n_pcs: int=100,
                                   recompute_pca: bool=True,
+                                  cache_pca: bool=True,
                                   use_annoy: bool=False,
                                   metric: str='correlation',
                                   approx: bool=True,
-                                  neighbors_within_batch: int=None,
+                                  initial_neighbours: int=None,
                                   bg_size: int=10000,
                                   padj_method: str='fdr_bh',
                                   padj_cutoff: float=.01,
@@ -47,56 +49,66 @@ def balanced_feature_select_graph(data: AnnData, reference_genes: np.array,
         closest neighbourhood genes we make sure they aren't already selected.
         NOTE: Settings of use_annoy=False, metric='correlation' produces results
                 almost identical to balanced_feature_select_v2.
+
+    Parameters
+    ----------
+    data: AnnData
+        The data object.
+    reference_genes: np.array
+        Array of gene names contained in data.var_names to bootstrap additional
+        genes.
+    batch_key: str
+        Column in data.obs which indicates batch, if batch is specified, will
+        subset to each particular batch & perform bfs separately for each
+        batch of cells before concatentating results; this ensures gene
+        coexpression are not distored by batch effect.
+    n_total: int
+        Total no. of genes to select, balancing selected genes across all
+        features.
+    pca: bool
+        Whether to perform PCA on the data first.
+    n_pcs: int
+        The no. of pcs to compute.
+    recompute_pca: bool
+        Whether to recompute the pca or not if it's already present.
+    use_annoy: bool
+        Whether to use annoy approximation for nearest neighbour graph
+        construction.
+    metric: str
+        Which distance metric to use when contstructing graph.
+    approx: bool
+        Approximate nearest neighbour graph construction, or not?
+    initial_neighbours: bool
+        Number of nearest neighbours to get per query gene intially, if smaller
+        than n_total or None defaults to n_total.
+    bg_size: int
+        The no. of random background genes to randomly pair with the query
+        genes to set cutoff for significance co-expression between genes.
+    padj_method: str
+        Method used to adjust p-values.
+    padj_cutoff: float
+        Adjusted p-value cutoff to use for significant genes to select.
+    verbose: bool
+        Whether to print output to the user.
+    Returns
+    -------
+    grid_data: AnnData
+        Equivalent expression data to adata, except values have been summed by
+        cells that fall within defined bins.
     """
-    if type(neighbors_within_batch)==type(None):
-        neighbors_within_batch = n_total
-
-    ###### Deciding which features we will compute the neighbourhood graph on
-    if pca and ('X_pca' not in data.varm or recompute_pca):
-        genes_data = sc.AnnData(data.to_df().transpose())
-        sc.tl.pca(genes_data, n_comps=n_pcs)
-
-        gene_features = genes_data.obsm['X_pca']
-        data.varm['X_pca'] = gene_features
-        if verbose:
-            print("Added data.varm['X_pca']")
-
-    elif 'X_pca' in data.varm:
-        gene_features = data.varm['X_pca']
-
-    else:
-        expr = data.X if type(data.X)==np.ndarray else data.X.toarray()
-        gene_features = expr.transpose()
-
-    # Let's make each of the reference genes a batch #
-    batch_list = np.array(["-1"] * data.shape[1])
-    ref_indices = [np.where(data.var_names.values == ref_gene)[0][0]
-                   for ref_gene in reference_genes]
-    batch_list[ref_indices] = "1"
-
-    ####### Getting the nearest neighbours & their resepective distances
-    if verbose:
-        print("Getting distances between reference genes & remaining genes...")
-    knn_indices, knn_distances = bbknn_modified(gene_features,
-                                             batch_list, use_annoy=use_annoy,
-                                             n_pcs=gene_features.shape[1],
-                                             metric=metric,
-                                             approx=approx,
-                                             neighbors_within_batch=
-                                                         neighbors_within_batch)
-
-    # Let's check if the ranked genes have similar correlations #
-    graph_refs = data.var_names.values[batch_list == "1"]  # was out of order!!!
-
-    # Getting genes to select per reference gene #
-    expr_genes = data.var_names.values.astype(str)
+    if type(initial_neighbours)==type(None) or initial_neighbours < n_total:
+        initial_neighbours = n_total
 
     # Now getting the balanced selected genes #
-    selected, selected_corrs, selected_match = get_selected_dist(
-                                                    knn_indices,
-                                                    knn_distances, graph_refs,
-                                                    expr_genes, n_total,
-                                                    verbose)
+    selected, selected_corrs, selected_match, expr_genes = \
+            balanced_feature_selection_graph_core(data, reference_genes,
+                                  n_total=n_total, batch_name='X',
+                                  pca=pca, n_pcs=n_pcs,
+                                  recompute_pca=recompute_pca,
+                                  cache_pca=cache_pca, use_annoy=use_annoy,
+                                  metric=metric, approx=approx,
+                                  initial_neighbours=initial_neighbours,
+                                  verbose=verbose)
 
     # Adding the results to AnnData #
     add_selected_to_anndata(data, expr_genes, selected, selected_corrs,
