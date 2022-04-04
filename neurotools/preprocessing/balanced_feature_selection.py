@@ -13,7 +13,7 @@ from scanpy import AnnData
 from .bbknn_functions import bbknn_modified
 from .bfs_helpers import pearson_r,  get_selected_dist, get_selected_corr, \
                        add_selected_to_anndata, calc_coexpr_odds, odds_cutoff, \
-                        balanced_feature_selection_graph_core
+                        balanced_feature_selection_graph_core, odds_cutoff_core
 
 def load_nps():
     """ Loads the neuropeptidergic/dopaminergic genes.
@@ -40,6 +40,7 @@ def balanced_feature_select_graph(data: AnnData, reference_genes: np.array,
                                   bg_size: int=10000,
                                   padj_method: str='fdr_bh',
                                   padj_cutoff: float=.01,
+                                  min_cells: int=3,
                                   verbose: bool=True,
                                   ):
     """ Performs balanced feature selection, except instead of using Pearson
@@ -99,32 +100,150 @@ def balanced_feature_select_graph(data: AnnData, reference_genes: np.array,
     if type(initial_neighbours)==type(None) or initial_neighbours < n_total:
         initial_neighbours = n_total
 
+    # Separating the data by batch information, if any!
+    if type(batch_key) == type(None) or batch_key not in data.obs.columns:
+        datas = [data]
+        batch_set = ['all']
+        if batch_key not in data.obs.columns:
+            print(f"Warning, {batch_key} not in data.obs, batch_key ignored.")
+    else:
+        batch_labels = data.obs[batch_key].values.astype(str)
+        data.obs[batch_key] = data.obs[batch_key].astype('category')
+        if verbose:
+            print(f"Set data.obs[{batch_key}] to categorical.")
+        batch_set = list( data.obs[batch_key].cat.categories )
+        datas = [data[batch_labels==batch_name,:] for batch_name in batch_set]
+
+
     # Now getting the balanced selected genes #
-    selected, selected_corrs, selected_match, expr_genes = \
-            balanced_feature_selection_graph_core(data, reference_genes,
-                                  n_total=n_total, batch_name='X',
-                                  pca=pca, n_pcs=n_pcs,
-                                  recompute_pca=recompute_pca,
-                                  cache_pca=cache_pca, use_annoy=use_annoy,
-                                  metric=metric, approx=approx,
-                                  initial_neighbours=initial_neighbours,
-                                  verbose=verbose)
+    for i, datai in enumerate(datas):
+        """ NOTE: below we are using the cells subsetted to batch for BFS, but
+                    adding the results to the original AnnData. 
+        """
+        batch_name = batch_set[i] if len(batch_set) != 1 else "X"
+        if verbose:
+            print(f"Processing batch {batch_name}...")
 
-    # Adding the results to AnnData #
-    add_selected_to_anndata(data, expr_genes, selected, selected_corrs,
-                            selected_match, verbose)
+        ### Need to subset genes to those expressed in batch
+        gene_cell_counts = (datai.X > 0).sum(axis=0)
+        genes_sub = datai.var_names.values.astype(str)[
+                                                   gene_cell_counts > min_cells]
+        reference_genesi = np.array([ref for ref in reference_genes
+                                                           if ref in genes_sub])
+        datai = datai[:, genes_sub] # Fewer possible genes now
+        if len(reference_genesi) != len(reference_genes):
+            print(f"\tFiltered out "
+                  f"{len(reference_genes)-len(reference_genesi)} "
+                  f"reference genes in batch {batch_name} due to insufficient "
+                  f"expression (expressed in less than min_cells={min_cells}).")
 
-    # Post-hoc metric of method performance; odds-score
-    if verbose:
-        print("Calculating odds-score of coexpression between selected genes & reference genes..")
-    calc_coexpr_odds(data, verbose=verbose)
+        ## Balanced feature selection from query features
+        selected, selected_corrs, selected_match, expr_genes, gene_features = \
+                  balanced_feature_selection_graph_core(datai, reference_genesi,
+                                         n_total=n_total, batch_name=batch_name,
+                              pca=pca, n_pcs=n_pcs, recompute_pca=recompute_pca,
+                              use_annoy=use_annoy, metric=metric, approx=approx,
+                                          initial_neighbours=initial_neighbours,
+                                                                verbose=verbose)
+        """ Only 18 of 62 DE genes detected in the selection for Batch1..
+        If it's correct, pearsonr should be 1- the selected_corrs...
+        
+        from scipy.stats import pearsonr
+        calc1, calc2 = [], []
+        for xi in range(len(reference_genesi), len(selected)):
+            #print(selected[xi]==selected_match[xi])
+            expr = datai[:,[selected[xi], selected_match[xi]]].to_df()
+            calc1.append( 1-pearsonr(expr.values[:,0], expr.values[:,1])[0] )
+            calc2.append( selected_corrs[xi] )
+            
+        Appears very accurate... is getting the correct genes.
+        
+        ###### Getting overlap with DE genes
+        import beautifulcells.visualisation.quick_plots as qpl
+        de_groups = ['DEFac'+group for group in datai.uns['marker_genes'] 
+                              if np.any([ref in datai.uns['marker_genes'][group] 
+                                                  for ref in reference_genesi])]
+        factors = data.varm['de_df'][de_groups]
+        factors_flat = factors.values.ravel()
+        qpl.distrib(factors_flat[factors_flat>1])
+        de_genes = []
+        [de_genes.extend(factors.index.values[factors[col].values>1])
+                                                     for col in factors.columns]
+        de_genes = np.unique(de_genes)
+        detected = [gene for gene in selected if gene in de_genes]
+        print(len(de_genes), len(detected), detected)
+        
+        #### Are the undetected DE genes correlated with DE in this batch?
+        de_genes_grouped = [factors.index.values[factors[col].values>1]
+                                                     for col in factors.columns]
+        undetected = [[gene for gene in de_genesi if gene not in selected]
+                        for de_genesi in de_genes_grouped]
+        detected = [[gene for gene in de_genesi if gene in selected]
+                        for de_genesi in de_genes_grouped]
+        corrs = []
+        for i, genes_i in enumerate(undetected):
+            for genei in genes_i:
+                for genej in detected[i]:
+                    expr = datai[:,[genei, genej]].to_df().values
+                    corrs.append( pearsonr(expr[:,0], expr[:,1])[0] )
+        
+        # The genes which weren't detected are not AT ALL correlated with the
+        #  detected DE genes, which suggests that perhaps these genes are
+        #  effected by the batch effect... 
+        
+                    
+        #
+        de_genes = datai.var_names.values[datai.var['de_gene'].values]
+        detected = [gene for gene in selected if gene in de_genes]
+        print(len(de_genes), len(detected), detected)
+        """
+        # TODO get this so that gene_features in alignment with data.
+        #if pca and cache_pca: # Saves recomputation if run with different params
+        #    data.varm[f'{batch_name}_pca'] = gene_features
 
-    # Using the odds-score & randomisation to determine cutoff
-    if verbose:
-        print(
-            "Dynamically determining odds-score based cutoff using random genes..")
-    odds_cutoff(data, bg_size=bg_size, verbose=verbose,
-                padj_method=padj_method, padj_cutoff=padj_cutoff)
+        ## Adding the results to anndata
+        add_selected_to_anndata(data, data.var_names.values.astype(str),
+                                selected, selected_corrs, selected_match,
+                                         batch_name=batch_name, verbose=verbose)
+
+        ## Now getting the odds scores
+        if verbose:
+            print("\tCalculating odds-score of coexpression between selected "
+                  "genes & reference genes..")
+        woRef_indices = [[i for i, gene in enumerate(selected)
+                                                if gene not in reference_genes]]
+        selected_woRef = selected[woRef_indices]
+        selected_match_woRef = selected_match[woRef_indices]
+        odds_full = calc_coexpr_odds(datai, reference_genesi,
+                                     selected_woRef, selected_match_woRef,
+                                     return_odds_full=True)
+        #### Make the odds score aligned to full AnnData
+        odds_aligned = np.zeros((data.shape[1]))
+        odds_aligned[[np.where(data.var_names.values==gene)[0][0]
+                      for gene in datai.var_names]] = odds_full
+        data.varm[f'{batch_name}_bfs_results'][f'{batch_name}_odds'] = \
+                                                                    odds_aligned
+
+        ## Now determining the significantly coexpressed genes
+        # Using the odds-score & randomisation to determine cutoff
+        if verbose:
+            print("\tDynamically determining odds-score based cutoff "
+                  "using random genes..")
+        results_df, bg = odds_cutoff_core(datai, batch_name, reference_genesi,
+                                          selected, odds_full,
+                                          bg_size=bg_size,
+                                          padj_method=padj_method,
+                                          padj_cutoff=padj_cutoff)
+        ### Adding results to AnnData
+        all_results_df = data.varm[f'{batch_name}_bfs_results']
+        ## Adding like this will result in NaNs, this will be useful to keep
+        ## track of what genes were detectable per batch...
+        data.varm[f'{batch_name}_bfs_results'] = pd.concat([all_results_df,
+                                                            results_df], axis=1)
+        data.uns[f'{batch_name}_bfs_background'] = bg
+
+    # TODO come up with method to summarise results across AnnData
+
 
 def balanced_feature_select_v2(data: AnnData, reference_genes: np.array,
                             n_total: int=500, verbose: bool=True):

@@ -62,9 +62,10 @@ def get_selected_dist(knn_indices: np.ndarray, knn_distances: np.ndarray,
         feature.
     """
     selected = np.empty((n_total), dtype=expr_genes.dtype)
+    selected_corrs = np.ones((n_total))
     for i, ref in enumerate(reference_genes):
         selected[i] = ref
-    selected_corrs = np.ones((n_total))
+        selected_corrs[i] = 0
     selected_match = selected.copy()  # Genes the selected match with
     # Determining how many genes per feature #
     n_genes_per_ref = genes_per_feature(knn_distances, n_total, dist=True)
@@ -103,7 +104,7 @@ def balanced_feature_selection_graph_core(data: AnnData, reference_genes: np.arr
                                   n_total: int=500, batch_name='X',
                                   pca: bool=False, n_pcs: int=100,
                                   recompute_pca: bool=True,
-                                  cache_pca: bool=True,
+                                  #cache_pca: bool=True,
                                   use_annoy: bool=False,
                                   metric: str='correlation',
                                   approx: bool=True,
@@ -120,10 +121,12 @@ def balanced_feature_selection_graph_core(data: AnnData, reference_genes: np.arr
         sc.tl.pca(genes_data, n_comps=n_pcs)
 
         gene_features = genes_data.obsm[pca_name]
-        if cache_pca: # Saving the PCA!
-            data.varm[pca_name] = gene_features
-            if verbose:
-                print(f"Added data.varm[{pca_name}]")
+        ### Won't cache pca here since might be dealing with a view version
+        ### of the data, & don't want to be making copies of each batch !!!!
+        # if cache_pca: # Saving the PCA!
+        #     data.varm[pca_name] = gene_features
+        #     if verbose:
+        #         print(f"Added data.varm[{pca_name}]")
 
     elif pca_name in data.varm:
         gene_features = data.varm[pca_name]
@@ -151,7 +154,7 @@ def balanced_feature_selection_graph_core(data: AnnData, reference_genes: np.arr
                                                 initial_neighbours)
 
     # Let's check if the ranked genes have similar correlations #
-    graph_refs = data.var_names.values[gene_labels == "1"]  # was out of order!!!
+    graph_refs = data.var_names.values[gene_labels == "1"] # was out of order!!!
 
     # Getting genes to select per reference gene #
     expr_genes = data.var_names.values.astype(str)
@@ -163,7 +166,7 @@ def balanced_feature_selection_graph_core(data: AnnData, reference_genes: np.arr
                                                     expr_genes, n_total,
                                                     verbose)
 
-    return selected, selected_corrs, selected_match, expr_genes
+    return selected, selected_corrs, selected_match, expr_genes, gene_features
 
 
 def get_selected_corr(corrs: np.ndarray, reference_genes: np.array,
@@ -202,11 +205,18 @@ def get_selected_corr(corrs: np.ndarray, reference_genes: np.array,
 
     return selected, selected_corrs, selected_match
 
+
 def add_selected_to_anndata(data: AnnData, expr_genes: np.array,
                             selected: np.array, selected_corrs: np.array,
-                            selected_match: np.array, verbose: bool=True):
+                            selected_match: np.array, batch_name: str=None,
+                            verbose: bool=True):
     """Adds selected gene information to AnnData
     """
+    if type(batch_name) == type(None):
+        batch_name = ''
+    else:
+        batch_name = f'{batch_name}_' # Separator
+
     reference_genes = np.unique(selected_match)
     reference_indices = [np.where(expr_genes == gene)[0][0]
                          for gene in reference_genes]
@@ -224,33 +234,40 @@ def add_selected_to_anndata(data: AnnData, expr_genes: np.array,
     selected_match_full[selected_indices] = selected_match
 
     bfs_results = pd.DataFrame(index=data.var_names.values,
-                           columns=['bfs_reference',
-                               'bfs_selected', 'bfs_corrs', 'bfs_matched'])
-    bfs_results['bfs_reference'] = reference_bool
-    bfs_results['bfs_selected'] = selected_bool
-    bfs_results['bfs_corrs'] = selected_corrs_full
-    bfs_results['bfs_matched'] = selected_match_full
+                           columns=[f'{batch_name}bfs_reference',
+                                    f'{batch_name}bfs_selected',
+                                    f'{batch_name}bfs_corrs',
+                                    f'{batch_name}bfs_matched'])
+    bfs_results[f'{batch_name}bfs_reference'] = reference_bool
+    bfs_results[f'{batch_name}bfs_selected'] = selected_bool
+    bfs_results[f'{batch_name}bfs_corrs'] = selected_corrs_full
+    bfs_results[f'{batch_name}bfs_matched'] = selected_match_full
 
-    data.varm['bfs_results'] = bfs_results
+    data.varm[f'{batch_name}bfs_results'] = bfs_results
 
     if verbose:
-        print("Added data.varm['bfs_results'].")
+        print(f"Added data.varm['{batch_name}bfs_results'].")
 
 def calc_coexpr_odds(data: AnnData,
+                     reference_genes: np.array=None,
                      selected_woRef: np.array=None,
                      selected_match_woRef: np.array=None,
-                     return_odds: bool=False,
+                     return_odds: bool=False, return_odds_full: bool=False,
                      verbose: bool=True):
     """Calculates the logodds of coexpression between inputted genes &
         reference genes.
     """
-    # Getting desired information from AnnData #
-    reference_bool = data.varm['bfs_results']['bfs_reference'].values
+    # Getting desired information from AnnData if not inputted #
+    if type(reference_genes) == type(None):
+        reference_bool = data.varm['bfs_results']['bfs_reference'].values
+        reference_genes = data.var_names.values[reference_bool]
+    else:
+        reference_bool = np.array([gene in reference_genes
+                                   for gene in data.var_names])
 
     # If we don't have inputted data, retrieve it from the AnnData #
     if type(selected_woRef)==type(None) and \
                                          type(selected_match_woRef)==type(None):
-        reference_genes = data.var_names.values[reference_bool]
         selected_bool = data.varm['bfs_results']['bfs_selected'].values
         selected = data.var_names.values[selected_bool]
         selected_match = data.varm['bfs_results']['bfs_matched'].values[
@@ -259,7 +276,7 @@ def calc_coexpr_odds(data: AnnData,
         selected_match_woRef = [match for i, match in enumerate(selected_match)
                                 if selected[i] not in reference_genes]
 
-    reference_genes = np.unique(selected_match_woRef)
+    #reference_genes = np.unique(selected_match_woRef)
     expr_genes = data.var_names.astype(str)
 
     expr = data.X if type(data.X) == np.ndarray else data.X.toarray()
@@ -281,10 +298,16 @@ def calc_coexpr_odds(data: AnnData,
 
     rand_coexpr_rates = ref_expr_rates_duplicate * selected_expr_rates
     odds = coexpr_rates / rand_coexpr_rates
+    ### Generates nan when denominator are 0;
+    ### These will be non-signicant anyhow, so set odds to 0.
+    odds[np.isnan(odds)] = 0
+    if np.any(np.isnan(odds)):
+        print("Nans!!!")
     #logodds = odds #np.log2(odds + (1 / expr.shape[0]))
+    ###### Set where we have Nan
 
     # Getting indices of where to place odds scores #
-    if not return_odds:
+    if not return_odds or return_odds_full:
         odds_indices = [np.where(data.var_names.values==gene)[0][0]
                         for gene in selected_woRef]
         odds_full = np.zeros((data.shape[1]))
@@ -293,7 +316,8 @@ def calc_coexpr_odds(data: AnnData,
                                 # Could calculate odds for reference but will
                                 # inflate the odds score distrib. for downstream
                                 # plotting.
-
+        if return_odds_full:
+            return odds_full # In-line with the variable names
 
         data.varm['bfs_results']['odds'] = odds_full
         if verbose:
@@ -302,6 +326,74 @@ def calc_coexpr_odds(data: AnnData,
         return
 
     return odds # Mostly used for random odds
+
+def odds_cutoff_core(data: AnnData, batch_name: str,
+                        reference_genes: np.array, selected: np.array,
+                        odds_full: np.array, bg_size: int=10000,
+                        padj_method: str='fdr_bh', padj_cutoff: float=.01):
+    """Determines cutoff based on random background using the odds scores &
+        random matching of the reference genes with background genes.
+    """
+    bg_genes = [gene for gene in data.var_names if gene not in selected]
+    if bg_size >= len(bg_genes):
+        print("Warning: specified background size exceeds available background"
+              f" genes, therefore using all available ({len(bg_genes)} "
+              f"instead of inputted {bg_size}).\n")
+        bg_size = len(bg_genes)
+
+    rand_genes = np.random.choice(bg_genes, size=bg_size, replace=False)
+    rand_matches = np.random.choice(reference_genes, size=bg_size)
+    rand_odds = calc_coexpr_odds(data, reference_genes=reference_genes,
+                                 selected_woRef=rand_genes,
+                                      selected_match_woRef=rand_matches,
+                                      return_odds=True)
+
+    """ Now let's dynamically determine the cutoff based on p-values....
+    """
+    odds_indices = np.where([(gene in selected and gene not in reference_genes)
+                     for gene in data.var_names])[0]
+    odds = odds_full[odds_indices]
+    ps = np.array(
+           [len(np.where(rand_odds > odd)[0]) / len(rand_odds) for odd in odds])
+    ps[ps == 0] = 1 / len(rand_odds)
+
+    padjs = multipletests(ps, method=padj_method)[1]
+
+    ################ Getting stats relative to all genes #######################
+    ps_full = np.ones((data.shape[1]))
+    padjs_full = ps_full.copy()
+    sig_odds_full = np.zeros((data.shape[1]))
+
+    reference_bool = [gene in reference_genes for gene in data.var_names]
+    ps_full[odds_indices] = ps
+    ps_full[reference_bool] = 0
+    padjs_full[odds_indices] = padjs
+    padjs_full[reference_bool] = 0
+
+    sig_full = padjs_full < padj_cutoff
+    sig_odds_full[odds_indices] = odds
+    sig_odds_full[reference_bool] = max(odds)
+    sig_odds_full[sig_full == False] = 0
+
+    ################ Summarising results to dataframes #########################
+    # Creating dataframe of the random values #
+    bg = pd.DataFrame([rand_genes, rand_matches, rand_odds],
+                      index=[f'{batch_name}_bg_genes',
+                             f'{batch_name}_rand_reference',
+                             f'{batch_name}_rand_odds']
+                      ).transpose()
+    # Ensure can save h5ad
+    bg[f'{batch_name}_rand_odds'] = bg[f'{batch_name}_rand_odds'].astype(float)
+    bg.index = bg.index.values.astype(str)
+
+    # Creating dataframe for the stats #
+    results_df = pd.DataFrame([ps_full, padjs_full, sig_full, sig_odds_full],
+                      index=[f'{batch_name}_ps', f'{batch_name}_padjs',
+                             f'{batch_name}_sig',
+                             f'{batch_name}_sig_odds'],
+                              columns=data.var_names.astype(str)).transpose()
+
+    return results_df, bg
 
 def odds_cutoff(data: AnnData, bg_size: int=10000,
                 padj_method: str='fdr_bh', padj_cutoff: float=.01,
@@ -334,15 +426,7 @@ def odds_cutoff(data: AnnData, bg_size: int=10000,
 
     padjs = multipletests(ps, method=padj_method)[1]
 
-    ############ Summarising information to save to data ###########################
-    # Creating dataframe of the random values #
-    bg = pd.DataFrame([rand_genes, rand_matches, rand_odds],
-                      index=['bg_genes', 'rand_reference', 'rand_odds']
-                      ).transpose()
-    # Ensure can save h5ad
-    bg['rand_odds'] = bg['rand_odds'].astype(float)
-    bg.index = bg.index.values.astype(str)
-
+    ############ Summarising information to save to data #######################
     ps_full = np.ones((data.shape[1]))
     padjs_full = ps_full.copy()
     sig_odds_full = np.zeros((data.shape[1]))
@@ -357,7 +441,15 @@ def odds_cutoff(data: AnnData, bg_size: int=10000,
     sig_odds_full[reference_bool] = max(odds)
     sig_odds_full[sig_full == False] = 0
 
-    ############## Saving information to AnnData ##################################
+    ############## Saving information to AnnData ###############################
+    # Creating dataframe of the random values #
+    bg = pd.DataFrame([rand_genes, rand_matches, rand_odds],
+                      index=['bg_genes', 'rand_reference', 'rand_odds']
+                      ).transpose()
+    # Ensure can save h5ad
+    bg['rand_odds'] = bg['rand_odds'].astype(float)
+    bg.index = bg.index.values.astype(str)
+
     data.uns['bfs_background'] = bg
 
     data.varm['bfs_results']['ps'] = ps_full

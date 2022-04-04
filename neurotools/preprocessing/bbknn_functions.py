@@ -228,10 +228,11 @@ def check_knn_metric(params, counts, scanpy_logging=False):
                 params['metric'] = 'euclidean'
         else:
             params['computation'] = 'pynndescent'
+            #### Below commented out since not relevant for BFS
             # pynndescent wants at least 11 cells per batch, from testing
-            if np.min(counts) < 11:
-                raise ValueError(
-                    "Not all batches have at least 11 cells in them - required by pynndescent.")
+            # if np.min(counts) < 11:
+            #     raise ValueError(
+            #         "Not all batches have at least 11 cells in them - required by pynndescent.")
             # metric needs to be a function or in the named list
             if not (params['metric'] in pynndescent.distances.named_distances or
                     isinstance(params['metric'], types.FunctionType)):
