@@ -57,12 +57,16 @@ def ieg_activation(data: AnnData, iegs: np.array,
         sc.tl.rank_genes_groups(data_ct, groupby=perturb_col, pts=True,
                                 reference=perturb_control, use_raw=False,
                                 )
-        genes_df = pd.DataFrame(data_ct.uns['rank_genes_groups']['names'])
+        genes_df = pd.DataFrame(data_ct.uns['rank_genes_groups']['names'],
+                                dtype=str)
         logfcs_df = pd.DataFrame(
-                             data_ct.uns['rank_genes_groups']['logfoldchanges'])
+                             data_ct.uns['rank_genes_groups']['logfoldchanges'],
+                                dtype=float)
         pvals_df = pd.DataFrame(data_ct.uns['rank_genes_groups']['pvals'])
-        padjs_df = pd.DataFrame(data_ct.uns['rank_genes_groups']['pvals_adj'])
-        prop_expr_df = pd.DataFrame(data_ct.uns['rank_genes_groups']['pts'])
+        padjs_df = pd.DataFrame(data_ct.uns['rank_genes_groups']['pvals_adj'],
+                                dtype=float)
+        prop_expr_df = pd.DataFrame(data_ct.uns['rank_genes_groups']['pts'],
+                                    dtype=float)
 
         ### Adding the IEG Expression information for fast plotting ###
         col_indices = list(range(logfcs_df.shape[1]))
@@ -92,19 +96,20 @@ def ieg_activation(data: AnnData, iegs: np.array,
         ieg_sigs.loc[ct,:] = sig_bool.sum(axis=1)[order]
 
         ### Saving overall IEG information per cell type ###
-        ieg_info = pd.DataFrame(columns=logfcs_df.columns,
-                                index=['IEG_counts', 'IEGs', 'logfcs',
+        ieg_info = pd.DataFrame(index=logfcs_df.columns,
+                                columns=['IEG_counts', 'IEGs', 'logfcs',
                                        '-log10(padjs)'])
-        ieg_info.loc['IEG_counts', :] = (sig_bool).sum(axis=0)
-        ieg_info.loc['IEGs', :] = ['_'.join(genes_df.values[sig_bool[:, i], i])
+        ieg_info['IEG_counts'] = (sig_bool).sum(axis=0)
+        ieg_info['IEGs'] = ['_'.join(genes_df.values[sig_bool[:, i], i])
                                    for i in range(genes_df.shape[1])]
-        ieg_info.loc['logfcs', :] = ['_'.join(logfcs_df.values[sig_bool[:, i],
+        ieg_info['logfcs'] = ['_'.join(logfcs_df.values[sig_bool[:, i],
                                                                i].astype(str))
                                      for i in range(logfcs_df.shape[1])]
-        ieg_info.loc['-log10(padjs)', :] = ['_'.join((-np.log10(padjs_df.values[
+        ieg_info['-log10(padjs)'] = ['_'.join((-np.log10(padjs_df.values[
                                                                     sig_bool[:,
                                                            i], i])).astype(str))
                                             for i in range(padjs_df.shape[1])]
+
 
         ieg_stats = {'ieg_info': ieg_info,
                      'genes_ranked': genes_df, 'logfcs': logfcs_df,
@@ -114,8 +119,10 @@ def ieg_activation(data: AnnData, iegs: np.array,
 
     for ieg in iegs_:
         ieg_logfcs[ieg] = ieg_logfcs[ieg].drop(columns=perturb_control)
+        ieg_logfcs[ieg] = ieg_logfcs[ieg].astype(float)
         ieg_prop_expr_diffs[ieg] = ieg_prop_expr_diffs[ieg].drop(
                                                         columns=perturb_control)
+        ieg_prop_expr_diffs[ieg] = ieg_prop_expr_diffs[ieg].astype(float)
 
     #### Attaching the results to the AnnData object ######
     data.uns['ieg_stats'] = ieg_stats

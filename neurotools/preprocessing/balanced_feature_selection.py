@@ -125,7 +125,8 @@ def balanced_feature_select_graph(data: AnnData, reference_genes: np.array,
             print(f"Processing batch {batch_name}...")
 
         ### Need to subset genes to those expressed in batch
-        gene_cell_counts = (datai.X > 0).sum(axis=0)
+        expri = datai.X if type(datai.X)==np.ndarray else datai.X.toarray()
+        gene_cell_counts = (expri > 0).sum(axis=0)
         genes_sub = datai.var_names.values.astype(str)[
                                                    gene_cell_counts > min_cells]
         reference_genesi = np.array([ref for ref in reference_genes
