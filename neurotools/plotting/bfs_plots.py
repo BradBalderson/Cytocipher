@@ -37,7 +37,7 @@ def odds_bg_comp(data: AnnData, batch_name: str=None, show: bool=True):
     rand_odds = data.uns[f'{batch_name}_bfs_background'][
                                                f'{batch_name}_rand_odds'].values
     reference_bool = data.varm[f'{batch_name}_bfs_results'][
-                                            '{batch_name}_bfs_reference'].values
+                                           f'{batch_name}_bfs_reference'].values
     selected_bool = data.varm[f'{batch_name}_bfs_results'][
                                             f'{batch_name}_bfs_selected'].values
     selected_woRef_bool = np.logical_and(selected_bool, reference_bool == False)
