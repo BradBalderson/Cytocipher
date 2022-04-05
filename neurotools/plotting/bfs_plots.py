@@ -27,17 +27,24 @@ def odds_cutoff(data: AnnData, bins: int=100, show: bool=True):
     if not show:
         return out
 
-def odds_bg_comp(data: AnnData, show: bool=True):
+def odds_bg_comp(data: AnnData, batch_name: str=None, show: bool=True):
     """Violin plots which compare the odds scores for
         significant selected genes, selected genes,
         & with random background genes.
     """
-    rand_odds = data.uns["bfs_background"]['rand_odds'].values
-    reference_bool = data.varm['bfs_results']['bfs_reference'].values
-    selected_bool = data.varm['bfs_results']['bfs_selected'].values
+    if type(batch_name)==type(None):
+        batch_name = 'X'
+    rand_odds = data.uns[f'{batch_name}_bfs_background'][
+                                               f'{batch_name}_rand_odds'].values
+    reference_bool = data.varm[f'{batch_name}_bfs_results'][
+                                            '{batch_name}_bfs_reference'].values
+    selected_bool = data.varm[f'{batch_name}_bfs_results'][
+                                            f'{batch_name}_bfs_selected'].values
     selected_woRef_bool = np.logical_and(selected_bool, reference_bool == False)
-    odds = data.varm['bfs_results']['odds'].values[selected_woRef_bool]
-    sig_odds = data.varm['bfs_results']['sig_odds'].values
+    odds = data.varm[f'{batch_name}_bfs_results']['odds'].values[
+                                                            selected_woRef_bool]
+    sig_odds = data.varm[f'{batch_name}_bfs_results'][
+                                                f'{batch_name}_sig_odds'].values
     sig_odds = sig_odds[np.logical_and(sig_odds > 0, reference_bool == False)]
 
     odds_list = [sig_odds, odds, rand_odds]

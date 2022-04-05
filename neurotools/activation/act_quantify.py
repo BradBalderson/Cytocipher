@@ -43,14 +43,18 @@ def ieg_activation(data: AnnData, iegs: np.array,
 
     #### Calling de iegs between behaviour & control #####
     ct_ieg_stats = {}
-    ieg_sigs = pd.DataFrame(index=ct_set, columns=socials[socials!='Control'])
+    ieg_sigs = pd.DataFrame(index=ct_set, columns=socials[socials!='Control'],
+                            dtype=float)
     ieg_logfcs = {}
     ieg_prop_exprs = {}
     ieg_prop_expr_diffs = {}
     for ieg in iegs_:
-        ieg_logfcs[ieg] = pd.DataFrame(index=ct_set, columns=socials)
-        ieg_prop_exprs[ieg] = pd.DataFrame(index=ct_set, columns=socials)
-        ieg_prop_expr_diffs[ieg] = pd.DataFrame(index=ct_set, columns=socials)
+        ieg_logfcs[ieg] = pd.DataFrame(index=ct_set, columns=socials,
+                                       dtype=float)
+        ieg_prop_exprs[ieg] = pd.DataFrame(index=ct_set, columns=socials,
+                                           dtype=float)
+        ieg_prop_expr_diffs[ieg] = pd.DataFrame(index=ct_set, columns=socials,
+                                                dtype=float)
 
     for i, data_ct in enumerate(datas):
         ct = ct_set[i]
@@ -119,10 +123,8 @@ def ieg_activation(data: AnnData, iegs: np.array,
 
     for ieg in iegs_:
         ieg_logfcs[ieg] = ieg_logfcs[ieg].drop(columns=perturb_control)
-        ieg_logfcs[ieg] = ieg_logfcs[ieg].astype(float)
         ieg_prop_expr_diffs[ieg] = ieg_prop_expr_diffs[ieg].drop(
                                                         columns=perturb_control)
-        ieg_prop_expr_diffs[ieg] = ieg_prop_expr_diffs[ieg].astype(float)
 
     #### Attaching the results to the AnnData object ######
     data.uns['ieg_stats'] = ieg_stats
