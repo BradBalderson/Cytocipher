@@ -29,8 +29,9 @@ def odds_cutoff(data: AnnData, batch_name: str=None,
                                                 f'{batch_name}_sig_odds'].values
     odds_cutoff = min(sig_odds[sig_odds > 0])
 
+    x_label = f'Odds-score for {batch_name}' if batch_name!='X' else 'Odds-score'
     out = distrib(odds, cutoff=odds_cutoff,
-                  x_label=f'Odds-score for {batch_name}', bins=bins, show=show)
+                  x_label=x_label, bins=bins, show=show)
     if not show:
         return out
 
@@ -61,7 +62,8 @@ def odds_bg_comp(data: AnnData, batch_name: str=None, show: bool=True):
     # Removing boxes outside #
     ax.spines['top'].set_visible(False)
     ax.spines['right'].set_visible(False)
-    ax.set_ylabel("Odds-score")
+    y_label = f'Odds-score for {batch_name}' if batch_name != 'X' else 'Odds-score'
+    ax.set_ylabel(y_label)
     ax.set_xticklabels(['Significant', 'Foreground', 'Background'])
     if show:
         plt.show()
