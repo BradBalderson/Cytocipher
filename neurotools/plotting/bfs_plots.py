@@ -11,19 +11,26 @@ import matplotlib.pyplot as plt
 from .general_plots import distrib
 
 ########################### Diagnostic plots ###################################
-def odds_cutoff(data: AnnData, bins: int=100, show: bool=True):
+def odds_cutoff(data: AnnData, batch_name: str=None,
+                bins: int=100, show: bool=True):
     """Plots distribution of odds-scores & the cutoff for what's considered
         a significant score.
     """
-    reference_bool = data.varm['bfs_results']['bfs_reference'].values
-    selected_bool = data.varm['bfs_results']['bfs_selected'].values
+    if type(batch_name)==type(None):
+        batch_name = 'X'
+    reference_bool = data.varm[f'{batch_name}_bfs_results'][
+                                           f'{batch_name}_bfs_reference'].values
+    selected_bool = data.varm[f'{batch_name}_bfs_results'][
+                                            f'{batch_name}_bfs_selected'].values
     selected_woRef_bool = np.logical_and(selected_bool, reference_bool == False)
-    odds = data.varm['bfs_results']['odds'].values[selected_woRef_bool]
-    sig_odds = data.varm['bfs_results']['sig_odds'].values
+    odds = data.varm[f'{batch_name}_bfs_results']['odds'].values[
+                                                            selected_woRef_bool]
+    sig_odds = data.varm[f'{batch_name}_bfs_results'][
+                                                f'{batch_name}_sig_odds'].values
     odds_cutoff = min(sig_odds[sig_odds > 0])
 
-    out = distrib(odds, cutoff=odds_cutoff, x_label='Odds-score',
-                  bins=bins, show=show)
+    out = distrib(odds, cutoff=odds_cutoff,
+                  x_label=f'Odds-score for {batch_name}', bins=bins, show=show)
     if not show:
         return out
 

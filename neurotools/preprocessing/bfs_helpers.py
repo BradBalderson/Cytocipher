@@ -392,6 +392,12 @@ def odds_cutoff_core(data: AnnData, batch_name: str,
                              f'{batch_name}_sig',
                              f'{batch_name}_sig_odds'],
                               columns=data.var_names.astype(str)).transpose()
+    float_cols = [f'{batch_name}_ps', f'{batch_name}_padjs',
+                                                       f'{batch_name}_sig_odds']
+    for col_ in float_cols:
+        results_df[col_] = results_df[col_].astype(float)
+    results_df[f'{batch_name}_sig'] = results_df[f'{batch_name}_sig'
+                                                                  ].astype(bool)
 
     return results_df, bg
 
