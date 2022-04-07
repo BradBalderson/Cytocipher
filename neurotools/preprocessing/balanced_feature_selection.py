@@ -1,6 +1,6 @@
 """
 Implements balanced feature selection approach; whereby use marker genes for
-different cell types to select additional genes in order to perform clustering
+different cell types to select additional genes in order to perform cluster
 on user's variation of interest.
 """
 
