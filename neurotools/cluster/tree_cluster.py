@@ -185,12 +185,18 @@ def merge_iteration(data: AnnData, labels: np.array, node_pairs: list,
 def check_different_iteration(data: AnnData, labels: np.array,
                               ancestor_node: ete3.TreeNode,
                     max_de: int = 2, padj_cutoff: float = .01,
-                    score_cutoff: float = 2,):
+                    logfc_cutoff: float = 2,):
     """ Top down approach to seeing if clusters significantly different..
     """
+    ancestor_node.visited = True
     children = ancestor_node.get_children()
-    if len(children) == 0:
+    if len(children) == 0: # Base case, at a root!!!
+        tree = ancestor_node.get_tree_root()
+        tree.cluster_groups.append( ancestor_node.clusters )
         return
+    elif len(children) > 2:
+        raise Exception("Greater than 2 children detected!!!! "
+                        "Must be binary tree.")
 
     ### Getting the cluster labels for all clusters beneath nodes
     node_cluster_labels = np.array(['node '] * data.shape[0])
@@ -202,11 +208,11 @@ def check_different_iteration(data: AnnData, labels: np.array,
     data.obs['node_labels'] = data.obs['node_labels'].astype('category')
 
     ### Determining if clusters significantly different
-    sig_different, n_de = is_sig_different_scores(data, 'node_labels',
+    sig_different, n_de = is_sig_different(data, 'node_labels',
                                            'node0', 'node1',
                                            max_de=max_de,
                                            padj_cutoff=padj_cutoff,
-                                           score_cutoff=score_cutoff,
+                                           logfc_cutoff=logfc_cutoff,
                                            )
     ancestor_node.sig = sig_different
 
@@ -216,10 +222,10 @@ def check_different_iteration(data: AnnData, labels: np.array,
     if sig_different: # No merging, so keep going, preorder traversal!
         check_different_iteration(data, labels, children[0],
                                          max_de=max_de, padj_cutoff=padj_cutoff,
-                                                    score_cutoff=score_cutoff)
+                                                    logfc_cutoff=logfc_cutoff)
         check_different_iteration(data, labels, children[1],
                                   max_de=max_de, padj_cutoff=padj_cutoff,
-                                  score_cutoff=score_cutoff)
+                                  logfc_cutoff=logfc_cutoff)
     else:
         tree = ancestor_node.get_tree_root()
         for node in children:

@@ -28,6 +28,14 @@ def is_sig_different(data: AnnData, groupby: str, label1: str, label2: str,
     padjs_rank = pd.DataFrame(data.uns['rank_genes_groups']['pvals_adj']
                                                     ).values[:, 0].astype(float)
 
+    # TODO find better way to deal with this problem & figure out why happening!
+    if np.all(np.isnan(logfcs_rank)):
+        #raise Exception("All logfcs nan!!!!")
+        scores_rank = pd.DataFrame(data.uns['rank_genes_groups']['scores']
+                                                    ).values[:, 0].astype(float)
+        logfcs_rank = np.zeros(logfcs_rank.shape)
+        logfcs_rank[scores_rank>0] = logfc_cutoff + 1
+
     sig_bool = np.logical_and(logfcs_rank > logfc_cutoff,
                               padjs_rank < padj_cutoff)
     n_de = len(np.where(sig_bool)[0])

@@ -40,7 +40,7 @@ def cluster_and_average(data: AnnData, expr: np.ndarray, resolution: float):
     return avg_data, label_set
 
 ######### Version 2
-def is_over_clustered(data: AnnData,
+def is_over_clustered_v2(data: AnnData,
                          avg_data: np.ndarray, label_set: np.array,
                          max_de: int=2,
                          padj_cutoff: float=.01,
@@ -80,7 +80,7 @@ def is_over_clustered(data: AnnData,
 
     return over_clustered, n_de
 
-def over_cluster(data, expr, res: float=1, max_de: int=2, padj_cutoff: float=.01,
+def over_cluster_v2(data, expr, res: float=1, max_de: int=2, padj_cutoff: float=.01,
                  #score_cutoff: float=2,
                  max_iter: int=20, step_size: float=2,
                  verbose: bool=True):
@@ -124,7 +124,7 @@ def over_cluster(data, expr, res: float=1, max_de: int=2, padj_cutoff: float=.01
             f"detected {n_de} de genes in a cluster and it's nearest neighbour.")
 
 ######### Version 1
-def is_over_clustered_v1(data: AnnData,
+def is_over_clustered(data: AnnData,
                          avg_data: np.ndarray, label_set: np.array,
                          max_de: int=2,
                          padj_cutoff: float=.01, logfc_cutoff: float=1):
@@ -160,7 +160,7 @@ def is_over_clustered_v1(data: AnnData,
 
     return over_clustered, n_de
 
-def over_cluster_v1(data, expr, res: float=1, max_de: int=2, padj_cutoff: float=.01,
+def over_cluster(data, expr, res: float=1, max_de: int=2, padj_cutoff: float=.01,
                  logfc_cutoff: float=2, max_iter: int=20, step_size: float=2,
                  verbose: bool=True):
     """Overclusters that data; defined when no DE genes between any given cluster
