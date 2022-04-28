@@ -10,6 +10,7 @@ from scanpy import AnnData
 import ete3
 
 from .tree_cluster_helpers import is_sig_different, is_sig_different_scores
+from .cluster_helpers import n_different
 
 def get_node_pairs(tree: ete3.Tree, initialise: bool=False):
     """Gets pairs of nodes which represent comparison between two distinct
@@ -208,12 +209,15 @@ def check_different_iteration(data: AnnData, labels: np.array,
     data.obs['node_labels'] = data.obs['node_labels'].astype('category')
 
     ### Determining if clusters significantly different
-    sig_different, n_de = is_sig_different(data, 'node_labels',
-                                           'node0', 'node1',
-                                           max_de=max_de,
-                                           padj_cutoff=padj_cutoff,
-                                           logfc_cutoff=logfc_cutoff,
-                                           )
+    # sig_different, n_de = is_sig_different(data, 'node_labels',
+    #                                        'node0', 'node1',
+    #                                        max_de=max_de,
+    #                                        padj_cutoff=padj_cutoff,
+    #                                        logfc_cutoff=logfc_cutoff,
+    #                                        )
+    n_de = n_different(data, 'node_labels', ['node0', 'node1'],
+                       logfc_cutoff, padj_cutoff)
+    sig_different = n_de > max_de
     ancestor_node.sig = sig_different
 
     print(sig_different, n_de,
