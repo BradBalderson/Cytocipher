@@ -8,7 +8,7 @@ from scanpy import AnnData
 import seaborn as sb
 import matplotlib.pyplot as plt
 
-from .general_plots import distrib
+from .general_plots import distrib, upset_plot
 
 ########################### Diagnostic plots ###################################
 def odds_cutoff(data: AnnData, batch_name: str=None,
@@ -70,9 +70,28 @@ def odds_bg_comp(data: AnnData, batch_name: str=None, show: bool=True):
     else:
         return ax
 
+def sig_gene_overlaps(data, show: bool=True):
+    """ Plots an upset plot showing the significant gene overlaps!!
+    """
+    if 'bfs_sig_gene_count_info' not in data.uns:
+        raise Exception("Need to run get_sig_counts_per_batch() first.")
 
+    groups = data.uns['bfs_sig_gene_count_info']['groups']
+    sig_genes_grouped = data.uns['bfs_sig_gene_count_info']['sig_genes_grouped']
 
+    upset_plot(sig_genes_grouped, group_names=groups,
+               fig_title='Batch overlaps of selected genes', show=show)
 
+def sig_gene_counts(data, show: bool=True):
+    """ Plots distribution of no. of batches gene was detected as signficant in.
+    """
+    if 'bfs_sig_gene_count_info' not in data.uns:
+        raise Exception("Need to run get_sig_counts_per_batch() first.")
 
+    sig_gene_counts = data.uns['bfs_sig_gene_count_info']['sig_gene_counts']
 
+    distrib(list(sig_gene_counts.values()),
+            x_label='Batches genes are significantly coexpressed within',
+            fig_title='Count of batches genes are significantly coexpressed in',
+            show=show)
 

@@ -13,7 +13,8 @@ from scanpy import AnnData
 from .bbknn_functions import bbknn_modified
 from .bfs_helpers import pearson_r,  get_selected_dist, get_selected_corr, \
                        add_selected_to_anndata, calc_coexpr_odds, odds_cutoff, \
-                        balanced_feature_selection_graph_core, odds_cutoff_core
+                      balanced_feature_selection_graph_core, odds_cutoff_core, \
+                        get_selected_batch_counts, get_batch_names
 
 def load_nps():
     """ Loads the neuropeptidergic/dopaminergic genes.
@@ -239,13 +240,67 @@ def balanced_feature_select_graph(data: AnnData, reference_genes: np.array,
         all_results_df = data.varm[f'{batch_name}_bfs_results']
         ## Adding like this will result in NaNs, this will be useful to keep
         ## track of what genes were detectable per batch...
-        data.varm[f'{batch_name}_bfs_results'] = pd.concat([all_results_df,
-                                                            results_df], axis=1)
+        final_results_df = pd.concat([all_results_df, results_df], axis=1)
+
+        ########### Make sure certain columns have correct typing !!!
+        float_cols = [f'{batch_name}_ps', f'{batch_name}_padjs',
+                      f'{batch_name}_sig_odds']
+        for col_ in float_cols:
+            final_results_df[col_] = final_results_df[col_].astype(float)
+        final_results_df[f'{batch_name}_sig'] = final_results_df[
+                                               f'{batch_name}_sig'].astype(bool)
+
+        ##### Adding to data...
+        data.varm[f'{batch_name}_bfs_results'] = final_results_df
         data.uns[f'{batch_name}_bfs_background'] = bg
 
-    # TODO come up with method to summarise results across AnnData
+def update_odds_cutoff(data, batch_name: str = None, padj_cutoff: float = 0.01,
+                       verbose: bool = True):
+    """ Updates the odds cutoff with different parameters.
+    """
+    batch_names = get_batch_names(data, batch_name=batch_name, verbose=verbose)
+
+    for batch_name in batch_names:
+        results_df = data.varm[f'{batch_name}_bfs_results']
+        padjs = results_df[f'{batch_name}_padjs'].values
+        sig_bool = padjs < padj_cutoff
+        results_df[f'{batch_name}_sig'] = sig_bool
+        odds = results_df[f'{batch_name}_odds'].values.astype(float)
+        odds[sig_bool == False] = 0
+        results_df[f'{batch_name}_sig_odds'] = odds
+
+        if verbose:
+            print(f"Updated data.varm['{batch_name}_bfs_results']")
+
+def get_sig_counts_per_batch(data, verbose: bool=False):
+    """ Gets the count of the no. of batches the gene was significant for!
+    """
+    batch_names = get_batch_names(data, verbose=verbose)
+    sig_gene_counts, batch_sig_genes, all_genes = \
+                             get_selected_batch_counts(data,
+                                                       batch_names, verbose)
+    groups = list(batch_names)
+    sig_genes_grouped = [list(batch_sig_genes[batch]) for batch in
+                         batch_sig_genes]
+
+    data.uns['bfs_sig_gene_count_info'] = {'sig_gene_counts': sig_gene_counts,
+                                           'batch_sig_genes': batch_sig_genes,
+                                           'all_genes': all_genes,
+                                           'groups': groups,
+                                         'sig_genes_grouped': sig_genes_grouped,
+                                           }
+    if verbose:
+        print("Added data.uns['bfs_sig_gene_count_info']")
 
 
+
+
+
+
+
+
+
+###### Old implementations
 def balanced_feature_select_v2(data: AnnData, reference_genes: np.array,
                             n_total: int=500, verbose: bool=True):
     """Similar to the development version, except in this case we don't select

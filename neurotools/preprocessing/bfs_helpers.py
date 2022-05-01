@@ -10,6 +10,8 @@ from numba import njit
 
 from tqdm import tqdm
 
+from collections import defaultdict
+
 from statsmodels.stats.multitest import multipletests
 
 from .bbknn_functions import bbknn_modified
@@ -472,3 +474,53 @@ def odds_cutoff(data: AnnData, bg_size: int=10000,
         print("Added data.varm['bfs_results']['sig']")
         print("Added data.varm['bfs_results']['sig_odds']")
         print("Added data.var['highly_variable']")
+
+##### Helper functions for summarising results across batches...
+def get_batch_names(data, batch_name: str=None, verbose: bool = True):
+    """ Gets the set of possible labels for the batch information.
+    """
+    # if type(batch_key) == type(None) or batch_key not in data.obs.columns:
+    #     batch_set = ['all']
+    #     if batch_key not in data.obs.columns:
+    #         print(f"Warning, {batch_key} not in data.obs, batch_key ignored.")
+    # else:
+    #     data.obs[batch_key] = data.obs[batch_key].astype('category')
+    #     if verbose:
+    #         print(f"Set data.obs[{batch_key}] to categorical.")
+    #     batch_set = list(data.obs[batch_key].cat.categories)
+
+    if type(batch_name) == type(None):
+        batch_names = [key.split('_')[0] for key in data.varm.keys()
+                       if key.endswith('_bfs_results')]
+    else:
+        batch_names = [batch_name]
+
+    return batch_names
+
+def get_selected_batch_counts(data, batch_names, verbose: bool=False):
+    """ For each batch, get the set of genes which were significantly
+        co-expressed, then count for how many batches this occured.
+    """
+    sig_gene_counts = defaultdict(int)
+    batch_sig_genes = {}
+    all_genes = data.var_names.values.astype(str)
+    for i, batch_name in enumerate(batch_names):
+        # Getting the significant genes
+        sig_odds = data.varm[f'{batch_name}_bfs_results'][
+            f'{batch_name}_sig_odds'
+        ].values.astype(float)
+        sig_genes_bool = sig_odds > 0
+        # TODO solve nan problem so can switch batch to this method !!!
+        # sig_genes_bool = data.varm[f'{batch_name}_bfs_results'][f'{batch_name}_sig'
+        #                                                    ].values.astype(np.bool_)
+        sig_genes = all_genes[sig_genes_bool]
+
+        # Saving for batch
+        batch_sig_genes[batch_name] = sig_genes
+
+        # Getting count
+        for gene in sig_genes:
+            sig_gene_counts[gene] += 1
+
+    return sig_gene_counts, batch_sig_genes, all_genes
+
