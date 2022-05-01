@@ -268,7 +268,7 @@ def get_batch_names(data, batch_name: str=None, verbose: bool = True):
     #     batch_set = list(data.obs[batch_key].cat.categories)
 
     if type(batch_name) == type(None):
-        batch_names = [key.split('_')[0] for key in data.varm.keys()
+        batch_names = [key.split('_bfs_results')[0] for key in data.varm.keys()
                        if key.endswith('_bfs_results')]
     else:
         batch_names = [batch_name]
