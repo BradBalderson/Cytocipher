@@ -14,7 +14,7 @@ from .bbknn_functions import bbknn_modified
 from .bfs_helpers import pearson_r,  get_selected_dist, get_selected_corr, \
                        add_selected_to_anndata, calc_coexpr_odds, odds_cutoff, \
                       balanced_feature_selection_graph_core, odds_cutoff_core, \
-                        get_selected_batch_counts, get_batch_names
+                        get_selected_batch_counts
 
 def load_nps():
     """ Loads the neuropeptidergic/dopaminergic genes.
@@ -253,6 +253,27 @@ def balanced_feature_select_graph(data: AnnData, reference_genes: np.array,
         ##### Adding to data...
         data.varm[f'{batch_name}_bfs_results'] = final_results_df
         data.uns[f'{batch_name}_bfs_background'] = bg
+
+def get_batch_names(data, batch_name: str=None, verbose: bool = True):
+    """ Gets the set of possible labels for the batch information.
+    """
+    # if type(batch_key) == type(None) or batch_key not in data.obs.columns:
+    #     batch_set = ['all']
+    #     if batch_key not in data.obs.columns:
+    #         print(f"Warning, {batch_key} not in data.obs, batch_key ignored.")
+    # else:
+    #     data.obs[batch_key] = data.obs[batch_key].astype('category')
+    #     if verbose:
+    #         print(f"Set data.obs[{batch_key}] to categorical.")
+    #     batch_set = list(data.obs[batch_key].cat.categories)
+
+    if type(batch_name) == type(None):
+        batch_names = [key.split('_')[0] for key in data.varm.keys()
+                       if key.endswith('_bfs_results')]
+    else:
+        batch_names = [batch_name]
+
+    return batch_names
 
 def update_odds_cutoff(data, batch_name: str = None, padj_cutoff: float = 0.01,
                        verbose: bool = True):

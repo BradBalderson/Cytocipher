@@ -476,27 +476,6 @@ def odds_cutoff(data: AnnData, bg_size: int=10000,
         print("Added data.var['highly_variable']")
 
 ##### Helper functions for summarising results across batches...
-def get_batch_names(data, batch_name: str=None, verbose: bool = True):
-    """ Gets the set of possible labels for the batch information.
-    """
-    # if type(batch_key) == type(None) or batch_key not in data.obs.columns:
-    #     batch_set = ['all']
-    #     if batch_key not in data.obs.columns:
-    #         print(f"Warning, {batch_key} not in data.obs, batch_key ignored.")
-    # else:
-    #     data.obs[batch_key] = data.obs[batch_key].astype('category')
-    #     if verbose:
-    #         print(f"Set data.obs[{batch_key}] to categorical.")
-    #     batch_set = list(data.obs[batch_key].cat.categories)
-
-    if type(batch_name) == type(None):
-        batch_names = [key.split('_')[0] for key in data.varm.keys()
-                       if key.endswith('_bfs_results')]
-    else:
-        batch_names = [batch_name]
-
-    return batch_names
-
 def get_selected_batch_counts(data, batch_names, verbose: bool=False):
     """ For each batch, get the set of genes which were significantly
         co-expressed, then count for how many batches this occured.

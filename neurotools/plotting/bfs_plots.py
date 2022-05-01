@@ -94,4 +94,3 @@ def sig_gene_counts(data, show: bool=True):
             x_label='Batches genes are significantly coexpressed within',
             fig_title='Count of batches genes are significantly coexpressed in',
             show=show)
-
