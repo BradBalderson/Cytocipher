@@ -276,17 +276,23 @@ def get_batch_names(data, batch_name: str=None, verbose: bool = True):
     return batch_names
 
 def update_odds_cutoff(data, batch_name: str = None, padj_cutoff: float = 0.01,
-                       verbose: bool = True):
+                       odds_cutoff: float=None, verbose: bool = True):
     """ Updates the odds cutoff with different parameters.
     """
     batch_names = get_batch_names(data, batch_name=batch_name, verbose=verbose)
 
+    if type(padj_cutoff)==type(None):
+        padj_cutoff = 1
+    if type(odds_cutoff)==type(None):
+        odds_cutoff = -99999999
+
     for batch_name in batch_names:
         results_df = data.varm[f'{batch_name}_bfs_results']
         padjs = results_df[f'{batch_name}_padjs'].values
-        sig_bool = padjs < padj_cutoff
-        results_df[f'{batch_name}_sig'] = sig_bool
         odds = results_df[f'{batch_name}_odds'].values.astype(float)
+
+        sig_bool = np.logical_and(padjs < padj_cutoff, odds>odds_cutoff)
+        results_df[f'{batch_name}_sig'] = sig_bool
         odds[sig_bool == False] = 0
         results_df[f'{batch_name}_sig_odds'] = odds
 
