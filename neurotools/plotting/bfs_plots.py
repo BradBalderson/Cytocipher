@@ -27,7 +27,11 @@ def odds_cutoff(data: AnnData, batch_name: str=None,
                                                             selected_woRef_bool]
     sig_odds = data.varm[f'{batch_name}_bfs_results'][
                                                 f'{batch_name}_sig_odds'].values
-    odds_cutoff = min(sig_odds[sig_odds > 0])
+    sig_odds = sig_odds[sig_odds > 0]
+    if len(sig_odds) > 0:
+        odds_cutoff = min(sig_odds)
+    else:
+        odds_cutoff = max(odds)
 
     x_label = f'Odds-score for {batch_name}' if batch_name!='X' else 'Odds-score'
     out = distrib(odds, cutoff=odds_cutoff,

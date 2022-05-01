@@ -291,7 +291,7 @@ def update_odds_cutoff(data, batch_name: str = None, padj_cutoff: float = 0.01,
         padjs = results_df[f'{batch_name}_padjs'].values
         odds = results_df[f'{batch_name}_odds'].values.astype(float)
 
-        sig_bool = np.logical_and(padjs < padj_cutoff, odds>odds_cutoff)
+        sig_bool = np.logical_and(padjs < padj_cutoff, odds > odds_cutoff)
         results_df[f'{batch_name}_sig'] = sig_bool
         odds[sig_bool == False] = 0
         results_df[f'{batch_name}_sig_odds'] = odds
