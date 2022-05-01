@@ -3,6 +3,7 @@ General plots which can be used across different methods for diagnostics.
 """
 
 import numpy as np
+import pandas as pd
 import upsetplot
 import matplotlib.pyplot as plt
 
