@@ -229,7 +229,8 @@ def add_selected_to_anndata(data: AnnData, expr_genes: np.array,
     selected_bool = np.full((data.shape[1]), False, dtype=np.bool_)
     selected_bool[selected_indices] = True
 
-    selected_corrs_full = np.zeros((data.shape[1]), dtype=np.float_)
+    # NOTE: changed this to ONES since is a distance metric!!!
+    selected_corrs_full = np.ones((data.shape[1]), dtype=np.float_)
     selected_corrs_full[selected_indices] = selected_corrs
 
     selected_match_full = np.empty((data.shape[1]), dtype=expr_genes.dtype)
@@ -403,6 +404,10 @@ def odds_cutoff_core(data: AnnData, batch_name: str,
 
     return results_df, bg
 
+# TODO: looking at this, think major limitation of this approach is that
+#   considers one background for each gene to determine a single cutoff...
+#   think this is incorrect, since chance of co-expression for some genes
+#   higher than other... needs to evaluate this..
 def odds_cutoff(data: AnnData, bg_size: int=10000,
                 padj_method: str='fdr_bh', padj_cutoff: float=.01,
                 verbose: bool=True):
