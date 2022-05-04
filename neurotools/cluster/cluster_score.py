@@ -46,7 +46,7 @@ def giotto_page_enrich(data: AnnData, groupby: str,
 
     #### First performing differential expression...
     if type(cluster_marker_key)==type(None):
-        if type(var_groups!=None):
+        if type(var_groups)!=type(None):
             data_sub = data[:,data.var[var_groups]]
             sc.tl.rank_genes_groups(data_sub, groupby=groupby, use_raw=False)
             data.uns['rank_genes_groups'] = data_sub.uns['rank_genes_groups']
