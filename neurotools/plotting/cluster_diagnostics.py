@@ -11,16 +11,24 @@ from scanpy import AnnData
 import matplotlib.pyplot as plt
 import seaborn as sb
 
-def enrich_heatmap(data: AnnData, groupby: str):
+def enrich_heatmap(data: AnnData, groupby: str, per_cell: bool=True):
     """Plots the Giotto enrichment scores for each clusters own DE genes to show
         specificity of gene coexpression in cluster.
     """
     cell_scores_df = data.obsm[f'{groupby}_enrich_scores']
     score_data = sc.AnnData(cell_scores_df, obs=data.obs)
 
-    ax = sc.pl.heatmap(score_data, score_data.var_names, figsize=(12, 12),
-                       groupby=groupby, show_gene_labels=True,
-                       show=False)
+    if per_cell:
+        ax = sc.pl.heatmap(score_data, score_data.var_names, figsize=(12, 12),
+                           groupby=groupby, show_gene_labels=True,
+                           show=False)
+
+    else:
+        ax = sc.pl.matrixplot(score_data, score_data.var_names, figsize=(12,12),
+                         groupby=groupby, dendrogram=False,
+                            show_gene_labels=True, show=False
+                         )
+
     ax['heatmap_ax'].set_title("Cluster DE gene coexpression score",
                                fontdict={'fontweight': 'bold',
                                          'fontsize': 20})
