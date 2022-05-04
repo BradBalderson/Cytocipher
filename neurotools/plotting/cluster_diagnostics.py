@@ -22,6 +22,9 @@ def enrich_heatmap(data: AnnData, groupby: str, per_cell: bool=True):
         ax = sc.pl.heatmap(score_data, score_data.var_names, figsize=(12, 12),
                            groupby=groupby, show_gene_labels=True,
                            show=False)
+        ax['heatmap_ax'].set_title("Cluster DE gene coexpression score",
+                                   fontdict={'fontweight': 'bold',
+                                             'fontsize': 20})
 
     else:
         ax = sc.pl.matrixplot(score_data, score_data.var_names, figsize=(12,12),
@@ -30,9 +33,6 @@ def enrich_heatmap(data: AnnData, groupby: str, per_cell: bool=True):
                               show=False
                          )
 
-    ax['heatmap_ax'].set_title("Cluster DE gene coexpression score",
-                               fontdict={'fontweight': 'bold',
-                                         'fontsize': 20})
     plt.show()
 
 def plot_cluster_sils(data: AnnData, groupby: str):
