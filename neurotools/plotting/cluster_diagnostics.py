@@ -26,7 +26,8 @@ def enrich_heatmap(data: AnnData, groupby: str, per_cell: bool=True):
     else:
         ax = sc.pl.matrixplot(score_data, score_data.var_names, figsize=(12,12),
                          groupby=groupby, dendrogram=False,
-                            show_gene_labels=True, show=False
+                            #show_gene_labels=True,
+                              show=False
                          )
 
     ax['heatmap_ax'].set_title("Cluster DE gene coexpression score",
