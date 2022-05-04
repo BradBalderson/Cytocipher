@@ -39,6 +39,7 @@ def giotto_page_enrich(data: AnnData, groupby: str,
                        var_groups: str='highly_variable',
                        logfc_cutoff: float=0, padj_cutoff: float=.05,
                        n_top: int=5, cluster_marker_key: str=None,
+                       rerun_de: bool=True,
                        verbose: bool=True):
     """ Runs Giotto coexpression enrichment score for DE genes in each cluster.
     """
@@ -50,7 +51,7 @@ def giotto_page_enrich(data: AnnData, groupby: str,
             data_sub = data[:,data.var[var_groups]]
             sc.tl.rank_genes_groups(data_sub, groupby=groupby, use_raw=False)
             data.uns['rank_genes_groups'] = data_sub.uns['rank_genes_groups']
-        else:
+        elif rerun_de:
             sc.tl.rank_genes_groups(data, groupby=groupby, use_raw=False)
 
         #### Getting marker genes for each cluster...
