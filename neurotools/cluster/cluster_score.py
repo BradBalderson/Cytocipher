@@ -37,7 +37,7 @@ def giotto_page_enrich_geneset(data, gene_set):
 
 def giotto_page_enrich(data: AnnData, groupby: str,
                        var_groups: str='highly_variable',
-                       logfc_cutoff: float=1, padj_cutoff: float=.01,
+                       logfc_cutoff: float=0, padj_cutoff: float=.05,
                        n_top: int=5, cluster_marker_key: str=None,
                        verbose: bool=True):
     """ Runs Giotto coexpression enrichment score for DE genes in each cluster.
