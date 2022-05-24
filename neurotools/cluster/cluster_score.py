@@ -39,7 +39,7 @@ def giotto_page_enrich(data: AnnData, groupby: str,
                        var_groups: str='highly_variable',
                        logfc_cutoff: float=0, padj_cutoff: float=.05,
                        n_top: int=5, cluster_marker_key: str=None,
-                       rerun_de: bool=True,
+                       rerun_de: bool=True, gene_order='logfc',
                        verbose: bool=True):
     """ Runs Giotto coexpression enrichment score for DE genes in each cluster.
     """
@@ -65,7 +65,11 @@ def giotto_page_enrich(data: AnnData, groupby: str,
         cluster_genes = {}
         for i, cluster in enumerate(genes_rank.columns):
             up_indices = np.where(up_bool[:,i])[0]
-            up_rank = np.argsort(-logfcs_rank.values[up_indices, i])[0:n_top]
+            if gene_order=='logfc':
+                up_rank = np.argsort(-logfcs_rank.values[up_indices, i])[0:n_top]
+            else:
+                up_rank = up_indices[0:n_top]
+
             cluster_genes[cluster] = genes_rank.values[up_rank, i]
 
         data.uns[f'{groupby}_markers'] = cluster_genes
