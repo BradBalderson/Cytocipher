@@ -10,7 +10,7 @@ from scanpy import AnnData
 from sklearn.metrics import silhouette_samples
 
 def cluster_silhouettes(data: AnnData, groupby: str, n_rands: int=5000,
-                        verbose: bool=True):
+                        metric: str='cosine', verbose: bool=True):
     """ Determines the silhouette scores per cluster.
 
     Parameters
@@ -35,10 +35,10 @@ def cluster_silhouettes(data: AnnData, groupby: str, n_rands: int=5000,
     cell_scores = data.obsm[f'{groupby}_enrich_scores'].values
     cluster_labels = data.obs[groupby].values.astype(str)
 
-    rand_indices = np.random.choice(list(range(cell_scores.shape[0])), 5000)
+    rand_indices = np.random.choice(list(range(cell_scores.shape[0])), n_rands)
 
     scores = silhouette_samples(cell_scores[rand_indices, :],
-                                cluster_labels[rand_indices], metric='cosine')
+                                cluster_labels[rand_indices], metric=metric)
 
     data.uns[f'{groupby}_sils'] = [scores, cluster_labels[rand_indices],
                                    rand_indices]
