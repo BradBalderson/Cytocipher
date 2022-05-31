@@ -166,6 +166,10 @@ def cluster_label(data: sc.AnnData, var_key: str,
     """ Labels clusters by the top DE genes, and subsequently merges clusters
         with no DE genes to the most similar cluster.
     """
+    
+    if verbose:
+        print("Start no. clusters: ",
+              len(np.unique(data.obs[groupby].values)))
 
     #### Getting genes of interest
     genes_bool = data.var[var_key].values
@@ -213,3 +217,6 @@ def cluster_label(data: sc.AnnData, var_key: str,
     #### Iteration complete, so can now add final labelled clusters.
     add_labels(data, obs_key, cluster_labels, verbose)
     add_colors(data, obs_key, 'tab20')  # Also adding colors
+    if verbose:
+        print("Final no. clusters: ", len(np.unique(cluster_labels)))
+
