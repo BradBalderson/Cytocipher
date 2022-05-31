@@ -35,7 +35,10 @@ def load_tfs():
     tfs = pd.read_csv(path +
       '/../dbs/Mouse_Transcription_Factors_GO_term_summary_20200813_013621.txt',
                         sep='\t', index_col=0).values[:,0].astype(str)
-    return tfs
+    tfs2 = pd.read_csv(path + '/../dbs/Mouse_TFs_ST_curated.txt',
+                        sep='\t').values[:,0].astype(str)
+    all_tfs_and_cofactors = np.unique( list(tfs)+list(tfs2) )
+    return all_tfs_and_cofactors
 
 def balanced_feature_select_graph(data: AnnData, reference_genes: np.array,
                                   batch_key=None, n_total: int=500,

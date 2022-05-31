@@ -1,0 +1,1692 @@
+Symbol	Gene name
+0610009M14Rik	RIKEN cDNA 0610009M14 gene
+1110001J12Rik	RIKEN cDNA 1110001J12 gene
+1110005A23Rik	RIKEN cDNA 1110005A23 gene
+1110011F09Rik	RIKEN cDNA 1110011F09 gene
+1110020M19Rik	RIKEN cDNA 1110020M19 gene
+1110033I14Rik	RIKEN cDNA 1110033I14 gene
+1110035L05Rik	RIKEN cDNA 1110035L05 gene
+1110054N06Rik	RIKEN cDNA 1110054N06 gene
+1190004M21Rik	RIKEN cDNA 1190004M21 gene
+1200006M05Rik	RIKEN cDNA 1200006M05 gene
+1200013F24Rik	RIKEN cDNA 1200013F24 gene
+1300003B13Rik	RIKEN cDNA 1300003B13 gene
+1300004C11Rik	RIKEN cDNA 1300004C11 gene
+1300019N10Rik	RIKEN cDNA 1300019N10 gene
+1500031N24Rik	RIKEN cDNA 1500031N24 gene
+1700001F22Rik	RIKEN cDNA 1700001F22 gene
+1700003F12Rik	RIKEN cDNA 1700003F12 gene
+1700012B18Rik	RIKEN cDNA 1700012B18 gene
+1700012H05Rik	RIKEN cDNA 1700012H05 gene
+1700012M14Rik	RIKEN cDNA 1700012M14 gene
+1700013G10Rik	RIKEN cDNA 1700013G10 gene
+1700014N06Rik	RIKEN cDNA 1700014N06 gene
+1700020N01Rik	RIKEN cDNA 1700020N01 gene
+1700030J15Rik	RIKEN cDNA 1700030J15 gene
+1700065O13Rik	RIKEN cDNA 1700065O13 gene
+1700086D15Rik	RIKEN cDNA 1700086D15 gene
+1700090G07Rik	RIKEN cDNA 1700090G07 gene
+1700123A16Rik	RIKEN cDNA 1700123A16 gene
+1700123J19Rik	RIKEN cDNA 1700123J19 gene
+1810007M14Rik	RIKEN cDNA 1810007M14 gene
+1810037G04Rik	RIKEN cDNA 1810037G04 gene
+1810060D16Rik	RIKEN cDNA 1810060D16 gene
+2010005A06Rik	RIKEN cDNA 2010005A06 gene
+2210008I11Rik	RIKEN cDNA 2210008I11 gene
+2210021A15Rik	RIKEN cDNA 2210021A15 gene
+2300002D11Rik	RIKEN cDNA 2300002D11 gene
+2300009P13Rik	RIKEN cDNA 2300009P13 gene
+2310020P08Rik	RIKEN cDNA 2310020P08 gene
+2310042L19Rik	RIKEN cDNA 2310042L19 gene
+2310043K02Rik	RIKEN cDNA 2310043K02 gene
+2310058A11Rik	RIKEN cDNA 2310058A11 gene
+2310058J06Rik	RIKEN cDNA 2310058J06 gene
+2310076O14Rik	RIKEN cDNA 2310076O14 gene
+2400009B11Rik	RIKEN cDNA 2400009B11 gene
+2410004N05Rik	RIKEN cDNA 2410004N05 gene
+2410018C20Rik	RIKEN cDNA 2410018C20 gene
+2410141K09Rik	RIKEN cDNA 2410141K09 gene
+2410141M05Rik	RIKEN cDNA 2410141M05 gene
+2600014C22Rik	RIKEN cDNA 2600014C22 gene
+2600017A12Rik	RIKEN cDNA 2600017A12 gene
+2610016F04Rik	RIKEN cDNA 2610016F04 gene
+2610028L19Rik	RIKEN cDNA 2610028L19 gene
+2610303A01Rik	RIKEN cDNA 2610303A01 gene
+2610524B01Rik	RIKEN cDNA 2610524B01 gene
+2700043M03Rik	RIKEN cDNA 2700043M03 gene
+2700067D09Rik	RIKEN cDNA 2700067D09 gene
+2810021G02Rik	RIKEN cDNA 2810021G02 gene
+2810021J22Rik	RIKEN cDNA 2810021J22 gene
+2810405K07Rik	RIKEN cDNA 2810405K07 gene
+2810405L04Rik	RIKEN cDNA 2810405L04 gene
+2810407K09Rik	RIKEN cDNA 2810407K09 gene
+2810438M17Rik	RIKEN cDNA 2810438M17 gene
+2810455B10Rik	RIKEN cDNA 2810455B10 gene
+2900054J07Rik	RIKEN cDNA 2900054J07 gene
+3010019O03Rik	RIKEN cDNA 3010019O03 gene
+3100002L24Rik	RIKEN cDNA 3100002L24 gene
+3110004H13Rik	RIKEN cDNA 3110004H13 gene
+3110024A21Rik	RIKEN cDNA 3110024A21 gene
+3110031B13Rik	RIKEN cDNA 3110031B13 gene
+3526402J09Rik	RIKEN cDNA 3526402J09 gene
+3632413B07Rik	RIKEN cDNA 3632413B07 gene
+3632451O06Rik	RIKEN cDNA 3632451O06 gene
+4631416I11Rik	RIKEN cDNA 4631416I11 gene
+4732429I09Rik	RIKEN cDNA 4732429I09 gene
+4733401N12Rik	RIKEN cDNA 4733401N12 gene
+4921504N20Rik	RIKEN cDNA 4921504N20 gene
+4921509B22Rik	RIKEN cDNA 4921509B22 gene
+4921509E05Rik	RIKEN cDNA 4921509E05 gene
+4921515A04Rik	RIKEN cDNA 4921515A04 gene
+4921520G13Rik	RIKEN cDNA 4921520G13 gene
+4921524J06Rik	RIKEN cDNA 4921524J06 gene
+4930430A15Rik	RIKEN cDNA 4930430A15 gene
+4930522L14Rik	RIKEN cDNA 4930522L14 gene
+4930532L20Rik	RIKEN cDNA 4930532L20 gene
+4930539I12Rik	RIKEN cDNA 4930539I12 gene
+4930548G07Rik	RIKEN cDNA 4930548G07 gene
+4930564N15Rik	RIKEN cDNA 4930564N15 gene
+4931423N10Rik	RIKEN cDNA 4931423N10 gene
+4932409F11Rik	RIKEN cDNA 4932409F11 gene
+4932422E22Rik	RIKEN cDNA 4932422E22 gene
+4933409K03Rik	RIKEN cDNA 4933409K03 gene
+4933416E05Rik	RIKEN cDNA 4933416E05 gene
+4933417L02Rik	RIKEN cDNA 4933417L02 gene
+4933426I21Rik	RIKEN cDNA 4933426I21 gene
+4933429H19Rik	RIKEN cDNA 4933429H19 gene
+4933430F08Rik	RIKEN cDNA 4933430F08 gene
+5730403M16Rik	RIKEN cDNA 5730403M16 gene
+5730410I19Rik	RIKEN cDNA 5730410I19 gene
+5730461K03Rik	RIKEN cDNA 5730461K03 gene
+5730467H21Rik	RIKEN cDNA 5730467H21 gene
+5730521P14Rik	RIKEN cDNA 5730521P14 gene
+5730589K01Rik	RIKEN cDNA 5730589K01 gene
+5830403E09Rik	RIKEN cDNA 5830403E09 gene
+5830417I10Rik	RIKEN cDNA 5830417I10 gene
+5830435C13Rik	RIKEN cDNA 5830435C13 gene
+6030408C04Rik	RIKEN cDNA 6030408C04 gene
+6030424L22Rik	RIKEN cDNA 6030424L22 gene
+6030426L16Rik	RIKEN cDNA 6030426L16 gene
+6030449J21	hypothetical protein 6030449J21
+6030490I01Rik	RIKEN cDNA 6030490I01 gene
+6130401J04Rik	RIKEN cDNA 6130401J04 gene
+6230410P16Rik	RIKEN cDNA 6230410P16 gene
+6330416L07Rik	RIKEN cDNA 6330416L07 gene
+6330581L23Rik	RIKEN cDNA 6330581L23 gene
+6330583I20Rik	RIKEN cDNA 6330583I20 gene
+6430502M16Rik	RIKEN cDNA 6430502M16 gene
+6430585N13Rik	RIKEN cDNA 6430585N13 gene
+6430596G11Rik	RIKEN cDNA 6430596G11 gene
+6720456H20Rik	RIKEN cDNA 6720456H20 gene
+6720457D02Rik	RIKEN cDNA 6720457D02 gene
+6720480D16Rik	RIKEN cDNA 6720480D16 gene
+6720489N17Rik	RIKEN cDNA 6720489N17 gene
+6820402O20Rik	RIKEN cDNA 6820402O20 gene
+8030445B08Rik	RIKEN cDNA 8030445B08 gene
+9030612M13Rik	RIKEN cDNA 9030612M13 gene
+9130012O13Rik	RIKEN cDNA 9130012O13 gene
+9130019O22Rik	RIKEN cDNA 9130019O22 gene
+9130211I03Rik	RIKEN cDNA 9130211I03 gene
+9130417I07Rik	RIKEN cDNA 9130417I07 gene
+9130423L19Rik	RIKEN cDNA 9130423L19 gene
+9230102N17Rik	RIKEN cDNA 9230102N17 gene
+9230110K08Rik	RIKEN cDNA 9230110K08 gene
+9430034D17Rik	RIKEN cDNA 9430034D17 gene
+9430065N20Rik	RIKEN cDNA 9430065N20 gene
+9530049C15Rik	RIKEN cDNA 9530049C15 gene
+9630006B20Rik	RIKEN cDNA 9630006B20 gene
+9930016F01Rik	RIKEN cDNA 9930016F01 gene
+A030003K21Rik	RIKEN cDNA A030003K21 gene
+A230102I05Rik	RIKEN cDNA A230102I05 gene
+A630035I11Rik	RIKEN cDNA A630035I11 gene
+A630042L21Rik	RIKEN cDNA A630042L21 gene
+A630089N07Rik	RIKEN cDNA A630089N07 gene
+A730008L03Rik	RIKEN cDNA A730008L03 gene
+A730012O14Rik	RIKEN cDNA A730012O14 gene
+A730019I05Rik	RIKEN cDNA A730019I05 gene
+A730032D07Rik	RIKEN cDNA A730032D07 gene
+A730098D12Rik	RIKEN cDNA A730098D12 gene
+A830014H24Rik	RIKEN cDNA A830014H24 gene
+A830023I12Rik	RIKEN cDNA A830023I12 gene
+A830025F02Rik	RIKEN cDNA A830025F02 gene
+A930021G21Rik	RIKEN cDNA A930021G21 gene
+AA408868	expreexpressed sequence AA408868
+Aatf	apoptosis antagonizing transcription factor
+Abt1	activator of basal transcription
+Abtb1	ankyrin repeat and BTB (POZ) domain containing 1
+Acyp2	"acylphosphatase 2, muscle type"
+Adnp	activity-dependent neuroprotective protein
+Aebp1	AE binding protein 1
+Aebp2	AE binding protein 2
+Aes	amino-terminal enhancer of split
+AF013969	expressed sequence AF013969
+Ahr	aryl-hydrocarbon receptor
+Ahrr	aryl-hydrocarbon receptor repressor
+AI255170	expressed sequence AI255170
+AI481750	expressed sequence AI481750
+AI591476	expressed sequence AI591476
+Aip	aryl-hydrocarbon receptor-interacting protein
+Aire	autoimmune regulator (autoimmune polyendocrinopathy candidiasis ectodermal dystrophy)
+Alx3	aristaless 3
+Alx4	aristaless 4
+Ank1	"ankyrin 1, erythroid"
+Ank2	"ankyrin 2, brain"
+Ankfy1	ankyrin repeat and FYVE domain containing 1
+Ankhd1	ankyrin repeat and KH domain containing 1
+Ankra2	"ankyrin repeat, family A (RFXANK-like), 2"
+Ankrd1	ankyrin repeat domain 1 (cardiac muscle)
+Ankrd10	ankyrin repeat domain 10
+Ankrd2	ankyrin repeat domain 2 (stretch responsive muscle)
+Ankrd25	ankyrin repeat domain 25
+Ankrd3	ankyrin repeat domain 3
+Ankrd5	ankyrin repeat domain 5
+Ankrd6	ankyrin repeat domain 6
+Aprin	androgen-induced proliferation inhibitor
+Ar	androgen receptor
+Arhgap17	Rho GTPase activating protein 17
+Arid1a	AT rich interactive domain 1A (Swi1 like)
+Arid3a	AT rich interactive domain 3A (Bright like)
+Arid3b	AT rich interactive domain 3B (Bright like)
+Arid4a	AT rich interactive domain 4A (Rbp1 like)
+Arid5b	AT rich interactive domain 5B (Mrf1 like)
+Arnt	aryl hydrocarbon receptor nuclear translocator
+Arnt2	aryl hydrocarbon receptor nuclear translocator 2
+Arntl	aryl hydrocarbon receptor nuclear translocator-like
+Arx	aristaless related homeobox gene (Drosophila)
+Asb1	ankyrin repeat and SOCS box-containing protein 1
+Asb10	ankyrin repeat and SOCS box-containing protein 10
+Asb11	ankyrin repeat and SOCS box-containing protein 11
+Asb12	ankyrin repeat and SOCS box-containing protein 12
+Asb15	ankyrin repeat and SOCS box-containing protein 15
+Asb2	ankyrin repeat and SOCS box-containing protein 2
+Asb3	ankyrin repeat and SOCS box-containing protein 3
+Asb4	ankyrin repeat and SOCS box-containing protein 4
+Asb5	ankyrin repeat and SOCs box-containing protein 5
+Asb6	ankyrin repeat and SOCS box-containing protein 6
+Asb8	ankyrin repeat and SOCS box-containing protein 8
+Asb9	ankyrin repeat and SOCS box-containing protein 9
+Ascl1	achaete-scute complex homolog-like 1 (Drosophila)
+Ascl2	achaete-scute complex homolog-like 2 (Drosophila)
+Ascl3	achaete-scute complex homolog-like 3 (Drosophila)
+Ash1l	"ash1 (absent, small, or homeotic)-like (Drosophila)"
+Ash2l	"ash2 (absent, small, or homeotic)-like (Drosophila)"
+Asxl1	additional sex combs like 1 (Drosophila)
+Atbf1	AT motif binding factor 1
+Atf1	activating transcription factor 1
+Atf2	activating transcription factor 2
+Atf3	activating transcription factor 3
+Atf4	activating transcription factor 4
+Atf5	activating transcription factor 5
+Atf6	activating transcription factor 6
+Atf7	activating transcription factor 7
+Atf7ip	activating transcription factor 7 interacting protein
+Atm	ataxia telangiectasia mutated homolog (human)
+Atoh1	atonal homolog 1 (Drosophila)
+AU018122	expressed sequence AU018122
+AW146020	expressed sequence AW146020
+AW210570	expressed sequence AW210570
+AW538212	expressed sequence AW538212
+AW610627	expressed sequence AW610627
+B3Gat3	"beta-1,3-glucuronyltransferase 3 (glucuronosyltransferase I)"
+B430306D02Rik	RIKEN cDNA B430306D02 gene
+B930011H20Rik	RIKEN cDNA B930011H20 gene
+B930041F14Rik	RIKEN cDNA B930041F14 gene
+Bach1	BTB and CNC homology 1
+Bach2	BTB and CNC homology 2
+Bapx1	bagpipe homeobox gene 1 homolog (Drosophila)
+Bard1	BRCA1 associated RING domain 1
+Barhl1	BarH-like 1 (Drosophila)
+Barx1	BarH-like homeobox 1
+Barx2	BarH-like homeobox 2
+Basp1	"brain abundant, membrane attached signal protein 1"
+Bat4	HLA-B associated transcript 4
+Bat8	HLA-B associated transcript 8
+Batf	"basic leucine zipper transcription factor, ATF-like"
+Baz1a	bromodomain adjacent to zinc finger domain 1A
+Baz1b	"bromodomain adjacent to zinc finger domain, 1B"
+Baz2a	"bromodomain adjacent to zinc finger domain, 2A"
+Bbx	bobby sox homolog (Drosophila)
+BC005471	cDNA sequence BC005471
+BC021921	cDNA sequence BC021921
+BC024063	cDNA sequence BC024063
+BC024139	cDNA sequence BC024139
+BC024969	cDNA sequence BC024969
+BC026432	cDNA sequence BC026432
+BC031441	cDNA sequence BC031441
+BC055310	cDNA sequence BC055310
+Bcl11a	B-cell CLL/lymphoma 11A (zinc finger protein)
+Bcl3	B-cell leukemia/lymphoma 3
+Bcl6	B-cell leukemia/lymphoma 6
+Bcl6b	"B-cell CLL/lymphoma 6, member B"
+Bclaf1	BCL2-associated transcription factor 1
+Bcor	Bcl6 interacting corepressor
+Bdp1	"B double prime 1, subunit of RNA polymerase III transcription initiation factor IIIB"
+Bhc80	BRAF35/HDAC2 complex
+Bhlhb2	"basic helix-loop-helix domain containing, class B2"
+Bhlhb3	"basic helix-loop-helix domain containing, class B3"
+Bhlhb5	"basic helix-loop-helix domain containing, class B5"
+Blzf1	basic leucine zipper nuclear factor 1
+Bmi1	B lymphoma Mo-MLV insertion region 1
+Bmyc	brain expressed myelocytomatosis oncogene
+Bnc1	basonuclin 1
+Bpnt1	bisphosphate 3'-nucleotidase 1
+Brca1	breast cancer 1
+Brd8	bromodomain containing 8
+Brdt	"bromodomain, testis-specific"
+Brpf1	"bromodomain and PHD finger containing, 1"
+Bsx	brain specific homeobox
+Btbd11	BTB (POZ) domain containing 11
+Bteb1	basic transcription element binding protein 1
+Btf3	basic transcription factor 3
+C030011J08Rik	RIKEN cDNA C030011J08 gene
+C1d	nuclear DNA binding protein
+C2ta	class II transactivator
+C330002I19Rik	RIKEN cDNA C330002I19 gene
+C330003B14Rik	RIKEN cDNA C330003B14 gene
+C330013J21Rik	RIKEN cDNA C330013J21 gene
+C330022B21Rik	RIKEN cDNA C330022B21 gene
+C330039G02Rik	RIKEN cDNA C330039G02 gene
+C730024G01Rik	RIKEN cDNA C730024G01 gene
+C730048E16Rik	RIKEN cDNA C730048E16 gene
+Camk4	calcium/calmodulin-dependent protein kinase IV
+Carf	calcium response factor
+Carhsp1	calcium regulated heat stable protein 1
+Carm1	coactivator-associated arginine methyltransferase 1
+Cart1	cartilage homeo protein 1
+Caskin1	CASK interacting protein 1
+Catnb	catenin beta
+Cbfa2t1h	CBFA2T1 identified gene homolog (human)
+Cbfb	core binding factor beta
+Cbx2	chromobox homolog 2 (Drosophila Pc class)
+Cbx3	chromobox homolog 3 (Drosophila HP1 gamma)
+Cbx4	chromobox homolog 4 (Drosophila Pc class)
+Cbx8	chromobox homolog 8 (Drosophila Pc class)
+Ccnc	cyclin C
+Ccnh	cyclin H
+Ccnk	cyclin K
+Ccnt1	cyclin T1
+Ccnt2	cyclin T2
+Cdc5l	cell division cycle 5-like (S. pombe)
+Cdk2	cyclin-dependent kinase 2
+Cdk4	cyclin-dependent kinase 4
+Cdk7	cyclin-dependent kinase 7 (homolog of Xenopus MO15 cdk-activating kinase)
+Cdk9	cyclin-dependent kinase 9 (CDC2-related kinase)
+Cdkn2a	cyclin-dependent kinase inhibitor 2A
+Cdkn2b	"cyclin-dependent kinase inhibitor 2B (p15, inhibits CDK4)"
+Cdkn2c	"cyclin-dependent kinase inhibitor 2C (p18, inhibits CDK4)"
+Cdkn2d	"cyclin-dependent kinase inhibitor 2D (p19, inhibits CDK4)"
+Cdx1	caudal type homeo box 1
+Cdx2	caudal type homeo box 2
+Cdx4	caudal type homeo box 4
+Cebpa	"CCAAT/enhancer binding protein (C/EBP), alpha"
+Cebpb	"CCAAT/enhancer binding protein (C/EBP), beta"
+Cebpd	"CCAAT/enhancer binding protein (C/EBP), delta"
+Cebpg	"CCAAT/enhancer binding protein (C/EBP), gamma"
+Cebpz	CCAAT/enhancer binding protein zeta
+Cecr6	"cat eye syndrome chromosome region, candidate 6 homolog (human)"
+Centb5	"centaurin, beta 5"
+Centg3	"centaurin, gamma 3"
+Chd4	chromodomain helicase DNA binding protein 4
+Ches1	checkpoint suppressor 1
+Chgb	chromogranin B
+Chx10	C. elegans ceh-10 homeo domain containing homolog
+Cic	capicua homolog (Drosophila)
+Cited1	Cbp/p300-interacting transactivator with Glu/Asp-rich carboxy-terminal domain 1
+Cited2	"Cbp/p300-interacting transactivator, with Glu/Asp-rich carboxy-terminal domain, 2"
+Cited4	"Cbp/p300-interacting transactivator, with Glu/Asp-rich carboxy-terminal domain, 4"
+Ckn1	Cockayne syndrome 1 homolog (human)
+Clock	circadian locomoter output cycles kaput
+Clp1	cardiac lineage protein 1
+Cml3	camello-like 3
+Cnbp1	cellular nucleic acid binding protein 1
+Cnot7	"CCR4-NOT transcription complex, subunit 7"
+Cnot8	"CCR4-NOT transcription complex, subunit 8"
+Copeb	core promoter element binding protein
+Cops2	"COP9 (constitutive photomorphogenic) homolog, subunit 2 (Arabidopsis thaliana)"
+Cops5	"COP9 (constitutive photomorphogenic) homolog, subunit 5 (Arabidopsis thaliana)"
+Creb1	cAMP responsive element binding protein 1
+Creb3	cAMP responsive element binding protein 3
+Creb3l1	cAMP responsive element binding protein 3-like 1
+Creb3l3	cAMP responsive element binding protein 3-like 3
+Creb3l4	cAMP responsive element binding protein 3-like 4
+Creb5	cAMP responsive element binding protein 5
+Crebbp	CREB binding protein
+Crebl1	cAMP responsive element binding protein-like 1
+Creg	cellular repressor of E1A-stimulated genes
+Crem	cAMP responsive element modulator
+Cri2	CREBBP/EP300 inhibitory protein 2
+Crsp6	"cofactor required for Sp1 transcriptional activation, subunit 6"
+Crsp7	"cofactor required for Sp1 transcriptional activation, subunit 7"
+Crsp9	"cofactor required for Sp1 transcriptional activation, subunit 9"
+Crx	cone-rod homeobox containing gene
+Csda	cold shock domain protein A
+Ctbp2	C-terminal binding protein 2
+Ctcf	CCCTC-binding factor
+Ctnnbl1	"catenin, beta like 1"
+Cutl1	cut-like 1 (Drosophila)
+Cutl2	cut-like 2 (Drosophila)
+Cxxc1	CXXC finger 1 (PHD domain)
+Cyln2	cytoplasmic linker 2
+D030011N01Rik	RIKEN cDNA D030011N01 gene
+D030014N22Rik	RIKEN cDNA D030014N22 gene
+D030022P06Rik	RIKEN cDNA D030022P06 gene
+D10Jhu82e	"DNA segment, Chr 10, Johns Hopkins University 82, expressed"
+D11Bwg0517e	"DNA segment, Chr 11, Brigham & Women's Genetics 0517 expressed"
+D11Ertd530e	"DNA segment, Chr 11, ERATO Doi 530, expressed"
+D12Ertd748e	"DNA segment, Chr 12, ERATO Doi 748, expressed"
+D130006K24Rik	RIKEN cDNA D130006K24 gene
+D130026O16Rik	RIKEN cDNA D130026O16 gene
+D15Ertd417e	"DNA segment, Chr 15, ERATO Doi 417, expressed"
+D19Ertd675e	"DNA segment, Chr 19, ERATO Doi 675, expressed"
+D1Bwg0491e	"DNA segment, Chr 1, Brigham & Women's Genetics 0491 expressed"
+D1Ertd161e	"DNA segment, Chr 1, ERATO Doi 161, expressed"
+D230022C05Rik	RIKEN cDNA D230022C05 gene
+D330024H06Rik	RIKEN cDNA D330024H06 gene
+D3Jfr1	"DNA segment, Chr 3, MJeffers 1"
+D430039N05Rik	RIKEN cDNA D430039N05 gene
+D5Ertd679e	"DNA segment, Chr 5, ERATO Doi 679, expressed"
+D830019J24Rik	RIKEN cDNA D830019J24 gene
+D8Ertd69e	"DNA segment, Chr 8, ERATO Doi 69, expressed"
+Dach1	dachshund 1 (Drosophila)
+Dach2	dachshund 2 (Drosophila)
+Daxx	Fas death domain-associated protein
+Dazap2	DAZ associated protein 2
+Dbp	D site albumin promoter binding protein
+Dbx1	developing brain homeobox 1
+Dbx2	developing brain homeobox 2
+Ddef1	development and differentiation enhancing
+Ddit3	DNA-damage inducible transcript 3
+Ddx20	DEAD (Asp-Glu-Ala-Asp) box polypeptide 20
+Ddx54	DEAD (Asp-Glu-Ala-Asp) box polypeptide 54
+Ddx58	DEAD (Asp-Glu-Ala-Asp) box polypeptide 58
+Deaf1	deformed epidermal autoregulatory factor 1 (Drosophila)
+Dedd	death effector domain-containing
+Dedd2	death effector domain-containing DNA binding protein 2
+Dek	DEK oncogene (DNA binding)
+Dido1	death inducer-obliterator 1
+Dlx1	distal-less homeobox 1
+Dlx2	distal-less homeobox 2
+Dlx3	distal-less homeobox 3
+Dlx4	distal-less homeobox 4
+Dlx5	distal-less homeobox 5
+Dlx6	distal-less homeobox 6
+Dmap1	DNA methyltransferase 1-associated protein 1
+Dmrt1	doublesex and mab-3 related transcription factor 1
+Dmrt2	doublesex and mab-3 related transcription factor 2
+Dmrt3	doublesex and mab-3 related transcription factor 3
+Dmrta1	doublesex and mab-3 related transcription factor like family A1
+Dmrta2	doublesex and mab-3 related transcription factor like family A2
+Dmrtc2	doublesex and mab-3 related transcription factor like family C2
+Dmtf1	cyclin D binding myb-like transcription factor 1
+Dnmt1	DNA methyltransferase (cytosine-5) 1
+Dnmt3a	DNA methyltransferase 3A
+Dot1l	"DOT1-like, histone H3 methyltransferase (S. cerevisiae)"
+Dpf2	"D4, zinc and double PHD fingers family 2"
+Dpf3	"D4, zinc and double PHD fingers, family 3"
+Dr1	down-regulator of transcription 1
+Drap1	Dr1 associated protein 1 (negative cofactor 2 alpha)
+Drg1	developmentally regulated GTP binding protein 1
+Dsip1	"delta sleep inducing peptide, immunoreactor"
+DXImx41e	"DNA segment, Chr X, Immunex 41, expressed"
+E130309B19Rik	RIKEN cDNA E130309B19 gene
+E2f1	E2F transcription factor 1
+E2f2	E2F transcription factor 2
+E2f3	E2F transcription factor 3
+E2f4	E2F transcription factor 4
+E2f5	E2F transcription factor 5
+E2f6	E2F transcription factor 6
+E430039K05Rik	RIKEN cDNA E430039K05 gene
+E4f1	E4F transcription factor 1
+Ebf1	early B-cell factor 1
+Ebf2	early B-cell factor 2
+Ebf3	early B-cell factor 3
+Ebf4	early B-cell factor 4
+Eed	embryonic ectoderm development
+Egr1	early growth response 1
+Egr2	early growth response 2
+Egr3	early growth response 3
+Egr4	early growth response 4
+Ehf	ets homologous factor
+Ehox	ES cell derived homeobox containing gene
+Elavl2	"ELAV (embryonic lethal, abnormal vision, Drosophila)-like 2 (Hu antigen B)"
+Elf1	E74-like factor 1
+Elf2	E74-like factor 2
+Elf3	E74-like factor 3
+Elf4	E74-like factor 4 (ets domain transcription factor)
+Elf5	E74-like factor 5
+Elk1	"ELK1, member of ETS oncogene family"
+Elk3	"ELK3, member of ETS oncogene family"
+Elk4	"ELK4, member of ETS oncogene family"
+Ell	elongation factor RNA polymerase II
+Ell2	elongation factor RNA polymerase II 2
+Elys	embryonic large molecule derived from yolk sac
+Emx1	empty spiracles homolog 1 (Drosophila)
+Emx2	empty spiracles homolog 2 (Drosophila)
+En1	engrailed 1
+En2	engrailed 2
+Enpp2	ectonucleotide pyrophosphatase/phosphodiesterase 2
+Eomes	eomesodermin homolog (Xenopus laevis)
+Ep300	E1A binding protein p300
+Epas1	endothelial PAS domain protein 1
+Ercc2	"excision repair cross-complementing rodent repair deficiency, complementation group 2"
+Ercc3	"excision repair cross-complementing rodent repair deficiency, complementation group 3"
+Erf	Ets2 repressor factor
+Erg	avian erythroblastosis virus E-26 (v-ets) oncogene related
+Esr1	estrogen receptor 1 (alpha)
+Esr2	estrogen receptor 2 (beta)
+Esrra	"estrogen related receptor, alpha"
+Esrrb	"estrogen related receptor, beta"
+Esrrg	estrogen-related receptor gamma
+Esx1	"extraembryonic, spermatogenesis, homeobox 1"
+Ets1	"E26 avian leukemia oncogene 1, 5' domain"
+Ets2	"E26 avian leukemia oncogene 2, 3' domain"
+Etsrp71	ets related protein 71
+Etv1	ets variant gene 1
+Etv3	ets variant gene 3
+Etv4	"ets variant gene 4 (E1A enhancer binding protein, E1AF)"
+Etv6	ets variant gene 6 (TEL oncogene)
+Evi1	ecotropic viral integration site 1
+Ewsh	Ewing sarcoma homolog
+Evx1	even skipped homeotic gene 1 homolog
+Evx2	even skipped homeotic gene 2 homolog
+Eya1	Eyes absent 1
+Eya2	Eyes absent 2
+Eya3	Eyes absent 3
+Eya4	Eyes absent 4
+Ezh1	enhancer of zeste homolog 1 (Drosophila)
+Ezh2	enhancer of zeste homolog 2 (Drosophila)
+F830020C16Rik	RIKEN cDNA F830020C16 gene
+Fah	fumarylacetoacetate hydrolase
+Fank1	fibronectin type 3 and ankyrin repeat domains 1
+Fbxl10	F-box and leucine-rich repeat protein 10
+Fbxl11	F-box and leucine-rich repeat protein 11
+Fbxo24	F-box only protein 24
+Fbxw7	"F-box and WD-40 domain protein 7, archipelago homolog (Drosophila)"
+Fem1a	feminization 1 homolog a (C. elegans)
+Fem1b	feminization 1 homolog b (C. elegans)
+Fem1c	fem-1 homolog c (C.elegans)
+Fev	FEV (ETS oncogene family)
+Fhl2	four and a half LIM domains 2
+Fhl5	four and a half LIM domains 5
+Fkhl18	forkhead-like 18 (Drosophila)
+Fli1	Friend leukemia integration 1
+Fmnl2	formin-like 2
+Fos	FBJ osteosarcoma oncogene
+Fosb	FBJ osteosarcoma oncogene B
+Fosl1	fos-like antigen 1
+Fosl2	fos-like antigen 2
+Foxa1	forkhead box A1
+Foxa2	forkhead box A2
+Foxa3	forkhead box A3
+Foxb1	forkhead box B1
+Foxb2	forkhead box B2
+Foxc1	forkhead box C1
+Foxc2	forkhead box C2
+Foxd1	forkhead box D1
+Foxd2	forkhead box D2
+Foxd3	forkhead box D3
+Foxd4	forkhead box D4
+Foxe1	forkhead box E1 (thyroid transcription factor 2)
+Foxe3	forkhead box E3
+Foxf1a	forkhead box F1a
+Foxf2	forkhead box F2
+Foxg1	forkhead box G1
+Foxh1	forkhead box H1
+Foxi1	forkhead box I1
+Foxj1	forkhead box J1
+Foxj2	forkhead box J2
+Foxk1	forkhead box K1
+Foxl1	forkhead box L1
+Foxl2	forkhead box L2
+Foxm1	forkhead box M1
+Foxn1	forkhead box N1
+Foxn2	forkhead box N2
+Foxn4	forkhead box N4
+Foxo1	forkhead box O1
+Foxo3	forkhead box O3
+Foxp1	forkhead box P1
+Foxp2	forkhead box P2
+Foxp3	forkhead box P3
+Foxp4	forkhead box P4
+Foxq1	forkhead box Q1
+Fus	"fusion, derived from t(12;16) malignant liposarcoma (human)"
+Fusip1	FUS interacting protein (serine-arginine rich) 1
+Fxr1h	"fragile X mental retardation gene 1, autosomal homolog"
+G431001E03Rik	RIKEN cDNA G431001E03 gene
+G431002C21Rik	RIKEN cDNA G431002C21 gene
+Gabpa	"GA repeat binding protein, alpha"
+Gabpb1	"GA repeat binding protein, beta 1"
+Garnl1	GTPase activating RANGAP domain-like 1
+Gas41	glioma-amplified sequence-41
+Gas7	growth arrest specific 7
+Gasz	"germ cell-specific ankyrin, SAM and basic leucine zipper domain containing protein"
+Gata1	GATA binding protein 1
+Gata2	GATA binding protein 2
+Gata3	GATA binding protein 3
+Gata4	GATA binding protein 4
+Gata5	GATA binding protein 5
+Gata6	GATA binding protein 6
+Gbif	"globin inducing factor, fetal"
+Gbx1	gastrulation brain homeobox 1
+Gbx2	gastrulation brain homeobox 2
+Gcdh	glutaryl-Coenzyme A dehydrogenase
+Gcl	germ cell-less homolog (Drosophila)
+Gcm1	glial cells missing homolog 1 (Drosophila)
+Gcm2	glial cells missing homolog 2 (Drosophila)
+Gcn5l2	GCN5 general control of amino acid synthesis-like 2 (yeast)
+Gfi1	growth factor independent 1
+Gfi1b	growth factor independent 1B
+Gli	GLI-Kruppel family member GLI
+Gli2	GLI-Kruppel family member GLI2
+Gli3	GLI-Kruppel family member GLI3
+Glis1	GLIS family zinc finger 1
+Glis2	GLIS family zinc finger 2
+Glmr	gp130-like monocyte receptor
+Glrp1	glutamine repeat protein 1
+Gls2	"glutaminase 2 (liver, mitochondrial)"
+Gmeb1	glucocorticoid modulatory element binding protein 1
+Gmeb2	glucocorticoid modulatory element binding protein 2
+Gsc	goosecoid
+Gscl	goosecoid-like
+Gsh1	genomic screened homeo box 1
+Gsh2	genomic screened homeo box 2
+Gsh3	genomic screened homeo box 3
+Gsh5	genomic screened homeo box 5
+Gtf2a1	"general transcription factor II A, 1"
+Gtf2a1lf	"general transcription factor II A, 1-like factor"
+Gtf2b	general transcription factor IIB
+Gtf2e1	"general transcription factor II E, polypeptide 1 (alpha subunit)"
+Gtf2e2	"general transcription factor II E, polypeptide 2 (beta subunit)"
+Gtf2f2	"general transcription factor IIF, polypeptide 2"
+Gtf2h1	"general transcription factor II H, polypeptide 1"
+Gtf2h2	"general transcription factor II H, polypeptide 2"
+Gtf2h4	"general transcription factor II H, polypeptide 4"
+Gtf2i	general transcription factor II I
+Gtf2ird1	general transcription factor II I repeat domain-containing 1
+Gtf3a	general transcription factor III A
+Gtf3c1	general transcription factor III C 1
+Gtf3c4	"general transcription factor IIIC, polypeptide 4"
+Hand1	heart and neural crest derivatives expressed transcript 1
+Hand2	heart and neural crest derivatives expressed transcript 2
+Harp	harmonin interacting ankyrin repeat containing protein
+Hbp1	high mobility group box transcription factor 1
+Hcfc1	host cell factor C1
+Hcls1	hematopoietic cell specific Lyn substrate 1
+Hcngp	transcriptional regulator protein
+Hdac1	histone deacetylase 1
+Hdac10	histone deacetylase 10
+Hdac11	histone deacetylase 11
+Hdac2	histone deacetylase 2
+Hdac3	histone deacetylase 3
+Hdac5	histone deacetylase 5
+Hdac6	histone deacetylase 6
+Hdac7a	histone deacetylase 7A
+Hdac8	histone deacetylase 8
+Hdac9	histone deacetylase 9
+Hdgfrp2	"hepatoma-derived growth factor, related protein 2"
+Helz	helicase with zinc finger domain
+Hes1	hairy and enhancer of split 1 (Drosophila)
+Hes2	hairy and enhancer of split 2 (Drosophila)
+Hes3	hairy and enhancer of split 3 (Drosophila)
+Hes5	hairy and enhancer of split 5 (Drosophila)
+Hes6	hairy and enhancer of split 6 (Drosophila)
+Hes7	hairy and enhancer of split 7 (Drosophila)
+Hesx1	homeo box gene expressed in ES cells
+Hey1	hairy/enhancer-of-split related with YRPW motif 1
+Hey2	hairy/enhancer-of-split related with YRPW motif 2
+Heyl	hairy/enhancer-of-split related with YRPW motif-like
+Hfh3	HNF-3/forkhead homolog 3
+Hfh5	HNF-3/forkhead homolog 5
+Hfh6	HNF-3/forkhead homolog 6
+Hfh7	HNF-3/forkhead homolog 7
+Hhex	hematopoietically expressed homeobox
+Hic1	hypermethylated in cancer 1
+Hic2	hypermethylated in cancer 2
+Hif1a	"hypoxia inducible factor 1, alpha subunit"
+Hif3a	"hypoxia inducible factor 3, alpha subunit"
+Hils1	histone H1-like protein in spermatids 1
+Hip14l	HIP14-related protein
+Hipk2	homeodomain interacting protein kinase 2
+Hira	histone cell cycle regulation defective homolog A (S. cerevisiae)
+Hivep1	human immunodeficiency virus type I enhancer binding protein 1
+Hivep2	human immunodeficiency virus type I enhancer binding protein 2
+Hivep3	human immunodeficiency virus type I enhancer binding protein 3
+Hkr2	GLI-Kruppel family member HKR2
+Hkr3	GLI-Kruppel family member HKR3
+Hlf	hepatic leukemia factor
+Hlx	H2.0-like homeo box gene
+Hlxb9	homeobox gene HB9
+Hmg20a	high mobility group 20A
+Hmg20b	high mobility group 20 B
+Hmga1	high mobility group AT-hook 1
+Hmga2	high mobility group AT-hook 2
+Hmgb2	high mobility group box 2
+Hmgb2l1	high mobility group box 2-like 1
+Hmgb3	high mobility group box 3
+Hmgcs1	3-hydroxy-3-methylglutaryl-Coenzyme A synthase 1
+Hmgn2	high mobility group nucleosomal binding domain 2
+Hmx1	H6 homeo box 1
+Hmx2	H6 homeo box 2
+Hmx3	H6 homeo box 3
+Hnf4	hepatic nuclear factor 4
+Hnf4g	"hepatocyte nuclear factor 4, gamma"
+Hnrpab	heterogeneous nuclear ribonucleoprotein A/B
+Hnrpd	heterogeneous nuclear ribonucleoprotein D
+Hnrpr	heterogeneous nuclear ribonucleoprotein R
+Hod	homeobox only domain
+Homez	homeodomain leucine zipper-encoding gene
+Hopx	
+Hoxa1	homeo box A1
+Hoxa10	homeo box A10
+Hoxa11	homeo box A11
+Hoxa11s	"homeo box A11, opposite strand transcript"
+Hoxa13	homeo box A13
+Hoxa2	homeo box A2
+Hoxa3	homeo box A3
+Hoxa4	homeo box A4
+Hoxa5	homeo box A5
+Hoxa6	homeo box A6
+Hoxa7	homeo box A7
+Hoxa9	homeo box A9
+Hoxb1	homeo box B1
+Hoxb13	homeo box B13
+Hoxb2	homeo box B2
+Hoxb3	homeo box B3
+Hoxb3s	"homeo box B3, opposite strand transcript"
+Hoxb4	homeo box B4
+Hoxb5	homeo box B5
+Hoxb6	homeo box B6
+Hoxb7	homeo box B7
+Hoxb8	homeo box B8
+Hoxb9	homeo box B9
+Hoxc10	homeo box C10
+Hoxc11	homeo box C11
+Hoxc12	homeo box C12
+Hoxc13	homeo box C13
+Hoxc4	homeo box C4
+Hoxc5	homeo box C5
+Hoxc6	homeo box C6
+Hoxc8	homeo box C8
+Hoxc9	homeo box C9
+Hoxd1	homeo box D1
+Hoxd10	homeo box D10
+Hoxd11	homeo box D11
+Hoxd12	homeo box D12
+Hoxd13	homeo box D13
+Hoxd3	homeo box D3
+Hoxd4	homeo box D4
+Hoxd8	homeo box D8
+Hoxd9	homeo box D9
+hr	hairless
+Hrb2	HIV-1 Rev binding protein 2
+Hsbp1	heat shock factor binding protein 1
+Hsf1	heat shock factor 1
+Hsf2	heat shock factor 2
+Hsf2bp	heat shock transcription factor 2 binding protein
+Hsf4	heat shock transcription factor 4
+Hspb9	"heat shock protein, alpha-crystallin-related, B9"
+Hszfp36	ZFP-36 zinc finger protein
+Htatip	"HIV-1 tat interactive protein, homolog (human)"
+Htatip2	"HIV-1 tat interactive protein 2, homolog (human)"
+Htr5a	5-hydroxytryptamine (serotonin) receptor 5A
+Icsbp1	interferon consensus sequence binding protein 1
+Id1	
+Id2	
+Id3	
+Id4	
+Idb1	inhibitor of DNA binding 1
+Idb2	inhibitor of DNA binding 2
+Idb3	inhibitor of DNA binding 3
+Idb4	inhibitor of DNA binding 4
+Ifi16	"interferon, gamma-inducible protein 16"
+Ifnar2	interferon (alpha and beta) receptor 2
+Ighmbp2	immunoglobulin mu binding protein 2
+Ikbkb	inhibitor of kappaB kinase beta
+Ikbkg	inhibitor of kappaB kinase gamma
+Ilf3	interleukin enhancer binding factor 3
+Ing1	"inhibitor of growth family, member 1"
+Ing1l	"inhibitor of growth family, member 1-like"
+Ing3	"inhibitor of growth family, member 3"
+Ing4	"inhibitor of growth family, member 4"
+Insm1	insulinoma-associated 1
+Insm2	insulinoma-associated 2
+Invs	inversin
+Ipf1	"insulin promoter factor 1, homeodomain transcription factor"
+Irebf1	interferon response element binding factor 1
+Irf1	interferon regulatory factor 1
+Irf2	interferon regulatory factor 2
+Irf2bp1	interferon regulatory factor 2 binding protein 1
+Irf3	interferon regulatory factor 3
+Irf4	interferon regulatory factor 4
+Irf5	interferon regulatory factor 5
+Irf6	interferon regulatory factor 6
+Irf7	interferon regulatory factor 7
+Irx1	Iroquois related homeobox 1 (Drosophila)
+Irx2	Iroquois related homeobox 2 (Drosophila)
+Irx3	Iroquois related homeobox 3 (Drosophila)
+Irx4	Iroquois related homeobox 4 (Drosophila)
+Irx5	Iroquois related homeobox 5 (Drosophila)
+Irx6	Iroquois related homeobox 6 (Drosophila)
+Isgf3g	interferon dependent positive acting transcription factor 3 gamma
+Isl1	"ISL1 transcription factor, LIM/homeodomain (islet 1)"
+Isl2	insulin related protein 2 (islet 2)
+Ivns1abp	influenza virus NS1A binding protein
+Jarid1a	"jumonji, AT rich interactive domain 1A (Rbp2 like)"
+Jarid1b	"jumonji, AT rich interactive domain 1B (Rbp2 like)"
+Jarid1c	"jumonji, AT rich interactive domain 1C (Rbp2 like)"
+Jarid1d	"jumonji, AT rich interactive domain 1D (Rbp2 like)"
+Jmjd2a	jumonji domain containing 2A
+Jmjd2b	jumonji domain containing 2B
+Jmjd2c	jumonji domain containing 2C
+Jmy	junction-mediating and regulatory protein
+Jun	Jun oncogene
+Junb	Jun-B oncogene
+Jund1	Jun proto-oncogene related gene d1
+Jundm2	Jun dimerization protein 2
+Kbtbd9	kelch repeat and BTB (POZ) domain containing 9
+Keap1	kelch-like ECH-associated protein 1
+Khdrbs1	"KH domain containing, RNA binding, signal transduction associated 1"
+Klf1	Kruppel-like factor 1 (erythroid)
+Klf12	Kruppel-like factor 12
+Klf13	Kruppel-like factor 13
+Klf15	Kruppel-like factor 15
+Klf16	Kruppel-like factor 16
+Klf2	Kruppel-like factor 2 (lung)
+Klf3	Kruppel-like factor 3 (basic)
+Klf4	Kruppel-like factor 4 (gut)
+Klf5	Kruppel-like factor 5
+Klf7	Kruppel-like factor 7 (ubiquitous)
+L3mbtl2	l(3)mbt-like 2 (Drosophila)
+Labx	labial homeobox homolog (Drosophila)
+Laf4	lymphoid nuclear protein related to AF4
+Lass2	longevity assurance homolog 2 (S. cerevisiae)
+Lass4	longevity assurance homolog 4 (S. cerevisiae)
+Lass5	longevity assurance homolog 5 (S. cerevisiae)
+Lass6	longevity assurance homolog 6 (S. cerevisiae)
+Lba1	lupus brain antigen 1
+Lbh	limb-bud and heart
+Lbx1h	lady bird-like homeobox 1 homolog (Drosophila)
+Lbx2h	lady bird-like homeobox 2 homolog (Drosophila)
+Ldb1	LIM domain binding 1
+Ldb2	LIM domain binding 2
+Lef1	lymphoid enhancer binding factor 1
+Lhx1	LIM homeobox protein 1
+Lhx2	LIM homeobox protein 2
+Lhx3	LIM homeobox protein 3
+Lhx4	LIM homeobox protein 4
+Lhx5	LIM homeobox protein 5
+Lhx6	LIM homeobox protein 6
+Lhx8	LIM homeobox protein 8
+Lhx9	LIM homeobox protein 9
+Limd1	LIM domains containing 1
+Lin28	lin-28 homolog (C. elegans)
+Lmo1	LIM domain only 1
+Lmo2	LIM domain only 2
+Lmo4	LIM domain only 4
+Lmx1a	LIM homeobox transcription factor 1 alpha
+Lmx1b	LIM homeobox transcription factor 1 beta
+Lmyc1	lung carcinoma myc related oncogene 1
+LOC232337	hypothetical protein LOC232337
+LOC233987	similar to zinc finger protein 97
+Lrrc6	leucine-rich repeat-containing 6 (testis)
+Lsm11	U7 snRNP-specific Sm-like protein LSM11
+Lsm4	"LSM4 homolog, U6 small nuclear RNA associated (S. cerevisiae)"
+Lyl1	lymphoblastomic leukemia
+Mad	Max dimerization protein
+Mad3	Max dimerization protein 3
+Mad4	Max dimerization protein 4
+Madh1	MAD homolog 1 (Drosophila)
+Madh2	MAD homolog 2 (Drosophila)
+Madh3	MAD homolog 3 (Drosophila)
+Madh4	MAD homolog 4 (Drosophila)
+Madh5	MAD homolog 5 (Drosophila)
+Madh6	MAD homolog 6 (Drosophila)
+Madh7	MAD homolog 7 (Drosophila)
+Madh9	MAD homolog 9 (Drosophila)
+Maf	avian musculoaponeurotic fibrosarcoma (v-maf) AS42 oncogene homolog
+Mafa	"v-maf musculoaponeurotic fibrosarcoma oncogene family, protein A (avian)"
+Mafb	"v-maf musculoaponeurotic fibrosarcoma oncogene family, protein B (avian)"
+Maff	"v-maf musculoaponeurotic fibrosarcoma oncogene family, protein F (avian)"
+Mafg	"v-maf musculoaponeurotic fibrosarcoma oncogene family, protein G (avian)"
+Mafk	"v-maf musculoaponeurotic fibrosarcoma oncogene family, protein K (avian)"
+Maged1	"melanoma antigen, family D, 1"
+Maml1	mastermind like 1 (Drosophila)
+Map3k12	mitogen activated protein kinase kinase kinase 12
+Mapk1	mitogen activated protein kinase 1
+Mapk3	mitogen activated protein kinase 3
+Mapk8	mitogen activated protein kinase 8
+Mapk8ip	mitogen activated protein kinase 8 interacting protein
+Max	Max protein
+Maz	MYC-associated zinc finger protein (purine-binding transcription factor)
+Mbd2	methyl-CpG binding domain protein 2
+Mbd3	methyl-CpG binding domain protein 3
+Mbd3l1	methyl-CpG binding domain protein 3-like 1
+Mcm2	minichromosome maintenance deficient 2 mitotin (S. cerevisiae)
+Mcm3	minichromosome maintenance deficient 3 (S. cerevisiae)
+Mcm4	minichromosome maintenance deficient 4 homolog (S. cerevisiae)
+Mcm5	"minichromosome maintenance deficient 5, cell division cycle 46 (S. cerevisiae)"
+Mcm6	"minichromosome maintenance deficient 6 (MIS5 homolog, S. pombe) (S. cerevisiae)"
+Mcm7	minichromosome maintenance deficient 7 (S. cerevisiae)
+Mcm8	minichromosome maintenance deficient 8 (S. cerevisiae)
+Mecp2	methyl CpG binding protein 2
+Mef2a	myocyte enhancer factor 2A
+Mef2b	myocyte enhancer factor 2B
+Mef2c	myocyte enhancer factor 2C
+Mef2d	myocyte enhancer factor 2D
+Meis1	myeloid ecotropic viral integration site 1
+Men1	multiple endocrine neoplasia 1
+Meox1	mesenchyme homeobox 1
+Meox2	mesenchyme homeobox 2
+Mga	MAX gene associated
+MGC39058	hypothetical protein MGC39058
+Mid1	midline 1
+Mint	Msx2 interacting nuclear target protein
+Mist1	"muscle, intestine and stomach expression 1"
+Mitc1	MAD homolog 4 interacting transcription coactivator 1
+Mitf	microphthalmia-associated transcription factor
+Mixl1	Mix1 homeobox-like 1 (Xenopus laevis)
+Miz1	Msx-interacting-zinc finger
+Mjd	"Machado-Joseph disease (spinocerebellar ataxia 3, olivopontocerebellar ataxia 3, autosomal dominant, ataxin 3) homolog (human)"
+Mki67ip	Mki67 (FHA domain) interacting nucleolar phosphoprotein
+Mkl1	megakaryoblastic leukemia (translocation) 1 homolog (human)
+Mll	myeloid/lymphoid or mixed-lineage leukemia
+Mll3	myeloid/lymphoid or mixed-lineage leukemia 3
+Mll5	myeloid/lymphoid or mixed-lineage leukemia 5
+Mllt1	myeloid/lymphoid or mixed lineage-leukemia translocation to 1 homolog (Drosophila)
+Mllt10	myeloid/lymphoid or mixed lineage-leukemia translocation to 10 homolog (Drosophila)
+Mllt2h	homolog of human MLLT2 unidentified gene
+Mllt3	myeloid/lymphoid or mixed lineage-leukemia translocation to 3 homolog (Drosophila)
+Mllt6	myeloid/lymphoid or mixed lineage-leukemia translocation to 6 homolog (Drosophila)
+Mllt7	myeloid/lymphoid or mixed lineage-leukemia translocation to 7 homolog (Drosophila)
+Mlr1	Mblk1-related protein-1
+Mlr2	Mblk1-related protein-2
+Mms19l	MMS19 (MET18 S. cerevisiae)-like
+Mnat1	menage a trois 1
+Mnt	max binding protein
+Mop3	morphine preference 3
+Mpl	myeloproliferative leukemia virus oncogene
+Mrg1	myeloid ecotropic viral integration site-related gene 1
+Mrg2	myeloid ecotropic viral integration site-related gene 2
+Mrsb	methionine sulfoxide reductase B
+Msc	musculin
+Msl31	male-specific lethal-3 homolog 1 (Drosophila)
+Msx1	"homeo box, msh-like 1"
+Msx2	"homeo box, msh-like 2"
+Msx3	"homeo box, msh-like 3"
+Mta1	metastasis associated 1
+Mta2	"metastasis-associated gene family, member 2"
+Mta3	metastasis associated 3
+Mtf1	metal response element binding transcription factor 1
+Mtf2	metal response element binding transcription factor 2
+Mtpn	myotrophin
+Musk	"muscle, skeletal, receptor tyrosine kinase"
+Mxi1	Max interacting protein 1
+Myb	myeloblastosis oncogene
+Mybbp1a	MYB binding protein (P160) 1a
+Mybl1	myeloblastosis oncogene-like 1
+Mybl2	myeloblastosis oncogene-like 2
+Myc	myelocytomatosis oncogene
+Mycbp	c-myc binding protein
+Mycs	"myc-like oncogene, s-myc protein"
+Myef2	"myelin basic protein expression factor 2, repressor"
+Myf5	myogenic factor 5
+Myf6	myogenic factor 6
+Mynn	myoneurin
+Myocd	myocardin
+Myod1	myogenic differentiation 1
+Myog	myogenin
+Myst2	MYST histone acetyltransferase 2
+Myst3	MYST histone acetyltransferase (monocytic leukemia) 3
+Myst4	MYST histone acetyltransferase monocytic leukemia 4
+Myt1	myelin transcription factor 1
+Myt1l	myelin transcription factor 1-like
+Myt2	myelin transcription factor 2
+Mzf6d	Kruppel associated box containing gene
+Nab1	Ngfi-A binding protein 1
+Nab2	Ngfi-A binding protein 2
+Naca	nascent polypeptide-associated complex alpha polypeptide
+Narg1	NMDA receptor-regulated gene 1
+Ncoa1	nuclear receptor coactivator 1
+Ncoa2	nuclear receptor coactivator 2
+Ncoa3	nuclear receptor coactivator 3
+Ncoa4	nuclear receptor coactivator 4
+Ncoa5	nuclear receptor coactivator 5
+Ncoa6	nuclear receptor coactivator 6
+Ncor1	nuclear receptor co-repressor 1
+Ncor2	nuclear receptor co-repressor 2
+Ndn	necdin
+Nedd8	"neural precursor cell expressed, developmentally down-regulated gene 8"
+Neud4	neuronal d4 domain family member
+Neurod1	neurogenic differentiation 1
+Neurod2	neurogenic differentiation 2
+Neurod4	neurogenic differentiation 4
+Neurod6	neurogenic differentiation 6
+Neurog1	neurogenin 1
+Neurog2	neurogenin 2
+Neurog3	neurogenin 3
+Nfat5	nuclear factor of activated T-cells 5
+Nfatc1	"nuclear factor of activated T-cells, cytoplasmic, calcineurin-dependent 1"
+Nfatc2	"nuclear factor of activated T-cells, cytoplasmic, calcineurin-dependent 2"
+Nfatc2ip	"nuclear factor of activated T-cells, cytoplasmic, calcineurin-dependent 2 interacting protein"
+Nfatc3	"nuclear factor of activated T-cells, cytoplasmic, calcineurin-dependent 3"
+Nfatc4	"nuclear factor of activated T-cells, cytoplasmic, calcineurin-dependent 4"
+Nfe2	"nuclear factor, erythroid derived 2"
+Nfe2l1	"nuclear factor, erythroid derived 2,-like 1"
+Nfe2l2	"nuclear factor, erythroid derived 2, like 2"
+Nfe2l3	"nuclear factor, erythroid derived 2, like 3"
+Nfia	nuclear factor I/A
+Nfib	nuclear factor I/B
+Nfic	nuclear factor I/C
+Nfil3	"nuclear factor, interleukin 3, regulated"
+Nfix	nuclear factor I/X
+Nfkb1	"nuclear factor of kappa light chain gene enhancer in B-cells 1, p105"
+Nfkb2	"nuclear factor of kappa light polypeptide gene enhancer in B-cells 2, p49/p100"
+Nfkbib	"nuclear factor of kappa light chain gene enhancer in B-cells inhibitor, beta"
+Nfkbie	"nuclear factor of kappa light polypeptide gene enhancer in B-cells inhibitor, epsilon"
+Nfkbil1	nuclear factor of kappa light polypeptide gene enhancer in B-cells inhibitor-like 1
+Nfx1	"nuclear transcription factor, X-box binding 1"
+Nfya	nuclear transcription factor-Y alpha
+Nfyb	nuclear transcription factor-Y beta
+Nfyc	nuclear transcription factor-Y gamma
+Nhlh1	nescient helix loop helix 1
+Nhlh2	nescient helix loop helix 2
+Nkd2	naked cuticle 2 homolog (Drosophila)
+Nkx1-1	"NK1 transcription factor related, locus 1 (Drosophila)"
+Nkx1-2	"NK1 transcription factor related, locus 2 (Drosophila)"
+Nkx2-2	"NK2 transcription factor related, locus 2 (Drosophila)"
+Nkx2-3	"NK2 transcription factor related, locus 3 (Drosophila)"
+Nkx2-4	"NK2 transcription factor related, locus 4 (Drosophila)"
+Nkx2-5	"NK2 transcription factor related, locus 5 (Drosophila)"
+Nkx2-6	"NK2 transcription factor related, locus 6 (Drosophila)"
+Nkx2-7	"NK2 transcription factor homolog, locus 7 (Drosophila)"
+Nkx2-9	"NK2 transcription factor related, locus 9 (Drosophila)"
+Nkx3-1	"NK-3 transcription factor, locus 1 (Drosophila)"
+Nkx6-1	"NK6 transcription factor related, locus 1 (Drosophila)"
+Nkx6-2	"NK6 transcription factor related, locus 2 (Drosophila)"
+Nmi	N-myc (and STAT) interactor
+Nmyc1	neuroblastoma myc-related oncogene 1
+Nol1	nucleolar protein 1
+Notch1	Notch gene homolog 1 (Drosophila)
+Notch2	Notch gene homolog 2 (Drosophila)
+Notch3	Notch gene homolog 3 (Drosophila)
+Notch4	Notch gene homolog 4 (Drosophila)
+Npas1	neuronal PAS domain protein 1
+Npas2	neuronal PAS domain protein 2
+Npas3	neuronal PAS domain protein 3
+Nptxr	neuronal pentraxin receptor
+Nr0b1	"nuclear receptor subfamily 0, group B, member 1"
+Nr0b2	"nuclear receptor subfamily 0, group B, member 2"
+Nr1d1	"nuclear receptor subfamily 1, group D, member 1"
+Nr1d2	"nuclear receptor subfamily 1, group D, member 2"
+Nr1h2	"nuclear receptor subfamily 1, group H, member 2"
+Nr1h3	"nuclear receptor subfamily 1, group H, member 3"
+Nr1h4	"nuclear receptor subfamily 1, group H, member 4"
+Nr1i2	"nuclear receptor subfamily 1, group I, member 2"
+Nr1i3	"nuclear receptor subfamily 1, group I, member 3"
+Nr2c1	"nuclear receptor subfamily 2, group C, member 1"
+Nr2c2	"nuclear receptor subfamily 2, group C, member 2"
+Nr2e1	"nuclear receptor subfamily 2, group E, member 1"
+Nr2e3	"nuclear receptor subfamily 2, group E, member 3"
+Nr2f1	"nuclear receptor subfamily 2, group F, member 1"
+Nr2f2	"nuclear receptor subfamily 2, group F, member 2"
+Nr2f6	"nuclear receptor subfamily 2, group F, member 6"
+Nr3c1	"nuclear receptor subfamily 3, group C, member 1"
+Nr3c2	"nuclear receptor subfamily 3, group C, member 2"
+Nr4a1	"nuclear receptor subfamily 4, group A, member 1"
+Nr4a2	"nuclear receptor subfamily 4, group A, member 2"
+Nr4a3	"nuclear receptor subfamily 4, group A, member 3"
+Nr5a1	"nuclear receptor subfamily 5, group A, member 1"
+Nr5a2	"nuclear receptor subfamily 5, group A, member 2"
+Nr6a1	"nuclear receptor subfamily 6, group A, member 1"
+Nrarp	Notch-regulated ankyrin repeat protein
+Nrbf2	nuclear receptor binding factor 2
+Nrf1	nuclear respiratory factor 1
+Nrip1	nuclear receptor interacting protein 1
+Nrip2	nuclear receptor interacting protein 2
+Nrl	neural retina leucine zipper gene
+Nsbp1	nucleosome binding protein 1
+Nsd1	nuclear receptor-binding SET-domain protein 1
+Nsep1	nuclease sensitive element binding protein 1
+Nudt12	nudix (nucleoside diphosphate linked moiety X)-type motif 12
+Nupr1	nuclear protein 1
+Nztf2	neural zinc finger transcription factor 2
+Obox1	oocyte specific homeobox 1
+Obox3	oocyte specific homeobox 3
+Obox5	oocyte specific homeobox 5
+Og2x	OG2 homeobox gene
+Og9x	OG9 homeobox gene
+Olig1	oligodendrocyte transcription factor 1
+Olig2	oligodendrocyte transcription factor 2
+Onecut1	"one cut domain, family member 1"
+Onecut3	"one cut domain, family member 3"
+Orc2l	"origin recognition complex, subunit 2-like (S. cerevisiae)"
+ORF63	open reading frame 63
+Ostf1	osteoclast stimulating factor 1
+Otp	orthopedia homolog (Drosophila)
+Otx1	orthodenticle homolog 1 (Drosophila)
+Otx2	orthodenticle homolog 2 (Drosophila)
+Otx3	orthodenticle homolog 3 (Drosophila)
+Ovol1	OVO homolog-like 1 (Drosophila)
+Papola	poly (A) polymerase alpha
+Papolb	poly (A) polymerase beta (testis specific)
+Pawr	"PRKC, apoptosis, WT1, regulator"
+Pax1	paired box gene 1
+Pax2	paired box gene 2
+Pax3	paired box gene 3
+Pax4	paired box gene 4
+Pax5	paired box gene 5
+Pax6	paired box gene 6
+Pax7	paired box gene 7
+Pax8	paired box gene 8
+Pax9	paired box gene 9
+Pbx1	pre B-cell leukemia transcription factor 1
+Pbx2	pre B-cell leukemia transcription factor 2
+Pbx3	pre B-cell leukemia transcription factor 3
+Pbx4	pre-B-cell leukemia transcription factor 4
+Pbxip1	pre-B-cell leukemia transcription factor interacting protein 1
+Pcaf	p300/CBP-associated factor
+Pcbd	6-pyruvoyl-tetrahydropterin synthase/dimerization cofactor of hepatocyte nuclear factor 1 alpha (TCF1)
+Pcqap	"positive cofactor 2, multiprotein complex, glutamine/Q-rich-associated protein"
+Pdcd11	programmed cell death protein 11
+Pdcd7	programmed cell death protein 7
+Pdlim1	PDZ and LIM domain 1 (elfin)
+Pdlim4	PDZ and LIM domain 4
+Peg3	paternally expressed 3
+Pem	placentae and embryos oncofetal gene
+Per1	period homolog 1 (Drosophila)
+Per2	period homolog 2 (Drosophila)
+Per3	period homolog 3 (Drosophila)
+Pfdn1	prefoldin 1
+Pgr	progesterone receptor
+Phf1	PHD finger protein 1
+Phf10	PHD finger protein 10
+Phf12	PHD finger protein 12
+Phf13	PHD finger protein 13
+Phf2	PHD finger protein 2
+Phf5a	PHD finger protein 5A
+Phf7	PHD finger protein 7
+Phf8	PHD finger protein 8
+Phox2a	paired-like homeobox 2a
+Phox2b	paired-like homeobox 2b
+Phtf1	putative homeodomain transcription factor 1
+Pias1	protein inhibitor of activated STAT 1
+Piasy	protein inhibitor of activated STAT PIASy
+Pit1	pituitary specific transcription factor 1
+Pitx1	paired-like homeodomain transcription factor 1
+Pitx2	paired-like homeodomain transcription factor 2
+Pitx3	paired-like homeodomain transcription factor 3
+Pknox1	Pbx/knotted 1 homeobox
+Pknox2	Pbx/knotted 1 homeobox 2
+Pla2g6	"phospholipase A2, group VI"
+Plagl1	pleiomorphic adenoma gene-like 1
+Plagl2	pleiomorphic adenoma gene-like 2
+Plrg1	"pleiotropic regulator 1, PRL1 homolog (Arabidopsis)"
+Pmfbp1	polyamine modulated factor 1 binding protein 1
+Pml	promyelocytic leukemia
+Pms1	postmeiotic segregation increased 1 (S. cerevisiae)
+Pogk	pogo transposable element with KRAB domain
+Polr2a	polymerase (RNA) II (DNA directed) polypeptide A
+Polr2b	polymerase (RNA) II (DNA directed) polypeptide B
+Polr2c	polymerase (RNA) II (DNA directed) polypeptide C
+Polr2e	polymerase (RNA) II (DNA directed) polypeptide E
+Polr2g	polymerase (RNA) II (DNA directed) polypeptide G
+Polr2h	polymerase (RNA) II (DNA directed) polypeptide H
+Polr2i	polymerase (RNA) II (DNA directed) polypeptide I
+Polr2j	polymerase (RNA) II (DNA directed) polypeptide J
+Polr2k	polymerase (RNA) II (DNA directed) polypeptide K
+Polr2l	polymerase (RNA) II (DNA directed) polypeptide L
+Polr3b	polymerase (RNA) III (DNA directed) polypeptide B
+Polr3d	polymerase (RNA) III (DNA directed) polypeptide D
+Polr3e	polymerase (RNA) III (DNA directed) polypeptide E
+Polr3h	polymerase (RNA) III (DNA directed) polypeptide H
+Polrmt	polymerase (RNA) mitochondrial (DNA directed)
+Pou2af1	"POU domain, class 2, associating factor 1"
+Pou2f1	"POU domain, class 2, transcription factor 1"
+Pou2f2	"POU domain, class 2, transcription factor 2"
+Pou2f3	"POU domain, class 2, transcription factor 3"
+Pou3f1	"POU domain, class 3, transcription factor 1"
+Pou3f2	"POU domain, class 3, transcription factor 2"
+Pou3f3	"POU domain, class 3, transcription factor 3"
+Pou3f4	"POU domain, class 3, transcription factor 4"
+Pou3f-rs1	"POU domain, class 3, transcription factor, related sequence 1"
+Pou4f1	"POU domain, class 4, transcription factor 1"
+Pou4f2	"POU domain, class 4, transcription factor 2"
+Pou4f3	"POU domain, class 4, transcription factor 3"
+Pou4f-rs1	"POU domain, class 4, transcription factor, related sequence 1"
+Pou5f1	"POU domain, class 5, transcription factor 1"
+Pou5f1-rs10	"POU domain, class 5, transcription factor 1, related sequence 10"
+Pou6f1	"POU domain, class 6, transcription factor 1"
+Ppara	peroxisome proliferator activated receptor alpha
+Pparbp	peroxisome proliferator activated receptor binding protein
+Ppard	peroxisome proliferator activator receptor delta
+Pparg	peroxisome proliferator activated receptor gamma
+Ppargc1a	"peroxisome proliferative activated receptor, gamma, coactivator 1 alpha"
+Ppargc1b	"peroxisome proliferative activated receptor, gamma, coactivator 1 beta"
+Ppp1r10	"protein phosphatase 1, regulatory subunit 10"
+Ppp1r12b	"protein phosphatase 1, regulatory (inhibitor) subunit 12B"
+Ppp1r12c	"protein phosphatase 1, regulatory (inhibitor) subunit 12C"
+Ppp1r13b	"protein phosphatase 1, regulatory (inhibitor) subunit 13B"
+Ppp1r16b	"protein phosphatase 1, regulatory (inhibitor) subunit 16B"
+Ppp1r1b	"protein phosphatase 1, regulatory (inhibitor) subunit 1B"
+Ppp2r1a	"protein phosphatase 2 (formerly 2A), regulatory subunit A (PR 65), alpha isoform"
+Ppp3cb	"protein phosphatase 3, catalytic subunit, beta isoform"
+Ppp5c	"protein phosphatase 5, catalytic subunit"
+Pqbp1	polyglutamine binding protein 1
+Prdm1	"PR domain containing 1, with ZNF domain"
+Prdm16	PR domain containing 16
+Prdm5	PR domain containing 5
+Preb	prolactin regulatory element binding
+Prkar1a	"protein kinase, cAMP dependent regulatory, type I, alpha"
+Prop1	paired like homeodomain factor 1
+Prox1	prospero-related homeobox 1
+Prr3	proline-rich polypeptide 3
+Prrx1	paired related homeobox 1
+Prrx2	paired related homeobox 2
+Prrxl1	paired related homeobox protein-like 1
+Psmc3	"proteasome (prosome, macropain) 26S subunit, ATPase 3"
+Psmc5	"protease (prosome, macropain) 26S subunit, ATPase 5"
+Psmd10	"proteasome (prosome, macropain) 26S subunit, non-ATPase, 10"
+Psmd9	"proteasome (prosome, macropain) 26S subunit, non-ATPase, 9"
+Psx1	placenta specific homeobox 1
+Psx2	placenta specific homeobox 2
+Ptf1a	"pancreas specific transcription factor, 1a"
+Ptges2	prostaglandin E synthase 2
+Ptma	prothymosin alpha
+Pura	purine rich element binding protein A
+Purb	purine rich element binding protein B
+Pygo1	
+Pygo2	
+Rab11a	"RAB11a, member RAS oncogene family"
+Rab11b	"RAB11B, member RAS oncogene family"
+Rab15	"RAB15, member RAS oncogene family"
+Rab18	"RAB18, member RAS oncogene family"
+Rab2	"RAB2, member RAS oncogene family"
+Rab25	"RAB25, member RAS oncogene family"
+Rab8a	"RAB8A, member RAS oncogene family"
+Rab8b	"RAB8B, member RAS oncogene family"
+Rabl3	"RAB, member of RAS oncogene family-like 3"
+Rai1	retinoic acid induced 1
+Rai14	retinoic acid induced 14
+Rara	"retinoic acid receptor, alpha"
+Rarb	"retinoic acid receptor, beta"
+Rarg	"retinoic acid receptor, gamma"
+Rax	retina and anterior neural fold homeobox
+Rb1	retinoblastoma 1
+Rbak	RB-associated KRAB repressor
+Rbbp7	retinoblastoma binding protein 7
+Rbl1	retinoblastoma-like 1 (p107)
+Rbl2	retinoblastoma-like 2
+Rbm14	RNA binding motif protein 14
+Rbm9	RNA binding motif protein 9
+Rbpsuh	recombining binding protein suppressor of hairless (Drosophila)
+Rbpsuhl	recombining binding protein suppressor of hairless-like (Drosophila)
+Rcor1	RE1-silencing transcription factor (REST) co-repressor 1
+Recc1	replication factor C 1
+Rel	reticuloendotheliosis oncogene
+Rela	v-rel reticuloendotheliosis viral oncogene homolog A (avian)
+Relb	avian reticuloendotheliosis viral (v-rel) oncogene related B
+Rem2	rad and gem related GTP binding protein 2
+Rest	RE1-silencing transcription factor
+Rfx1	"regulatory factor X, 1 (influences HLA class II expression)"
+Rfx2	"regulatory factor X, 2 (influences HLA class II expression)"
+Rfx3	"regulatory factor X, 3 (influences HLA class II expression)"
+Rfx4	"regulatory factor X, 4 (influences HLA class II expression)"
+Rfx5	"regulatory factor X, 5 (influences HLA class II expression)"
+Rfxank	regulatory factor X-associated ankyrin-containing protein
+Rfxap	regulatory factor X-associated protein
+Rfxdc1	regulatory factor X domain containing 1
+Ring1	ring finger protein 1
+Rnf110	ring finger protein 110
+Rnf12	ring finger protein 12
+Rnf134	ring finger protein 134
+Rnf14	ring finger protein 14
+Rnf141	ring finger protein 141
+Rnf38	ring finger protein 38
+Rnf4	ring finger protein 4
+Rnpc2	"RNA-binding region (RNP1, RRM) containing 2"
+Rnps1	ribonucleic acid binding protein S1
+Rog	repressor of GATA
+Rora	RAR-related orphan receptor alpha
+Rorb	RAR-related orphan receptor beta
+Rorc	RAR-related orphan receptor gamma
+Rpo1-1	RNA polymerase 1-1
+Rpo1-2	RNA polymerase 1-2
+Rpo1-3	RNA polymerase 1-3
+Rpo1-4	RNA polymerase 1-4
+Rpo2tc1	RNA polymerase II transcriptional coactivator
+Rps6ka4	"ribosomal protein S6 kinase, polypeptide 4"
+Runx1	runt related transcription factor 1
+Runx2	runt related transcription factor 2
+Runx3	runt related transcription factor 3
+Ruvbl1	RuvB-like protein 1
+Ruvbl2	RuvB-like protein 2
+Rxra	retinoid X receptor alpha
+Rxrb	retinoid X receptor beta
+Rxrg	retinoid X receptor gamma
+Rybp	RING1 and YY1 binding protein
+Sall1	sal-like 1 (Drosophila)
+Sall2	sal-like 2 (Drosophila)
+Sall3	sal-like 3 (Drosophila)
+Sall4	sal-like 4 (Drosophila)
+Sap18	Sin3-associated polypeptide 18
+Sap30	sin3 associated polypeptide
+Satb1	special AT-rich sequence binding protein 1
+Satb2	special AT-rich sequence binding protein 2
+Scand1	SCAN domain-containing 1
+Scap	SREBP cleavage activating protein
+Scmh1	sex comb on midleg homolog 1
+Scrt1	"scratch homolog 1, zinc finger protein (Drosophila)"
+Scx	scleraxis
+Sdccag33	serologically defined colon cancer antigen 33
+Sec14l2	SEC14-like 2 (S. cerevisiae)
+Sertad1	SERTA domain containing 1
+Sertad2	SERTA domain containing 2
+Setbp1	SET binding protein 1
+Sfpi1	SFFV proviral integration 1
+Sfrs5	"splicing factor, arginine/serine-rich 5 (SRp40, HRS)"
+Sh3d19	SH3 domain protein D19
+Shank3	SH3/ankyrin domain gene 3
+Shox2	short stature homeobox 2
+Shprh	SNF2 histone linker PHD RING helicase
+Siah2	seven in absentia 2
+Sim1	single-minded 1
+Sim2	single-minded 2
+Sin3a	"transcriptional regulator, SIN3A (yeast)"
+Sin3b	"transcriptional regulator, SIN3B (yeast)"
+Sirt1	"sirtuin 1 ((silent mating type information regulation 2, homolog) 1 (S. cerevisiae)"
+Sirt2	"sirtuin 2 (silent mating type information regulation 2, homolog) 2 (S. cerevisiae)"
+Sirt3	"sirtuin 3 (silent mating type information regulation 2, homolog) 3 (S. cerevisiae)"
+Sirt4	sirtuin 4 (silent mating type information regulation 2 homolog) 4 (S. cerevisiae)
+Sirt5	sirtuin 5 (silent mating type information regulation 2 homolog) 5 (S. cerevisiae)
+Sirt6	"sirtuin 6 (silent mating type information regulation 2, homolog) 6 (S. cerevisiae)"
+Sirt7	"sirtuin 7 (silent mating type information regulation 2, homolog) 7 (S. cerevisiae)"
+Six1	sine oculis-related homeobox 1 homolog (Drosophila)
+Six2	sine oculis-related homeobox 2 homolog (Drosophila)
+Six3	sine oculis-related homeobox 3 homolog (Drosophila)
+Six4	sine oculis-related homeobox 4 homolog (Drosophila)
+Six5	sine oculis-related homeobox 5 homolog (Drosophila)
+Six6	sine oculis-related homeobox 6 homolog (Drosophila)
+Skd3	suppressor of K+ transport defect 3
+Ski	Sloan-Kettering viral oncogene homolog
+Skz1	SCAN-KRAB-zinc finger gene 1
+Smarca1	"SWI/SNF related, matrix associated, actin dependent regulator of chromatin, subfamily a, member 1"
+Smarca2	"SWI/SNF related, matrix associated, actin dependent regulator of chromatin, subfamily a, member 2"
+Smarca3	"SWI/SNF related, matrix associated, actin dependent regulator of chromatin, subfamily a, member 3"
+Smarca4	"SWI/SNF related, matrix associated, actin dependent regulator of chromatin, subfamily a, member 4"
+Smarca5	"SWI/SNF related, matrix associated, actin dependent regulator of chromatin, subfamily a, member 5"
+Smarcb1	"SWI/SNF related, matrix associated, actin dependent regulator of chromatin, subfamily b, member 1"
+Smarce1	"SWI/SNF related, matrix associated, actin dependent regulator of chromatin, subfamily e, member 1"
+Smyd1	SET and MYND domain containing 1
+Snai1	snail homolog 1 (Drosophila)
+Snai2	snail homolog 2 (Drosophila)
+Snai3	snail homolog 3 (Drosophila)
+Snapc2	"small nuclear RNA activating complex, polypeptide 2"
+Snapc4	"small nuclear RNA activating complex, polypeptide 4"
+Sncaip	"synuclein, alpha interacting protein (synphilin)"
+Snip1	Smad nuclear interacting protein 1
+Snrpb	small nuclear ribonucleoprotein B
+Solh	small optic lobes homolog (Drosophila)
+Sox1	SRY-box containing gene 1
+Sox10	SRY-box containing gene 10
+Sox11	SRY-box containing gene 11
+Sox12	SRY-box containing gene 12
+Sox13	SRY-box containing gene 13
+Sox14	SRY-box containing gene 14
+Sox15	SRY-box containing gene 15
+Sox16	SRY-box containing gene 16
+Sox17	SRY-box containing gene 17
+Sox18	SRY-box containing gene 18
+Sox19	SRY-box containing gene 19
+Sox2	SRY-box containing gene 2
+Sox21	SRY-box containing gene 21
+Sox3	SRY-box containing gene 3
+Sox30	SRY-box containing gene 30
+Sox4	SRY-box containing gene 4
+Sox5	SRY-box containing gene 5
+Sox6	SRY-box containing gene 6
+Sox7	SRY-box containing gene 7
+Sox8	SRY-box containing gene 8
+Sox9	SRY-box containing gene 9
+Sp1	trans-acting transcription factor 1
+Sp2	Sp2 transcription factor
+Sp3	trans-acting transcription factor 3
+Sp4	trans-acting transcription factor 4
+Sp5	trans-acting transcription factor 5
+Sp6	trans-acting transcription factor 6
+Sp7	Sp7 transcription factor
+Spdef	SAM pointed domain containing ets transcription factor
+Spib	Spi-B transcription factor (Spi-1/PU.1 related)
+Spic	Spi-C transcription factor (Spi-1/PU.1 related)
+Sprm1	sperm-associated POU domain protein 1
+Spz1	spermatogenic Zip 1
+Sqstm1	sequestosome 1
+Sra1	steroid receptor RNA activator 1
+Srebf1	sterol regulatory element binding factor 1
+Srebf2	sterol regulatory element binding factor 2
+Srf	serum response factor
+Srst	simple repeat sequence-containing transcript
+Sry	sex determining region of Chr Y
+Ssbp2	single-stranded DNA binding protein 2
+Ssbp3	single-stranded DNA binding protein 3
+Ssbp4	single stranded DNA binding protein 4
+Ssrp1	structure specific recognition protein 1
+Ssxb1	"synovial sarcoma, X member B, breakpoint 1"
+St18	suppression of tumorigenicity 18
+Stag1	stromal antigen 1
+Stat1	signal transducer and activator of transcription 1
+Stat2	signal transducer and activator of transcription 2
+Stat3	signal transducer and activator of transcription 3
+Stat4	signal transducer and activator of transcription 4
+Stat5a	signal transducer and activator of transcription 5A
+Stat5b	signal transducer and activator of transcription 5B
+Stat6	signal transducer and activator of transcription 6
+Strap	serine/threonine kinase receptor associated protein
+Strm	striamin
+Supt3h	suppressor of Ty 3 homolog (S. cerevisiae)
+Supt4h	suppressor of Ty 4 homolog (S. cerevisiae)
+Supt4h2	suppressor of Ty 4 homolog 2 (S. cerevisiae)
+Supt5h	suppressor of Ty 5 homolog (S. cerevisiae)
+Surb7	SRB7 (supressor of RNA polymerase B) homolog (S. cerevisiae)
+T	brachyury
+Tada2l	"transcriptional adaptor 2 (ADA2 homolog, yeast)-like"
+Tada3l	"transcriptional adaptor 3 (NGG1 homolog, yeast)-like"
+Taf10	"TAF10 RNA polymerase II, TATA box binding protein (TBP)-associated factor"
+Taf11	"TAF11 RNA polymerase II, TATA box binding protein (TBP)-associated factor"
+Taf12	"TAF12 RNA polymerase II, TATA box binding protein (TBP)-associated factor"
+Taf13	"TAF13 RNA polymerase II, TATA box binding protein (TBP)-associated factor"
+Taf1a	"TATA box binding protein (Tbp)-associated factor, RNA polymerase I, A"
+Taf1b	"TATA box binding protein (Tbp)-associated factor, RNA polymerase I, B"
+Taf1c	"TATA box binding protein (Tbp)-associated factor, RNA polymerase I, C"
+Taf3	"TAF3 RNA polymerase II, TATA box binding protein (TBP)-associated factor"
+Taf4a	"TAF4A RNA polymerase II, TATA box binding protein (TBP)-associated factor"
+Taf4b	"TAF4B RNA polymerase II, TATA box binding protein (TBP)-associated factor"
+Taf5	"TAF5 RNA polymerase II, TATA box binding protein (TBP)-associated factor"
+Taf5l	"TAF5-like RNA polymerase II, p300/CBP-associated factor (PCAF)-associated factor"
+Taf6	"TAF6 RNA polymerase II, TATA box binding protein (TBP)-associated factor"
+Taf6l	"TAF6-like RNA polymerase II, p300/CBP-associated factor (PCAF)-associated factor"
+Taf7	"TAF7 RNA polymerase II, TATA box binding protein (TBP)-associated factor"
+Taf9	"TAF9 RNA polymerase II, TATA box binding protein (TBP)-associated factor"
+Tal1	T-cell acute lymphocytic leukemia 1
+Tal2	T-cell acute lymphocytic leukemia 2
+Tardbp	TAR DNA binding protein
+Tbp	TATA box binding protein
+Tbpl1	TATA box binding protein-like 1
+Tbr1	T-box brain gene 1
+Tbx1	T-box 1
+Tbx10	T-box 10
+Tbx13	T-box 13
+Tbx14	T-box 14
+Tbx15	T-box 15
+Tbx18	T-box18
+Tbx19	T-box 19
+Tbx2	T-box 2
+Tbx20	T-box 20
+Tbx21	T-box 21
+Tbx22	T-box 22
+Tbx3	T-box 3
+Tbx4	T-box 4
+Tbx5	T-box 5
+Tbx6	T-box 6
+Tcea1	transcription elongation factor A (SII) 1
+Tcea2	"transcription elongation factor A (SII), 2"
+Tcea3	"transcription elongation factor A (SII), 3"
+Tceal1	transcription elongation factor A (SII)-like 1
+Tceb2	"transcription elongation factor B (SIII), polypeptide 2"
+Tceb3	"transcription elongation factor B (SIII), polypeptide 3"
+Tcerg1	transcription elongation regulator 1 (CA150)
+Tcf1	transcription factor 1
+Tcf12	transcription factor 12
+Tcf15	transcription factor 15
+Tcf19	transcription factor 19
+Tcf2	transcription factor 2
+Tcf20	transcription factor 20
+Tcf21	transcription factor 21
+Tcf3	transcription factor 3
+Tcf4	transcription factor 4
+Tcf7	"transcription factor 7, T-cell specific"
+Tcf7l2	"transcription factor 7-like 2, T-cell specific, HMG-box"
+Tcfap2a	"transcription factor AP-2, alpha"
+Tcfap2b	transcription factor AP-2 beta
+Tcfap2c	"transcription factor AP-2, gamma"
+Tcfap2d	"transcription factor AP-2, delta"
+Tcfap2e	"transcription factor AP-2, epsilon"
+Tcfap4	transcription factor AP4
+Tcfcp2	transcription factor CP2
+Tcfcp2l1	transcription factor CP2-like 1
+Tcfe2a	transcription factor E2a
+Tcfe3	transcription factor E3
+Tcfeb	transcription factor EB
+Tcfec	transcription factor EC
+Tcfl1	transcription factor-like 1
+Tcfl4	transcription factor-like 4
+Tcfl5	transcription factor-like 5 (basic helix-loop-helix)
+Tead1	TEA domain family member 1
+Tead2	TEA domain family member 2
+Tead3	TEA domain family member 3
+Tead4	TEA domain family member 4
+Tef	thyrotroph embryonic factor
+Tfam	"transcription factor A, mitochondrial"
+Tfap4	transcription factor AP-4 (activating enhancer-binding protein 4)
+Tfdp1	transcription factor Dp 1
+Tfdp2	transcription factor Dp 2
+Tgfb1i1	transforming growth factor beta 1 induced transcript 1
+Tgfb1i4	transforming growth factor beta 1 induced transcript 4
+Tgif	TG interacting factor
+Tgif2	TGFB-induced factor 2
+Tgifx1	TGIF homeobox 1
+Th1l	TH1-like homolog (Drosophila)
+Thra	thyroid hormone receptor alpha
+Thrap3	thyroid hormone receptor associated protein 3
+Thrap4	thyroid hormone receptor associated protein 4
+Thrap5	thyroid hormone receptor associated protein 5
+Thrap6	thyroid hormone receptor associated protein 6
+Thrb	thyroid hormone receptor beta
+Thrsp	thyroid hormone responsive SPOT14 homolog (Rattus)
+Tial1	Tial1 cytotoxic granule-associated RNA binding protein-like 1
+Tieg1	TGFB inducible early growth response 1
+Tieg2	TGFB inducible early growth response 2
+Titf1	thyroid transcription factor 1
+Tle1	"transducin-like enhancer of split 1, homolog of Drosophila E(spl)"
+Tle2	"transducin-like enhancer of split 2, homolog of Drosophila E(spl)"
+Tle3	"transducin-like enhancer of split 3, homolog of Drosophila E(spl)"
+Tle4	"transducin-like enhancer of split 4, homolog of Drosophila E(spl)"
+Tle6	"transducin-like enhancer of split 6, homolog of Drosophila E(spl)"
+Tlx1	"T-cell leukemia, homeobox 1"
+Tlx2	"T-cell leukemia, homeobox 2"
+Tlx3	"T-cell leukemia, homeobox 3"
+Tmpo	thymopoietin
+Tnfaip3	"tumor necrosis factor, alpha-induced protein 3"
+Tnrc11	trinucleotide repeat containing 11 (THR-associated protein)
+Tob1	transducer of ErbB-2.1
+Trerf1	transcriptional regulating factor 1
+Trib3	tribbles homolog 3 (Drosophila)
+Trim24	tripartite motif protein 24
+Trim28	tripartite motif protein 28
+Trim30	tripartite motif protein 30
+Trip13	thyroid hormone receptor interactor 13
+Trip4	thyroid hormone receptor interactor 4
+Trip6	thyroid hormone receptor interactor 6
+Trp53	transformation related protein 53
+Trp53bp1	transformation related protein 53 binding protein 1
+Trp63	transformation related protein 63
+Trp73	transformation related protein 73
+Trps1	trichorhinophalangeal syndrome I (human)
+Trrap	transformation/transcription domain-associated protein
+Tsg101	tumor susceptibility gene 101
+Ttrap	Traf and Tnf receptor associated protein
+Tulp4	tubby like protein 4
+Twist1	twist gene homolog 1 (Drosophila)
+Twist2	twist homolog 2 (Drosophila)
+Ube1c	ubiquitin-activating enzyme E1C
+Ubn1	ubinuclein 1
+Ubp1	upstream binding protein 1
+Ubtf	"upstream binding transcription factor, RNA polymerase I"
+Ugp2	UDP-glucose pyrophosphorylase 2
+Uhrf1	"ubiquitin-like, containing PHD and RING finger domains, 1"
+Uhrf2	"ubiquitin-like, containing PHD and RING finger domains 2"
+Uncx4.1	Unc4.1 homeobox (C. elegans)
+Ureb1	upstream regulatory element binding protein 1e
+Usf1	upstream transcription factor 1
+Usf2	upstream transcription factor 2
+Usp49	ubiquitin specific protease 49
+Utf1	undifferentiated embryonic cell transcription factor 1
+Wasl	Wiskott-Aldrich syndrome-like (human)
+Vax1	ventral anterior homeobox containing gene 1
+Vax2	ventral anterior homeobox containing gene 2
+Wbp7	WW domain binding protein 7
+Wbscr14	Williams-Beuren syndrome chromosome region 14 homolog (human)
+Vdr	vitamin D receptor
+Wdr9	WD repeat domain 9
+Vdrip	vitamin D receptor interacting protein
+Vgll1	vestigial like 1 homolog (Drosophila)
+Vgll2	vestigial like 2 homolog (Drosophila)
+Vgll3	vestigial like 3 homolog (Drosophila)
+Vgll4	vestigial like 4 homolog (Drosophila)
+Whsc2	Wolf-Hirschhorn syndrome candidate 2 (human)
+Vsx1	visual system homeobox 1 homolog (zebrafish)
+Wt1	Wilms tumor homolog
+Xab2	XPA binding protein 2
+Xbp1	X-box binding protein 1
+XPMC2H	Xenopus prevents mitotic catastrophe 2 homolog
+Xrcc3	X-ray repair complementing defective repair in Chinese hamster cells 3
+Yaf2	YY1 associated factor 2
+Yy1	YY1 transcription factor
+Zbtb1	zinc finger and BTB domain containing 1
+Zbtb3	zinc finger and BTB domain containing 3
+Zbtb33	zinc finger and BTB domain containing 33
+Zbtb7	zinc finger and BTB domain containing 7
+Zcchc8	"zinc finger, CCHC domain containing 8"
+Zdhhc1	"zinc finger, DHHC domain containing 1"
+Zdhhc15	"zinc finger, DHHC domain containing 15"
+Zdhhc16	"zinc finger, DHHC domain containing 16"
+Zdhhc21	"zinc finger, DHHC domain containing 21"
+Zdhhc5	"zinc finger, DHHC domain containing 5"
+Zdhhc6	"zinc finger, DHHC domain containing 6"
+Zeb1	
+Zeb2	
+Zf	HCF-binding transcription factor Zhangfei
+Zfa	"zinc finger protein, autosomal"
+Zfhx1a	zinc finger homeobox 1a
+Zfhx1b	zinc finger homeobox 1b
+Zfp1	zinc finger protein 1
+Zfp100	zinc finger protein 100
+Zfp105	zinc finger protein 105
+Zfp108	zinc finger protein 108
+Zfp109	zinc finger protein 109
+Zfp110	zinc finger protein 110
+Zfp111	zinc finger protein 111
+Zfp112	zinc finger protein 112
+Zfp113	zinc finger protein 113
+Zfp119	zinc finger protein 119
+Zfp128	zinc finger protein 128
+Zfp13	zinc finger protein 13
+Zfp131	zinc finger protein 131
+Zfp142	zinc finger protein 142
+Zfp143	zinc finger protein 143
+Zfp145	zinc finger protein 145
+Zfp146	zinc finger protein 146
+Zfp148	zinc finger protein 148
+Zfp161	zinc finger protein 161
+Zfp162	zinc finger protein 162
+Zfp180	zinc finger protein 180
+Zfp189	zinc finger protein 189
+Zfp191	zinc finger protein 191
+Zfp192	zinc finger protein 192
+Zfp198	zinc finger protein 198
+Zfp2	zinc finger protein 2
+Zfp202	zinc finger protein 202
+Zfp207	zinc finger protein 207
+Zfp219	zinc finger protein 219
+Zfp235	zinc finger protein 235
+Zfp238	zinc finger protein 238
+Zfp239	zinc finger protein 239
+Zfp248	zinc finger protein 248
+Zfp263	zinc finger protein 263
+Zfp27	zinc finger protein 27
+Zfp275	Zinc finger protein 275
+Zfp277	zinc finger protein 277
+Zfp278	zinc finger protein 278
+Zfp281	zinc finger protein 281
+Zfp282	zinc finger protein 282
+Zfp287	zinc finger protein 287
+Zfp288	zinc finger protein 288
+Zfp29	zinc finger protein 29
+Zfp292	zinc finger protein 292
+Zfp295	zinc finger protein 295
+Zfp297	zinc finger protein 297
+Zfp297b	zinc finger protein 297B
+Zfp319	zinc finger protein 319
+Zfp334	zinc finger protein 334
+Zfp336	zinc finger protein 336
+Zfp339	zinc finger protein 339
+Zfp35	zinc finger protein 35
+Zfp354a	zinc finger protein 354A
+Zfp354b	zinc finger protein 354B
+Zfp354c	zinc finger protein 354C
+Zfp36	zinc finger protein 36
+Zfp36l1	"zinc finger protein 36, C3H type-like 1"
+Zfp37	zinc finger protein 37
+Zfp385	zinc finger protein 385
+Zfp386	zinc finger protein 386 (Kruppel-like)
+Zfp39	zinc finger protein 39
+Zfp398	zinc finger protein 398
+Zfp40	zinc finger protein 40
+Zfp41	zinc finger protein 41
+Zfp42	zinc finger protein 42
+Zfp423	zinc finger protein 423
+Zfp426	zinc finger protein 426
+Zfp451	zinc finger protein 451
+Zfp454	zinc finger protein 454
+Zfp46	zinc finger protein 46
+Zfp467	zinc finger protein 467
+Zfp51	zinc finger protein 51
+Zfp52	zinc finger protein 52
+Zfp523	zinc finger protein 523
+Zfp535	zinc finger protein 535
+Zfp537	zinc finger protein 537
+Zfp54	zinc finger protein 54
+Zfp553	zinc finger protein 553
+Zfp57	zinc finger protein 57
+Zfp580	zinc finger protein 580
+Zfp59	zinc finger protein 59
+Zfp592	zinc finger protein 592
+Zfp597	zinc finger protein 597
+Zfp60	zinc finger protein 60
+Zfp606	zinc finger protein 606
+Zfp61	zinc finger protein 61
+Zfp612	zinc finger protein 612
+Zfp617	zinc finger protein 617
+Zfp64	zinc finger protein 64
+Zfp68	zinc finger protein 68
+Zfp82	zinc finger protein 82
+Zfp84	zinc finger protein 84
+Zfp9	zinc finger protein 9
+Zfp90	zinc finger protein 90
+Zfp91	zinc finger protein 91
+Zfp92	zinc finger protein 92
+Zfp93	zinc finger protein 93
+Zfp94	zinc finger protein 94
+Zfp95	zinc finger protein 95
+Zfp96	zinc finger protein 96
+Zfp97	zinc finger protein 97
+Zfp98	zinc finger protein 98
+Zfp99	zinc finger protein 99
+Zfpm1	"zinc finger protein, multitype 1"
+Zfpm2	"zinc finger protein, multitype 2"
+Zfpn1a1	"zinc finger protein, subfamily 1A, 1 (Ikaros)"
+Zfpn1a2	"zinc finger protein, subfamily 1A, 2 (Helios)"
+Zfpn1a3	"zinc finger protein, subfamily 1A, 3 (Aiolos)"
+Zfx	zinc finger protein X-linked
+Zfy1	"zinc finger protein 1, Y linked"
+Zfy2	"zinc finger protein 2, Y linked"
+Zhx1	zinc fingers and homeoboxes protein 1
+Zhx3	zinc fingers and homeoboxes 3
+Zic1	"Zic family member 1 (odd-paired homolog, Drosophila)"
+Zic2	"Zic family member 2 (odd-paired homolog, Drosophila)"
+Zic3	zinc finger protein of the cerebellum 3
+Zik1	zinc finger protein interacting with K protein 1
+Zim1	"zinc finger, imprinted 1"
+Zipro1	zinc finger proliferation 1
+Zmynd11	"zinc finger, MYND domain containing 11"
+Znrd1	"zinc ribbon domain containing, 1"
+Zswim4	"zinc finger, SWIM domain containing 4"
