@@ -70,7 +70,7 @@ def label_clusters(data: sc.AnnData, groupby: str, de_key: str,
     logfcs_df = pd.DataFrame(data.uns[de_key]['logfoldchanges'])
 
     de_bool = tvals_df.values >= t_cutoff
-    if padj_cutoff < 1 and logfc_cutoff > 0:  # necessary to add other criteria...
+    if padj_cutoff < 1 or logfc_cutoff > 0:  # necessary to add other criteria...
         de_bool = np.logical_and(de_bool, padjs_df.values < padj_cutoff)
         de_bool = np.logical_and(de_bool, logfcs_df.values >= logfc_cutoff)
 
@@ -78,19 +78,16 @@ def label_clusters(data: sc.AnnData, groupby: str, de_key: str,
     label_map = {}
     for i, cluster in enumerate(genes_df.columns):
         de_indices = np.where(de_bool[:, i])[0]
-        if len(
-                de_indices) > min_de:  # Significant number of DE genes detected !!!!
+        if len(de_indices) >= min_de:  # Significant number of DE genes detected !!!!
             genes_ = genes_df.values[:, i]
-            de_genes = np.unique(
-                genes_[de_indices][0:max_genes])  # Sorts alphabetically
+            de_genes = np.unique(enes_[de_indices][0:max_genes])  # Sorts alphabetically
 
             # Need to put the reference genes first...
             if type(reference_genes) != type(None):
                 ref_de = [gene for gene in de_genes if gene in reference_genes]
                 other_de = [gene for gene in de_genes if
                             gene not in reference_genes]
-                if len(
-                        ref_de) == 0:  # If no reference genes DE, then put the first reference gene with max t-value
+                if len(ref_de) == 0:  # If no reference genes DE, then put the first reference gene with max t-value
                     ref_indices = [np.where(genes_ == ref)[0][0] for ref in
                                    reference_genes]
                     highest_index = np.argmax(tvals_df.values[ref_indices, i])
@@ -161,7 +158,7 @@ def cluster_label(data: sc.AnnData, var_key: str,
                   # Stores final cluster labellings!
                   reference_genes: np.array = None,
                   # reference genes used for nts bfs, put these genes first for cluster label
-                  max_genes: int = 5, min_de: int = 0, t_cutoff: float = 10,
+                  max_genes: int = 5, min_de: int = 1, t_cutoff: float = 10,
                   de_key: str = 'rank_genes_groups',
                   logfc_cutoff: float = 0, padj_cutoff: float = 1,
                   verbose: bool = True,
@@ -190,6 +187,8 @@ def cluster_label(data: sc.AnnData, var_key: str,
     i = 0
     while np.any([label_map[key].isdigit() for key in
                   label_map]):  # Still clusters without label.
+        i += 1
+        
         #### Adding intermediate clustering results...
         merge_col = f'{groupby}_merge{i}'
         add_labels(data, merge_col, cluster_labels, verbose)
