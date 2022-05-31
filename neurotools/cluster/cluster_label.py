@@ -12,7 +12,7 @@ import numpy as np
 import pandas as pd
 import scanpy as sc
 
-from numba import List
+from numba.typed import List
 
 import scipy.spatial as spatial
 from ..utils.general import summarise_data_fast
