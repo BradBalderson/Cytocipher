@@ -80,7 +80,7 @@ def label_clusters(data: sc.AnnData, groupby: str, de_key: str,
         de_indices = np.where(de_bool[:, i])[0]
         if len(de_indices) >= min_de:  # Significant number of DE genes detected !!!!
             genes_ = genes_df.values[:, i]
-            de_genes = np.unique(enes_[de_indices][0:max_genes])  # Sorts alphabetically
+            de_genes = np.unique(genes_[de_indices][0:max_genes])  # Sorts alphabetically
 
             # Need to put the reference genes first...
             if type(reference_genes) != type(None):
@@ -188,7 +188,7 @@ def cluster_label(data: sc.AnnData, var_key: str,
     while np.any([label_map[key].isdigit() for key in
                   label_map]):  # Still clusters without label.
         i += 1
-        
+
         #### Adding intermediate clustering results...
         merge_col = f'{groupby}_merge{i}'
         add_labels(data, merge_col, cluster_labels, verbose)
