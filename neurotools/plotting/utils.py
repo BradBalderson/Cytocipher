@@ -6,10 +6,12 @@ import numpy as np
 
 import scanpy as sc
 
+import seaborn as sb
+
 import matplotlib
 import matplotlib as plt
 
-def get_colors(labels, cmap, rgb=False):
+def get_colors(labels, cmap, rgb=False, seaborn=False):
     """ Gets colors.
     """
     # Determining the set of labels #
@@ -20,8 +22,13 @@ def get_colors(labels, cmap, rgb=False):
 
     # Ordering the cells according to their frequency and obtaining colors #
     nLabels = len(label_set)
-    cmap = plt.cm.get_cmap(cmap, nLabels)
-    rgbs = [cmap(i)[:3] for i in range(nLabels)]
+    if not seaborn:
+        cmap = plt.cm.get_cmap(cmap, nLabels)
+        rgbs = [cmap(i)[:3] for i in range(nLabels)]
+    else:
+        cmap = sb.color_palette(cmap, n_colors=nLabels, as_cmap=True)
+        rgbs = cmap
+        rgb = True
     # rgbs = list(numpy.array(rgbs)[order]) # Make sure color order is the same.
 
     # Populating the color dictionary with rgb values or hexcodes #
