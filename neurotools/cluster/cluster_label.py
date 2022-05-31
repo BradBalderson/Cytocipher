@@ -55,7 +55,6 @@ def get_genesubset_de(data: sc.AnnData, data_sub: sc.AnnData,
     sc.tl.rank_genes_groups(data_sub, groupby=groupby, key_added=de_key)
     data.uns[de_key] = data_sub.uns[de_key]
 
-
 def label_clusters(data: sc.AnnData, groupby: str, de_key: str,
                    reference_genes: np.array,
                    max_genes: int, min_de: int, t_cutoff: float,
@@ -200,6 +199,7 @@ def cluster_label(data: sc.AnnData, var_key: str,
         add_labels(data, merge_col, cluster_labels, verbose)
 
         #### Calling de
+        add_labels(data_sub, merge_col, cluster_labels, False)
         get_genesubset_de(data, data_sub, merge_col, de_key)
 
         #### Relabelling
