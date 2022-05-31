@@ -16,6 +16,7 @@ from numba.typed import List
 
 import scipy.spatial as spatial
 from ..utils.general import summarise_data_fast
+from ..plotting.utils import add_colors
 
 def average(expr: pd.DataFrame, labels: np.array, label_set: np.array):
     """Averages the expression by label.
@@ -149,7 +150,7 @@ def add_labels(data: sc.AnnData, merge_col: str, cluster_labels: np.array,
     data.obs[merge_col] = cluster_labels
     data.obs[merge_col] = data.obs[merge_col].astype('category')
     if verbose:
-        print(f"Added data.obs[ {merge_col} ]")
+        print(f"Added data.obs[ '{merge_col}' ]")
 
 def cluster_label(data: sc.AnnData, var_key: str,
                   groupby: str = 'leiden',
@@ -211,3 +212,4 @@ def cluster_label(data: sc.AnnData, var_key: str,
 
     #### Iteration complete, so can now add final labelled clusters.
     add_labels(data, obs_key, cluster_labels, verbose)
+    add_colors(data, obs_key, 'tab20')  # Also adding colors
