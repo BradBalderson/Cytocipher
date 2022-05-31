@@ -29,6 +29,14 @@ def load_sex():
     sex_df = pd.read_csv(path + '/../dbs/sex_genes.txt', sep='\t', index_col=0)
     return sex_df
 
+def load_tfs():
+    """Loads TFs"""
+    path = os.path.dirname(os.path.realpath(__file__))
+    tfs = pd.read_csv(path +
+      '/../dbs/Mouse_Transcription_Factors_GO_term_summary_20200813_013621.txt',
+                        sep='\t', index_col=0).values[:,0].astype(str)
+    return tfs
+
 def balanced_feature_select_graph(data: AnnData, reference_genes: np.array,
                                   batch_key=None, n_total: int=500,
                                   pca: bool=False, n_pcs: int=100,

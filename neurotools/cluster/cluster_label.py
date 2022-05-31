@@ -166,7 +166,7 @@ def cluster_label(data: sc.AnnData, var_key: str,
     """ Labels clusters by the top DE genes, and subsequently merges clusters
         with no DE genes to the most similar cluster.
     """
-    
+
     if verbose:
         print("Start no. clusters: ",
               len(np.unique(data.obs[groupby].values)))
