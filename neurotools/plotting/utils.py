@@ -26,8 +26,8 @@ def get_colors(labels, cmap, rgb=False, seaborn=False):
         cmap = plt.cm.get_cmap(cmap, nLabels)
         rgbs = [cmap(i)[:3] for i in range(nLabels)]
     else:
-        cmap = sb.color_palette(cmap, n_colors=nLabels, as_cmap=True)
-        rgbs = cmap
+        cmap = sb.color_palette(cmap, as_cmap=True)
+        rgbs = np.random.choice(cmap, nLabels, replace=True)
         rgb = True
     # rgbs = list(numpy.array(rgbs)[order]) # Make sure color order is the same.
 
