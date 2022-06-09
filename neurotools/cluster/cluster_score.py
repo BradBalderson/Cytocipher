@@ -235,40 +235,42 @@ def code_score(expr: np.ndarray, in_index_end: int, min_counts: int = 2):
     """Enriches for the genes in the data, while controlling for genes that
         shouldn't be in the cells.
     """
-
-    expr_bool = expr[:, :in_index_end] > 0
-    # print("new")
-    # print(in_index_end)
-    # print(expr_bool)
-    coexpr_counts = expr_bool.sum(axis=1)
-
+    ### Need to check all places of expression to get expression probablility
     expr_bool = expr > 0
     coexpr_counts_all = expr_bool.sum(axis=1)
+
+    ### Include cells which coexpress genes in positive set
+    expr_pos = expr[:, :in_index_end] # Get this for downstream calcs
+    expr_bool_pos = expr_bool[:, :in_index_end]
+    coexpr_counts_pos = expr_bool_pos.sum(axis=1)
+
+    ### Exclude cells which coexpress genes in the negative gene set...
+    expr_bool_neg = expr_bool[:, in_index_end:]
+    coexpr_counts_neg = expr_bool_neg.sum(axis=1)
 
     ### Accounting for case where might have only one marker gene !!
     if in_index_end < min_counts:
         min_counts = in_index_end
 
-    ### Must be coexpression of atleast min_count markers!
+    ### Getting which cells coexpress atleast min_counts of
+    ###  positive set but not min_counts of negative set
+    coexpr_bool = np.logical_and(coexpr_counts_pos >= min_counts,
+                                 coexpr_counts_neg < min_counts)
+    coexpr_indices = np.where( coexpr_bool )[0]
+
+    ### Need to check all nonzero indices to get expression level frequency.
     nonzero_indices = np.where(coexpr_counts_all > 0)[0]
-    coexpr_indices = np.where(coexpr_counts >= min_counts)[0]
-    # print("n coexpr indices, min_counts:", len(coexpr_indices), min_counts)
-    # print(" ")
     cell_scores = np.zeros((expr.shape[0]), dtype=np.float64)
     for i in coexpr_indices:
-        expr_probs = np.zeros(( expr.shape[1] ))
-        cell_nonzero = np.where( expr_bool[i, :] )[0]
-        for genej in cell_nonzero:
-            expr_probs[genej] = len(
-                np.where(expr[nonzero_indices, genej] >= expr[i, genej])[0]) / \
-                                                                   expr.shape[0]
+        expr_probs = np.zeros(( expr_pos.shape[1] ))
+        cell_nonzero = np.where( expr_bool_pos[i, :] )[0]
+        for j, genej in enumerate(cell_nonzero):
+            expr_level_count = len(np.where(expr_pos[nonzero_indices, genej]
+                                                      >= expr_pos[i, genej])[0])
+            expr_probs[j] = expr_level_count / expr.shape[0]
 
-        # NOTE: if len(diff_indices) is 0, np.prod will return 1.
-        out_probs = expr_probs[in_index_end:]
-        out_probs = out_probs[out_probs>0]
-        in_probs = expr_probs[:in_index_end]
-        in_probs = in_probs[in_probs>0]
-        cell_scores[i] = np.log2( np.prod(out_probs) / np.prod(in_probs) )
+        joint_coexpr_prob = np.prod( expr_probs[expr_probs > 0] )
+        cell_scores[i] = np.log2(coexpr_counts_pos[i] / joint_coexpr_prob)
 
     return cell_scores
 
@@ -300,7 +302,7 @@ def get_code_scores(full_expr: np.ndarray, all_genes: np.array,
                 if gene == gene2:
                     diff_indices[gene_index] = gene_index2
 
-        # TODO find error where ignoring clusters with genes >= 2
+        #### Now getting the coexpression scores
         all_indices = np.concatenate((gene_indices, diff_indices))
         cluster_scores_ = code_score(full_expr[:, all_indices],
                                      in_index_end=len(gene_indices),
@@ -505,7 +507,55 @@ def get_markers(data: sc.AnnData, groupby: str,
     if verbose:
         print(f"Added data.uns['{groupby}_markers']")
 
+################################################################################
+                        # Junk code #
+################################################################################
+"""
+@njit
+def code_score(expr: np.ndarray, in_index_end: int, min_counts: int = 2):
+    Enriches for the genes in the data, while controlling for genes that
+        shouldn't be in the cells.
+    
 
+    ### Need to check all places of expression to get expression probablility
+    expr_bool = expr > 0
+    coexpr_counts_all = expr_bool.sum(axis=1)
 
+    ### Include cells which coexpress genes in positive set
+    expr_bool_pos = expr[:, :in_index_end] > 0
+    coexpr_counts_pos = expr_bool_pos.sum(axis=1)
 
+    ### Exclude cells which coexpress genes in the negative gene set...
+    expr_bool_neg = expr[:, in_index_end:] > 0
+    coexpr_counts_neg = expr_bool_neg.sum(axis=1)
 
+    ### Accounting for case where might have only one marker gene !!
+    if in_index_end < min_counts:
+        min_counts = in_index_end
+
+    ### Getting which cells coexpress atleast min_counts of
+    ###  positive set but not negative set
+    coexpr_bool = np.logical_and(coexpr_counts_pos >= min_counts, 
+                                 coexpr_counts_neg < min_counts)
+    coexpr_indices = np.where(coexpr_bool)[0]
+
+    ### Need to check all nonzero indices to get expression level frequency.
+    nonzero_indices = np.where(coexpr_counts_all > 0)[0]
+    cell_scores = np.zeros((expr.shape[0]), dtype=np.float64)
+    for i in coexpr_indices:
+        expr_probs = np.zeros(( expr.shape[1] ))
+        cell_nonzero = np.where( expr_bool[i, :] )[0]
+        for genej in cell_nonzero:
+            expr_probs[genej] = len(
+                np.where(expr[nonzero_indices, genej] >= expr[i, genej])[0]) / \
+                                                                   expr.shape[0]
+
+        # NOTE: if len(diff_indices) is 0, np.prod will return 1.
+        out_probs = expr_probs[in_index_end:]
+        out_probs = out_probs[out_probs>0]
+        in_probs = expr_probs[:in_index_end]
+        in_probs = in_probs[in_probs>0]
+        cell_scores[i] = np.log2( np.prod(out_probs) / np.prod(in_probs) )
+
+    return cell_scores
+"""
