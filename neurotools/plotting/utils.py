@@ -8,8 +8,16 @@ import scanpy as sc
 
 import seaborn as sb
 
+import colorsys
 import matplotlib
-import matplotlib as plt
+from matplotlib import colors as mcolors
+
+def man_cmap(cmap, value=1.):
+    colors = cmap(np.arange(cmap.N))
+    hls = np.array([colorsys.rgb_to_hls(*c) for c in colors[:,:3]])
+    hls[:,1] *= value
+    rgb = np.clip(np.array([colorsys.hls_to_rgb(*c) for c in hls]), 0,1)
+    return mcolors.LinearSegmentedColormap.from_list("", rgb)
 
 def get_colors(labels, cmap, rgb=False, seaborn=False):
     """ Gets colors.

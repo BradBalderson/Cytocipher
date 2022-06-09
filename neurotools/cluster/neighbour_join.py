@@ -1,6 +1,6 @@
 """
 Progressively merge clusters using neighbour-joining algorithm, measuring
-distance between clusters as the no. of DE genes between them!
+distance between clusters as the no. of Limma_DE genes between them!
 
 Copy-pasted from TreeMethods:
 

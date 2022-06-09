@@ -13,7 +13,7 @@ def is_sig_different(data: AnnData, groupby: str, label1: str, label2: str,
         different from one another.
 
     NOTE: this should consider logfc as an absolute cutoff, right now only
-        considers if DE in label1 versus label2, but it might DOWN regulate
+        considers if Limma_DE in label1 versus label2, but it might DOWN regulate
         relative to the other label!!!
     """
 
@@ -40,7 +40,7 @@ def is_sig_different(data: AnnData, groupby: str, label1: str, label2: str,
                               padjs_rank < padj_cutoff)
     n_de = len(np.where(sig_bool)[0])
 
-    # If have less than this amount of DE genes, not sig different
+    # If have less than this amount of Limma_DE genes, not sig different
     return n_de > max_de, n_de
 
 def is_sig_different_scores(data: AnnData, groupby: str, label1: str, label2: str,
@@ -69,7 +69,7 @@ def is_sig_different_scores(data: AnnData, groupby: str, label1: str, label2: st
     # n_de = len(np.where(sig_bool)[0])
     n_de = len(np.where( padjs_rank < padj_cutoff )[0])
 
-    # If have less than this amount of DE genes, not sig different
+    # If have less than this amount of Limma_DE genes, not sig different
     return n_de > max_de, n_de
 
 

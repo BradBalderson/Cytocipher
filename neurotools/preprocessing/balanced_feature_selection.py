@@ -24,7 +24,7 @@ def load_nps():
     return nps
 
 def load_sex():
-    """Loads sex DE genes from development papers"""
+    """Loads sex Limma_DE genes from development papers"""
     path = os.path.dirname(os.path.realpath(__file__))
     sex_df = pd.read_csv(path + '/../dbs/sex_genes.txt', sep='\t', index_col=0)
     return sex_df
@@ -158,7 +158,7 @@ def balanced_feature_select_graph(data: AnnData, reference_genes: np.array,
                               use_annoy=use_annoy, metric=metric, approx=approx,
                                           initial_neighbours=initial_neighbours,
                                                                 verbose=verbose)
-        """ Only 18 of 62 DE genes detected in the selection for Batch1..
+        """ Only 18 of 62 Limma_DE genes detected in the selection for Batch1..
         If it's correct, pearsonr should be 1- the selected_corrs...
         
         from scipy.stats import pearsonr
@@ -171,7 +171,7 @@ def balanced_feature_select_graph(data: AnnData, reference_genes: np.array,
             
         Appears very accurate... is getting the correct genes.
         
-        ###### Getting overlap with DE genes
+        ###### Getting overlap with Limma_DE genes
         import beautifulcells.visualisation.quick_plots as qpl
         de_groups = ['DEFac'+group for group in datai.uns['marker_genes'] 
                               if np.any([ref in datai.uns['marker_genes'][group] 
@@ -186,7 +186,7 @@ def balanced_feature_select_graph(data: AnnData, reference_genes: np.array,
         detected = [gene for gene in selected if gene in de_genes]
         print(len(de_genes), len(detected), detected)
         
-        #### Are the undetected DE genes correlated with DE in this batch?
+        #### Are the undetected Limma_DE genes correlated with Limma_DE in this batch?
         de_genes_grouped = [factors.index.values[factors[col].values>1]
                                                      for col in factors.columns]
         undetected = [[gene for gene in de_genesi if gene not in selected]
@@ -201,7 +201,7 @@ def balanced_feature_select_graph(data: AnnData, reference_genes: np.array,
                     corrs.append( pearsonr(expr[:,0], expr[:,1])[0] )
         
         # The genes which weren't detected are not AT ALL correlated with the
-        #  detected DE genes, which suggests that perhaps these genes are
+        #  detected Limma_DE genes, which suggests that perhaps these genes are
         #  effected by the batch effect... 
         
                     

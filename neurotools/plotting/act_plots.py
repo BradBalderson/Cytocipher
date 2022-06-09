@@ -54,7 +54,7 @@ def ieg_counts(data: AnnData,
     # Retrieving the information from the AnnData #
     ieg_counts = data.uns['ieg_sig_counts']
 
-    # Rank by no. of significant DE genes #
+    # Rank by no. of significant Limma_DE genes #
     ct_sums = ieg_counts.values.sum(axis=1)
     ct_order = np.argsort(-ct_sums)
     social_sums = ieg_counts.values.sum(axis=0)

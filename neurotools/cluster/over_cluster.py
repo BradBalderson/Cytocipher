@@ -99,7 +99,7 @@ def get_pairs(data: AnnData, expr: np.ndarray, resolution: float):
 ### Main difference is that considers both up- and down- regulated genes!
 def is_over_clustered(data: AnnData, pairs: np.array, max_de: int=2,
                          padj_cutoff: float=.01, logfc_cutoff: float=1):
-    """ Checks if the data has been overclustered; i.e. no DE genes between a
+    """ Checks if the data has been overclustered; i.e. no Limma_DE genes between a
         given cluster & it's most similar cluster.
     """
     over_clustered = True
@@ -116,7 +116,7 @@ def is_over_clustered(data: AnnData, pairs: np.array, max_de: int=2,
 def over_cluster(data, expr, res: float=1, max_de: int=2, padj_cutoff: float=.01,
                  logfc_cutoff: float=2, max_iter: int=20, step_size: float=2,
                  verbose: bool=True):
-    """Overclusters that data; defined when no DE genes between any given cluster
+    """Overclusters that data; defined when no Limma_DE genes between any given cluster
         and it's nearest neighbour is reached.
     """
     #avg_data, label_set = cluster_and_average_v2(data, expr, res)
@@ -161,7 +161,7 @@ def is_over_clustered_v2(data: AnnData,
                          padj_cutoff: float=.01,
                       #score_cutoff: float=1
                       ):
-    """ Checks if the data has been overclustered; i.e. no DE genes between a
+    """ Checks if the data has been overclustered; i.e. no Limma_DE genes between a
         given cluster & it's most similar cluster.
     """
     over_clustered = True
@@ -199,7 +199,7 @@ def over_cluster_v2(data, expr, res: float=1, max_de: int=2, padj_cutoff: float=
                  #score_cutoff: float=2,
                  max_iter: int=20, step_size: float=2,
                  verbose: bool=True):
-    """Overclusters that data; defined when no DE genes between any given cluster
+    """Overclusters that data; defined when no Limma_DE genes between any given cluster
         and it's nearest neighbour is reached.
     """
     avg_data, label_set = cluster_and_average(data, expr, res)
@@ -243,7 +243,7 @@ def is_over_clustered_v1(data: AnnData,
                          avg_data: np.ndarray, label_set: np.array,
                          max_de: int=2,
                          padj_cutoff: float=.01, logfc_cutoff: float=1):
-    """ Checks if the data has been overclustered; i.e. no DE genes between a
+    """ Checks if the data has been overclustered; i.e. no Limma_DE genes between a
         given cluster & it's most similar cluster.
     """
     over_clustered = True
@@ -278,7 +278,7 @@ def is_over_clustered_v1(data: AnnData,
 def over_cluster_v1(data, expr, res: float=1, max_de: int=2, padj_cutoff: float=.01,
                  logfc_cutoff: float=2, max_iter: int=20, step_size: float=2,
                  verbose: bool=True):
-    """Overclusters that data; defined when no DE genes between any given cluster
+    """Overclusters that data; defined when no Limma_DE genes between any given cluster
         and it's nearest neighbour is reached.
     """
     avg_data, label_set = cluster_and_average(data, expr, res)

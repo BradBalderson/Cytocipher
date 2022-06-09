@@ -50,7 +50,7 @@ def cluster_silhouettes(data: AnnData, groupby: str, n_rands: int=5000,
 def cluster_enrich(data, groupby: str, group_genes: dict=None,
                   padj_cutoff: float=.05, logfc_cutoff: float=None,
                   verbose: bool=True):
-    Scores the different clusters based on the enrichment of cluster DE
+    Scores the different clusters based on the enrichment of cluster Limma_DE
         genes. Must have performed sc.tl.rank_genes_group first!
 
     Parameters
@@ -100,9 +100,9 @@ def cluster_enrich(data, groupby: str, group_genes: dict=None,
     cell_scores = np.zeros((data.shape[0], len(group_genes)))
     #cluster_scores = np.zeros((len(group_genes), len(group_genes)))
     for i, clusteri in enumerate(group_genes):
-        if len(group_genes[clusteri]) == 0: # No DE.
+        if len(group_genes[clusteri]) == 0: # No Limma_DE.
             if verbose:
-                print(f"Warning, detected cluster with no DE ({clusteri}).")
+                print(f"Warning, detected cluster with no Limma_DE ({clusteri}).")
             continue
 
         cluster_scores_ = giotto_page_enrich_min(group_genes[clusteri],

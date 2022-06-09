@@ -7,7 +7,7 @@ import pandas as pd
 import scanpy as sc
 
 def n_different(data, groupby, pair, logfc_cutoff, padj_cutoff):
-    """ Gets no. of significant DE between inputted cell types.
+    """ Gets no. of significant Limma_DE between inputted cell types.
     """
     ##### Calling de genes
     sc.tl.rank_genes_groups(data, groupby=groupby, use_raw=False,
