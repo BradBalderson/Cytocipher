@@ -145,7 +145,9 @@ def get_enrich_scores(full_expr: np.ndarray, all_genes: np.array,
         genes_ = cluster_genes_List[i]
         gene_indices = np.zeros( genes_.shape, dtype=np.int_ )
         for gene_index, gene in enumerate( genes_ ):
-            gene_indices[gene_index] = np.where(all_genes == gene)[0][0]
+            for gene_index2, gene2 in enumerate( all_genes ):
+                if gene == gene2:
+                    gene_indices[gene_index] = gene_index2
 
         cluster_scores_ = coexpr_score(full_expr[:, gene_indices],
                                        min_counts=min_counts)
