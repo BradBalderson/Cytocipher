@@ -249,6 +249,7 @@ def code_score(expr: np.ndarray, in_index_end: int, min_counts: int = 2):
     ### Must be coexpression of atleast min_count markers!
     nonzero_indices = np.where(coexpr_counts_all > 0)[0]
     coexpr_indices = np.where(coexpr_counts >= min_counts)[0]
+    print(len(coexpr_indices))
     cell_scores = np.zeros((expr.shape[0]), dtype=np.float64)
     for i in coexpr_indices:
         expr_probs = np.zeros(( expr.shape[1] ))
