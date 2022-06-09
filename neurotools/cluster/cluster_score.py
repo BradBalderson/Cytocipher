@@ -293,8 +293,8 @@ def get_code_scores(full_expr: np.ndarray, all_genes: np.array,
                     diff_indices[gene_index] = gene_index2
 
         all_indices = np.concatenate((gene_indices, diff_indices))
-        indices_in = np.array(range(len(gene_indices)))
-        indices_out = np.array(range(len(diff_indices)))
+        indices_in = np.array(range(len(gene_indices)), dtype=np.int_)
+        indices_out = np.array(range(len(diff_indices)), dtype=np.int_)
 
         cluster_scores_ = code_score(full_expr[:, all_indices],
                                      indices_in=indices_in,
