@@ -235,7 +235,8 @@ def coexpr_enrich_labelled(data: sc.AnnData, groupby: str, min_counts: int=2,
     how specific is cells cluster genes against all other cluster genes ?
 """
 def coexpr_specificity_score(data: sc.AnnData, groupby: str,
-                             enrich_key: str=None, verbose=True,):
+                             enrich_key: str=None, verbose=True,
+                             broader_expr_adjust: bool=False):
     """ How specific is the cluster enrichment score in cell ?
     """
     if type(enrich_key)==type(None):
@@ -250,15 +251,28 @@ def coexpr_specificity_score(data: sc.AnnData, groupby: str,
 
     #### Distance to only having score in cluster but no other.
     label_set = expr_scores_df.columns.values.astype(str)
+    if broader_expr_adjust:
+        label_genes = [label.split('-') for label in label_set]
     labels = data.obs[groupby].values.astype(str)
 
     spec_scores = np.zeros( (data.shape[0]) )
     for celli in range( data.shape[0] ):
         perfect_score = np.zeros( (len(label_set)) )
-        perfect_score[label_set == labels[celli]] = 1 # Just score for cluster
+        label_index = np.where(label_set == labels[celli])[0][0]
+        perfect_score[label_index] = 1 # Just score for cluster
 
-        spec_scores[celli] = distance.cosine(perfect_score,
-                                                          expr_scores[celli, :])
+        # Adjust for cases where clusters express genes in this cluster!!
+        if broader_expr_adjust:
+            include_indices = [label_index]+\
+                              [i for i in range(label_set)
+                               if i!=label_index and
+                               not np.all([gene in label_genes[i]
+                                         for gene in label_genes[label_index]])]
+        else:
+            include_indices = list(range(len(label_set)))
+
+        spec_scores[celli] = distance.cosine(perfect_score[include_indices],
+                                             expr_scores[celli, include_indices])
 
     data.obs[f'{groupby}_specificity'] = spec_scores
     if verbose:
