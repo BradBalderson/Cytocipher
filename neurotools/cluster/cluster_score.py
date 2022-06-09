@@ -259,8 +259,9 @@ def code_score(expr: np.ndarray, in_index_end: int, min_counts: int = 2):
                                                                    expr.shape[0]
 
         # NOTE: if len(diff_indices) is 0, np.prod will return 1.
-        cell_scores[i] = np.log2(np.prod(expr_probs[in_index_end:]) /
-                                 np.prod(expr_probs[:in_index_end]))
+        numerator = np.prod(expr_probs[in_index_end:])
+        numerator = numerator if numerator!=0 else 1
+        cell_scores[i] = np.log2(numerator / np.prod(expr_probs[:in_index_end]))
         print("cell scores", cell_scores[i])
 
     return cell_scores
