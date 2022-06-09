@@ -231,20 +231,19 @@ def coexpr_enrich_labelled(data: sc.AnnData, groupby: str, min_counts: int=2,
      # Coexpression scoring but taking into account other cluster genes #
 ################################################################################
 @njit
-def code_score(expr: np.ndarray, indices_in: np.array, indices_out: np.array,
-               min_counts: int = 2):
+def code_score(expr: np.ndarray, in_index_end: int, min_counts: int = 2):
     """Enriches for the genes in the data, while controlling for genes that
         shouldn't be in the cells.
     """
 
-    expr_bool = expr[:, indices_in] > 0
+    expr_bool = expr[:, :in_index_end] > 0
     coexpr_counts = expr_bool.sum(axis=1)
 
     expr_bool = expr > 0
 
     ### Accounting for case where might have only one marker gene !!
-    if len(indices_in) < min_counts:
-        min_counts = len(indices_in)
+    if in_index_end < min_counts:
+        min_counts = in_index_end
 
     ### Must be coexpression of atleast min_count markers!
     nonzero_indices = np.where(coexpr_counts > 0)[0]
@@ -259,8 +258,8 @@ def code_score(expr: np.ndarray, indices_in: np.array, indices_out: np.array,
                             expr.shape[0]
 
         # NOTE: if len(diff_indices) is 0, np.prod will return 1.
-        cell_scores[i] = np.log2(np.prod(expr_probs[indices_out]) /
-                                 np.prod(expr_probs[indices_in]))
+        cell_scores[i] = np.log2(np.prod(expr_probs[in_index_end:]) /
+                                 np.prod(expr_probs[:in_index_end]))
 
     return cell_scores
 
@@ -293,12 +292,8 @@ def get_code_scores(full_expr: np.ndarray, all_genes: np.array,
                     diff_indices[gene_index] = gene_index2
 
         all_indices = np.concatenate((gene_indices, diff_indices))
-        indices_in = np.array(range(len(gene_indices)), dtype=np.int_)
-        indices_out = np.array(range(len(diff_indices)), dtype=np.int_)
-
         cluster_scores_ = code_score(full_expr[:, all_indices],
-                                     indices_in=indices_in,
-                                     indices_out=indices_out,
+                                     in_index_end=len(gene_indices),
                                                           min_counts=min_counts)
         cell_scores[:, i] = cluster_scores_
 
