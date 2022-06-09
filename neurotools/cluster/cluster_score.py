@@ -240,22 +240,23 @@ def code_score(expr: np.ndarray, in_index_end: int, min_counts: int = 2):
     coexpr_counts = expr_bool.sum(axis=1)
 
     expr_bool = expr > 0
+    coexpr_counts_all = expr_bool.sum(axis=1)
 
     ### Accounting for case where might have only one marker gene !!
     if in_index_end < min_counts:
         min_counts = in_index_end
 
     ### Must be coexpression of atleast min_count markers!
-    nonzero_indices = np.where(coexpr_counts > 0)[0]
+    nonzero_indices = np.where(coexpr_counts_all > 0)[0]
     coexpr_indices = np.where(coexpr_counts >= min_counts)[0]
     cell_scores = np.zeros((expr.shape[0]), dtype=np.float64)
     for i in coexpr_indices:
-        expr_probs = np.zeros((coexpr_counts[i]))
-        cell_nonzero = np.where(expr_bool[i, :])[0]
-        for j, genej in enumerate(cell_nonzero):
-            expr_probs[j] = len(
+        expr_probs = np.zeros(( expr.shape[1] ))
+        cell_nonzero = np.where( expr_bool[i, :] )[0]
+        for genej in cell_nonzero:
+            expr_probs[genej] = len(
                 np.where(expr[nonzero_indices, genej] >= expr[i, genej])[0]) / \
-                            expr.shape[0]
+                                                                   expr.shape[0]
 
         # NOTE: if len(diff_indices) is 0, np.prod will return 1.
         cell_scores[i] = np.log2(np.prod(expr_probs[in_index_end:]) /
