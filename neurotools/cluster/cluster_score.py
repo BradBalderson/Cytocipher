@@ -346,7 +346,7 @@ def code_enrich(data: sc.AnnData, groupby: str,
                 # to penalise.
                 min_ = min_counts \
                     if len(cluster_genes) >= min_counts else len(cluster_genes)
-                if sum(shared_genes_bool) >= min_counts:
+                if sum(shared_genes_bool) >= min_:
                     cluster_diff_full.extend(
                         [gene for gene in cluster_genes_dict[clusterj]
                                           if gene not in cluster_genes]
