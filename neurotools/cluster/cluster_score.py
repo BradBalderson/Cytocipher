@@ -237,6 +237,10 @@ def code_score(expr: np.ndarray, in_index_end: int, min_counts: int = 2):
     """
 
     expr_bool = expr[:, :in_index_end] > 0
+    print("new")
+    print(in_index_end)
+    print(expr_bool)
+    print(" ")
     coexpr_counts = expr_bool.sum(axis=1)
 
     expr_bool = expr > 0
@@ -293,6 +297,7 @@ def get_code_scores(full_expr: np.ndarray, all_genes: np.array,
                 if gene == gene2:
                     diff_indices[gene_index] = gene_index2
 
+        # TODO find error where ignoring clusters with genes >= 2
         all_indices = np.concatenate((gene_indices, diff_indices))
         cluster_scores_ = code_score(full_expr[:, all_indices],
                                      in_index_end=len(gene_indices),
