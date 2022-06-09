@@ -344,6 +344,8 @@ def code_enrich(data: sc.AnnData, groupby: str,
                 # If it's possible to score for this cluster due to
                 # shared genes by coexpression scoring, get genes different
                 # to penalise.
+                min_ = min_counts \
+                    if len(cluster_genes) >= min_counts else len(cluster_genes)
                 if sum(shared_genes_bool) >= min_counts:
                     cluster_diff_full.extend(
                         [gene for gene in cluster_genes_dict[clusterj]
