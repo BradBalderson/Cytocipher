@@ -205,6 +205,8 @@ def coexpr_enrich_labelled(data: sc.AnnData, groupby: str, min_counts: int=2,
                                              n_cpus: int=1, verbose: bool=True):
     """ Coexpression enrichment for cell clusters labelled by gene coexpression.
     """
+    # NOTE: can't do this because have case of single gene labels which might
+    #       have a gene shared between clusters...
     ### Converting cluster names to marker list
     cluster_names = np.unique( data.obs[groupby].values )
     cluster_markers = {}
@@ -223,18 +225,18 @@ def coexpr_enrich_labelled(data: sc.AnnData, groupby: str, min_counts: int=2,
                                                                  n_cpus=n_cpus,)
 
 
-
 ################################################################################
                         # Currently not in use #
 ################################################################################
 # TODO could be good to use this in giotto_enrich above...
-"""
 def get_markers(data: sc.AnnData, groupby: str,
                 var_groups: str = 'highly_variable',
                 logfc_cutoff: float = 0, padj_cutoff: float = .05,
-                n_top: int = 5, rerun_de: bool = True, gene_order='logfc',
+                n_top: int = 5, rerun_de: bool = True, gene_order=None,
                 verbose: bool = True):
+    """
     Gets the marker genes as a dictionary...
+    """
 
     if rerun_de:
         if type(var_groups) != type(None):
@@ -263,10 +265,9 @@ def get_markers(data: sc.AnnData, groupby: str,
         cluster_genes[cluster] = genes_rank.values[up_rank, i]
 
     data.uns[f'{groupby}_markers'] = cluster_genes
-    cluster_marker_key = f'{groupby}_markers'
     if verbose:
         print(f"Added data.uns['{groupby}_markers']")
-"""
+
 
 
 
