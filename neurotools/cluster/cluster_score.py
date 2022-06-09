@@ -228,6 +228,173 @@ def coexpr_enrich_labelled(data: sc.AnnData, groupby: str, min_counts: int=2,
                                                                  n_cpus=n_cpus,)
 
 ################################################################################
+     # Coexpression scoring but taking into account other cluster genes #
+################################################################################
+@njit
+def code_score(expr: np.ndarray, indices_in: np.array, indices_out: np.array,
+               min_counts: int = 2):
+    """Enriches for the genes in the data, while controlling for genes that
+        shouldn't be in the cells.
+    """
+
+    expr_bool = expr[:, indices_in] > 0
+    coexpr_counts = expr_bool.sum(axis=1)
+
+    expr_bool = expr > 0
+
+    ### Accounting for case where might have only one marker gene !!
+    if len(indices_in) < min_counts:
+        min_counts = len(indices_in)
+
+    ### Must be coexpression of atleast min_count markers!
+    nonzero_indices = np.where(coexpr_counts > 0)[0]
+    coexpr_indices = np.where(coexpr_counts >= min_counts)[0]
+    cell_scores = np.zeros((expr.shape[0]), dtype=np.float64)
+    for i in coexpr_indices:
+        expr_probs = np.zeros((coexpr_counts[i]))
+        cell_nonzero = np.where(expr_bool[i, :])[0]
+        for j, genej in enumerate(cell_nonzero):
+            expr_probs[j] = len(
+                np.where(expr[nonzero_indices, genej] >= expr[i, genej])[0]) / \
+                            expr.shape[0]
+
+        # NOTE: if len(diff_indices) is 0, np.prod will return 1.
+        cell_scores[i] = np.log2(np.prod(expr_probs[indices_out]) /
+                                 np.prod(expr_probs[indices_in]))
+
+    return cell_scores
+
+@njit(parallel=True)
+def get_code_scores(full_expr: np.ndarray, all_genes: np.array,
+                      cluster_genes_List: np.array,
+                      cluster_diff_List: np.array,
+                      min_counts: int,
+                      ):
+    """ Gets the enrichment of the cluster-specific gene combinations in each
+        individual cell.
+    """
+    cell_scores = np.zeros((full_expr.shape[0], len(cluster_genes_List)))
+    for i in prange( len(cluster_genes_List) ):
+        genes_ = cluster_genes_List[i]
+        genes_diff = cluster_diff_List[i]
+
+        #### Getting genes should be in cluster
+        gene_indices = np.zeros( genes_.shape, dtype=np.int_ )
+        for gene_index, gene in enumerate( genes_ ):
+            for gene_index2, gene2 in enumerate( all_genes ):
+                if gene == gene2:
+                    gene_indices[gene_index] = gene_index2
+
+        #### Getting genes shouldn't be in cluster
+        diff_indices = np.zeros(genes_diff.shape, dtype=np.int_)
+        for gene_index, gene in enumerate( genes_diff ):
+            for gene_index2, gene2 in enumerate(all_genes):
+                if gene == gene2:
+                    diff_indices[gene_index] = gene_index2
+
+        all_indices = np.concatenate((gene_indices, diff_indices))
+        indices_in = np.array(range(len(gene_indices)))
+        indices_out = np.array(range(len(diff_indices)))
+
+        cluster_scores_ = code_score(full_expr[:, all_indices],
+                                     indices_in=indices_in,
+                                     indices_out=indices_out,
+                                                          min_counts=min_counts)
+        cell_scores[:, i] = cluster_scores_
+
+    return cell_scores
+
+def code_enrich(data: sc.AnnData, groupby: str,
+                  cluster_marker_key: str = None,
+                  min_counts: int = 2, n_cpus: int=1,
+                  verbose: bool = True):
+    """ NOTE: unlike the giotto function version, this one assumes have already done DE.
+    """
+    # Setting threads for paralellisation #
+    if type(n_cpus) != type(None):
+        numba.set_num_threads( n_cpus )
+
+    if type(cluster_marker_key) == type(None):
+        cluster_marker_key = f'{groupby}_markers'
+
+    cluster_genes_dict = data.uns[cluster_marker_key]
+
+    # Putting all genes into array for speed.
+    all_genes = []
+    [all_genes.extend(cluster_genes_dict[cluster])
+                                              for cluster in cluster_genes_dict]
+    # Getting correct typing
+    str_dtype = f"<U{max([len(gene_name) for gene_name in all_genes])}"
+    all_genes = np.unique( all_genes ).astype(str_dtype)
+
+    #### Need to convert the markers into a Numba compatible format, easiest is
+    #### List of numpy arrays.
+    cluster_genes_List = List()
+    cluster_diff_List = List() #Genes which the clusters shouldn't express!
+    for cluster in cluster_genes_dict:
+        #### Genes stratified by cluster
+        cluster_genes = np.array([gene for gene in cluster_genes_dict[cluster]],
+                                                                dtype=str_dtype)
+        cluster_genes_List.append( cluster_genes )
+
+        ### Getting genes which are different if clusters with similar genes
+        cluster_diff_full = []
+        for clusterj in cluster_genes_dict:
+            if cluster!=clusterj:
+                shared_genes_bool = [gene in cluster_genes_dict[clusterj]
+                                                      for gene in cluster_genes]
+
+                # If it's possible to score for this cluster due to
+                # shared genes by coexpression scoring, get genes different
+                # to penalise.
+                if sum(shared_genes_bool) >= min_counts:
+                    cluster_diff_full.extend(
+                        [gene for gene in cluster_genes_dict[clusterj]
+                                          if gene not in cluster_genes]
+                    )
+        cluster_diff_full = np.unique(np.array(cluster_diff_full,
+                                                               dtype=str_dtype))
+        cluster_diff_List.append( cluster_diff_full )
+
+    full_expr = data[:, all_genes].X.toarray()
+
+    ###### Getting the enrichment scores...
+    cell_scores = get_code_scores(full_expr, all_genes,
+                                    cluster_genes_List, cluster_diff_List,
+                                                                     min_counts)
+
+    ###### Adding to AnnData
+    cluster_scores = pd.DataFrame(cell_scores, index=data.obs_names,
+                                  columns=list(cluster_genes_dict.keys()))
+    data.obsm[f'{groupby}_enrich_scores'] = cluster_scores
+
+    if verbose:
+        print(f"Added data.obsm['{groupby}_enrich_scores']")
+
+def code_enrich_labelled(data: sc.AnnData, groupby: str, min_counts: int=2,
+                                             n_cpus: int=1, verbose: bool=True):
+    """ Coexpression enrichment for cell clusters labelled by gene coexpression.
+    """
+    # NOTE: can't do this because have case of single gene labels which might
+    #       have a gene shared between clusters...
+    ### Converting cluster names to marker list
+    cluster_names = np.unique( data.obs[groupby].values )
+    cluster_markers = {}
+    for cluster in cluster_names:
+        cluster_markers[cluster] = cluster.split('-')
+
+    ### Add to anndata so can calculate coexpression scores.
+    cluster_marker_key = f'{groupby}_markers'
+    data.uns[cluster_marker_key] = cluster_markers
+    if verbose:
+        print(f"Added {groupby}_markers.")
+
+    ### Now running coexpression scoring.
+    code_enrich(data, groupby, cluster_marker_key=cluster_marker_key,
+                                         min_counts=min_counts, verbose=verbose,
+                                                                 n_cpus=n_cpus,)
+
+################################################################################
                    # Coexpression specificity score #
 ################################################################################
 """ Looking at how specific the coexpression of the gene is for the group of 
