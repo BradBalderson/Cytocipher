@@ -260,8 +260,9 @@ def coexpr_specificity_score(data: sc.AnnData, groupby: str,
         spec_scores[celli] = distance.cosine(perfect_score,
                                                           expr_scores[celli, :])
 
+    data.obs[f'{groupby}_specificity'] = spec_scores
     if verbose:
-        data.obs[f'{groupby}_spec_scores'] = spec_scores
+        print(f"Added data.obs['{groupby}_specificity']")
 
 ################################################################################
                         # Currently not in use #
