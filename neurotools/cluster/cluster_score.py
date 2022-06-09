@@ -297,7 +297,6 @@ def get_code_scores(full_expr: np.ndarray, all_genes: np.array,
         cluster_scores_ = code_score(full_expr[:, all_indices],
                                      in_index_end=len(gene_indices),
                                                           min_counts=min_counts)
-        print(sum(cluster_scores_))
         cell_scores[:, i] = cluster_scores_
 
     return cell_scores
@@ -353,6 +352,9 @@ def code_enrich(data: sc.AnnData, groupby: str,
         cluster_diff_full = np.unique(np.array(cluster_diff_full,
                                                                dtype=str_dtype))
         cluster_diff_List.append( cluster_diff_full )
+
+    print(cluster_genes_List)
+    print(cluster_diff_List)
 
     full_expr = data[:, all_genes].X.toarray()
 
