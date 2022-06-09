@@ -226,13 +226,14 @@ def coexpr_enrich_labelled(data: sc.AnnData, groupby: str, min_counts: int=2,
                         # Currently not in use #
 ################################################################################
 # TODO could be good to use this in giotto_enrich above...
+"""
 def get_markers(data: sc.AnnData, groupby: str,
                 var_groups: str = 'highly_variable',
                 logfc_cutoff: float = 0, padj_cutoff: float = .05,
                 n_top: int = 5, rerun_de: bool = True, gene_order='logfc',
                 verbose: bool = True):
-    """Gets the marker genes as a dictionary...
-    """
+    Gets the marker genes as a dictionary...
+
     if rerun_de:
         if type(var_groups) != type(None):
             data_sub = data[:, data.var[var_groups]]
@@ -263,7 +264,7 @@ def get_markers(data: sc.AnnData, groupby: str,
     cluster_marker_key = f'{groupby}_markers'
     if verbose:
         print(f"Added data.uns['{groupby}_markers']")
-
+"""
 
 
 
