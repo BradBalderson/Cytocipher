@@ -176,21 +176,16 @@ def coexpr_enrich(data: sc.AnnData, groupby: str,
 
     #### Need to convert the markers into a Numba compatible format, easiest is
     #### List of numpy arrays.
-    all_genes = []
-    cluster_genes_List = List()
-
     # Getting correct typing
     str_dtype = f"<U{max([len(gene_name) for gene_name in all_genes])}"
 
+    cluster_genes_List = List()
     for cluster in cluster_genes_dict:
-        all_genes.extend(cluster_genes_dict[cluster]) ### Just getting all genes
-
         #### Genes stratified by cluster
         cluster_genes = np.array([gene for gene in cluster_genes_dict[cluster]],
                                                                 dtype=str_dtype)
         cluster_genes_List.append( cluster_genes )
 
-    all_genes = np.unique( all_genes )
     full_expr = data[:, all_genes].X.toarray()
 
     ###### Getting the enrichment scores...
