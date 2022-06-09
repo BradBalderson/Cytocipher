@@ -182,7 +182,7 @@ def coexpr_enrich(data: sc.AnnData, groupby: str,
 
     # Putting all genes into array for speed.
     all_genes = []
-    [all_genes.extend(cluster_genes[cluster] for cluster in cluster_genes)]
+    [all_genes.extend(cluster_genes[cluster]) for cluster in cluster_genes]
     all_genes = np.unique( all_genes )
 
     full_expr = data[:, all_genes].X.toarray()
