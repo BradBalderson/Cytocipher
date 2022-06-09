@@ -7,6 +7,9 @@ import pandas as pd
 import scanpy as sc
 from scanpy import AnnData
 
+from scipy.spatial import distance
+from sklearn.preprocessing import minmax_scale
+
 import numba
 from numba.typed import List
 from numba import njit, prange
@@ -224,13 +227,48 @@ def coexpr_enrich_labelled(data: sc.AnnData, groupby: str, min_counts: int=2,
                                          min_counts=min_counts, verbose=verbose,
                                                                  n_cpus=n_cpus,)
 
+################################################################################
+                   # Coexpression specificity score #
+################################################################################
+""" Looking at how specific the coexpression of the gene is for the group of 
+    cells!!! i.e. given the coexpression score for each cluster's genes, 
+    how specific is cells cluster genes against all other cluster genes ?
+"""
+def coexpr_specificity_score(data: sc.AnnData, groupby: str,
+                             enrich_key: str=None, verbose=True,):
+    """ How specific is the cluster enrichment score in cell ?
+    """
+    if type(enrich_key)==type(None):
+        expr_scores_df = data.obsm[f'{groupby}_enrich_scores']
+    else:
+        expr_scores_df = data.obsm[ enrich_key ]
+
+    #### For each cell, min-max scale across it's scores since cosine
+    #### sensitive to scale, ref:
+    # https://stats.stackexchange.com/questions/292596/is-feature-normalisation-needed-prior-to-computing-cosine-distance
+    expr_scores = minmax_scale(expr_scores_df.values, axis=1) # per cell scale
+
+    #### Distance to only having score in cluster but no other.
+    label_set = expr_scores_df.columns.values.astype(str)
+    labels = data.obs[groupby].values.astype(str)
+
+    spec_scores = np.zeros( (data.shape[0]) )
+    for celli in range( data.shape[0] ):
+        perfect_score = np.zeros( (len(label_set)) )
+        perfect_score[label_set == labels[celli]] = 1 # Just score for cluster
+
+        spec_scores[celli] = distance.cosine(perfect_score,
+                                                          expr_scores[celli, :])
+
+    if verbose:
+        data.obs[f'{groupby}_spec_scores'] = spec_scores
 
 ################################################################################
                         # Currently not in use #
 ################################################################################
 # TODO could be good to use this in giotto_enrich above...
 def get_markers(data: sc.AnnData, groupby: str,
-                var_groups: str = 'highly_variable',
+                var_groups: str = None,
                 logfc_cutoff: float = 0, padj_cutoff: float = .05,
                 n_top: int = 5, rerun_de: bool = True, gene_order=None,
                 verbose: bool = True):
