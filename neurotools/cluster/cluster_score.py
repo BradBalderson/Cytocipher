@@ -110,7 +110,11 @@ def coexpr_score(expr: np.ndarray, min_counts: int = 2):
     expr_bool = expr > 0
     coexpr_counts = expr_bool.sum(axis=1)
 
-    # min_counts = 2 ### Must be coexpression of atleast 2 of the markers!
+    ### Accounting for case where might have only one marker gene !!
+    if expr.shape[1] < min_counts:
+        min_counts = expr.shape[1]
+
+    ### Must be coexpression of atleast min_count markers!
     nonzero_indices = np.where(coexpr_counts > 0)[0]
     coexpr_indices = np.where(coexpr_counts >= min_counts)[0]
     cell_scores = np.zeros((expr.shape[0]), dtype=np.float64)
@@ -126,7 +130,7 @@ def coexpr_score(expr: np.ndarray, min_counts: int = 2):
 
     return cell_scores
 
-
+# TODO could be good to use this in giotto_enrich above...
 def get_markers(data: sc.AnnData, groupby: str,
                 var_groups: str = 'highly_variable',
                 logfc_cutoff: float = 0, padj_cutoff: float = .05,
@@ -165,9 +169,9 @@ def get_markers(data: sc.AnnData, groupby: str,
     if verbose:
         print(f"Added data.uns['{groupby}_markers']")
 
-
 def coexpr_enrich(data: sc.AnnData, groupby: str,
-                  cluster_marker_key: str = None, min_counts: int = 2,
+                  cluster_marker_key: str = None,
+                  min_counts: int = 2,
                   verbose: bool = True):
     """ NOTE: unlike the giotto function version, this one assumes have already done DE.
     """
@@ -176,12 +180,21 @@ def coexpr_enrich(data: sc.AnnData, groupby: str,
 
     cluster_genes = data.uns[cluster_marker_key]
 
+    # Putting all genes into array for speed.
+    all_genes = []
+    [all_genes.extend(cluster_genes[cluster] for cluster in cluster_genes)]
+    all_genes = np.unique( all_genes )
+
+    full_expr = data[:, all_genes].X.toarray()
+
     ###### Getting the enrichment scores...
     cell_scores = np.zeros((data.shape[0], len(cluster_genes)))
     for i, clusteri in enumerate(cluster_genes):
         genes_ = cluster_genes[clusteri]
-        cluster_scores_ = coexpr_score(data[:, genes_].X.toarray(),
-                                       min_counts=min_counts)
+        gene_indices = [np.where(all_genes==gene)[0][0]
+                        for gene in genes_]
+        cluster_scores_ = coexpr_score(full_expr[:, gene_indices],
+                                                          min_counts=min_counts)
         cell_scores[:, i] = cluster_scores_
 
     ###### Adding to AnnData
