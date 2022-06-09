@@ -264,7 +264,7 @@ def coexpr_specificity_score(data: sc.AnnData, groupby: str,
         # Adjust for cases where clusters express genes in this cluster!!
         if broader_expr_adjust:
             include_indices = [label_index]+\
-                              [i for i in range(label_set)
+                              [i for i in range(len(label_set))
                                if i!=label_index and
                                not np.all([gene in label_genes[i]
                                          for gene in label_genes[label_index]])]
