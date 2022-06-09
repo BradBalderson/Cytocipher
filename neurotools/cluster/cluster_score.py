@@ -7,7 +7,8 @@ import pandas as pd
 import scanpy as sc
 from scanpy import AnnData
 
-from numba import njit
+import numba
+from numba import njit, prange, List
 
 def calc_page_enrich_input(data):
     """ Calculates stats necessary to calculate enrichment score.
@@ -130,6 +131,105 @@ def coexpr_score(expr: np.ndarray, min_counts: int = 2):
 
     return cell_scores
 
+@njit(parallel=True)
+def get_enrich_scores(full_expr: np.ndarray, all_genes: np.array,
+                      cluster_genes_List: np.array,
+                      min_counts: int,
+                      ):
+    """ Gets the enrichment of the cluster-specific gene combinations in each
+        individual cell.
+    """
+    cell_scores = np.zeros((full_expr.shape[0], len(cluster_genes_List)))
+    for i in prange( len(cluster_genes_List) ):
+        genes_ = cluster_genes_List[i]
+        gene_indices = np.zeros( genes_.shape )
+        for gene_index, gene in enumerate( genes_ ):
+            gene_indices[gene_index] = np.where(all_genes == gene)[0][0]
+
+        cluster_scores_ = coexpr_score(full_expr[:, gene_indices],
+                                       min_counts=min_counts)
+        cell_scores[:, i] = cluster_scores_
+
+    return cell_scores
+
+def coexpr_enrich(data: sc.AnnData, groupby: str,
+                  cluster_marker_key: str = None,
+                  min_counts: int = 2, n_cpus: int=1,
+                  verbose: bool = True):
+    """ NOTE: unlike the giotto function version, this one assumes have already done DE.
+    """
+    # Setting threads for paralellisation #
+    if type(n_cpus) != type(None):
+        numba.set_num_threads( n_cpus )
+
+    if type(cluster_marker_key) == type(None):
+        cluster_marker_key = f'{groupby}_markers'
+
+    cluster_genes_dict = data.uns[cluster_marker_key]
+
+    # Putting all genes into array for speed.
+    all_genes = []
+    [all_genes.extend(cluster_genes_dict[cluster])
+                                              for cluster in cluster_genes_dict]
+    all_genes = np.unique( all_genes )
+
+    #### Need to convert the markers into a Numba compatible format, easiest is
+    #### List of numpy arrays.
+    all_genes = []
+    cluster_genes_List = List()
+
+    # Getting correct typing
+    str_dtype = f"<U{max([len(gene_name) for gene_name in all_genes])}"
+
+    for cluster in cluster_genes_dict:
+        all_genes.extend(cluster_genes_dict[cluster]) ### Just getting all genes
+
+        #### Genes stratified by cluster
+        cluster_genes = np.array([gene for gene in cluster_genes_dict[cluster]],
+                                                                dtype=str_dtype)
+        cluster_genes_List.append( cluster_genes )
+
+    all_genes = np.unique( all_genes )
+    full_expr = data[:, all_genes].X.toarray()
+
+    ###### Getting the enrichment scores...
+    cell_scores = get_enrich_scores(full_expr, all_genes,
+                                    cluster_genes_List, min_counts)
+
+    ###### Adding to AnnData
+    cluster_scores = pd.DataFrame(cell_scores, index=data.obs_names,
+                                  columns=list(cluster_genes_dict.keys()))
+    data.obsm[f'{groupby}_enrich_scores'] = cluster_scores
+
+    if verbose:
+        print(f"Added data.obsm['{groupby}_enrich_scores']")
+
+def coexpr_enrich_labelled(data: sc.AnnData, groupby: str, min_counts: int=2,
+                                             n_cpus: int=1, verbose: bool=True):
+    """ Coexpression enrichment for cell clusters labelled by gene coexpression.
+    """
+    ### Converting cluster names to marker list
+    cluster_names = np.unique( data.obs[groupby].values )
+    cluster_markers = {}
+    for cluster in cluster_names:
+        cluster_markers[cluster] = cluster.split('-')
+
+    ### Add to anndata so can calculate coexpression scores.
+    cluster_marker_key = f'{groupby}_markers'
+    data.uns[cluster_marker_key] = cluster_markers
+    if verbose:
+        print(f"Added {groupby}_markers.")
+
+    ### Now running coexpression scoring.
+    coexpr_enrich(data, groupby, cluster_marker_key=cluster_marker_key,
+                                         min_counts=min_counts, verbose=verbose,
+                                                                 n_cpus=n_cpus,)
+
+
+
+################################################################################
+                        # Currently not in use #
+################################################################################
 # TODO could be good to use this in giotto_enrich above...
 def get_markers(data: sc.AnnData, groupby: str,
                 var_groups: str = 'highly_variable',
@@ -168,63 +268,6 @@ def get_markers(data: sc.AnnData, groupby: str,
     cluster_marker_key = f'{groupby}_markers'
     if verbose:
         print(f"Added data.uns['{groupby}_markers']")
-
-def coexpr_enrich(data: sc.AnnData, groupby: str,
-                  cluster_marker_key: str = None,
-                  min_counts: int = 2,
-                  verbose: bool = True):
-    """ NOTE: unlike the giotto function version, this one assumes have already done DE.
-    """
-    if type(cluster_marker_key) == type(None):
-        cluster_marker_key = f'{groupby}_markers'
-
-    cluster_genes = data.uns[cluster_marker_key]
-
-    # Putting all genes into array for speed.
-    all_genes = []
-    [all_genes.extend(cluster_genes[cluster]) for cluster in cluster_genes]
-    all_genes = np.unique( all_genes )
-
-    full_expr = data[:, all_genes].X.toarray()
-
-    ###### Getting the enrichment scores...
-    cell_scores = np.zeros((data.shape[0], len(cluster_genes)))
-    for i, clusteri in enumerate(cluster_genes):
-        genes_ = cluster_genes[clusteri]
-        gene_indices = [np.where(all_genes==gene)[0][0]
-                        for gene in genes_]
-        cluster_scores_ = coexpr_score(full_expr[:, gene_indices],
-                                                          min_counts=min_counts)
-        cell_scores[:, i] = cluster_scores_
-
-    ###### Adding to AnnData
-    cluster_scores = pd.DataFrame(cell_scores, index=data.obs_names,
-                                  columns=list(cluster_genes.keys()))
-    data.obsm[f'{groupby}_enrich_scores'] = cluster_scores
-
-    if verbose:
-        print(f"Added data.obsm['{groupby}_enrich_scores']")
-
-def coexpr_enrich_labelled(data: sc.AnnData, groupby: str, min_counts: int=2,
-                                                            verbose: bool=True):
-    """ Coexpression enrichment for cell clusters labelled by gene coexpression.
-    """
-    ### Converting cluster names to marker list
-    cluster_names = np.unique( data.obs[groupby].values )
-    cluster_markers = {}
-    for cluster in cluster_names:
-        cluster_markers[cluster] = cluster.split('-')
-
-    ### Add to anndata so can calculate coexpression scores.
-    cluster_marker_key = f'{groupby}_markers'
-    data.uns[cluster_marker_key] = cluster_markers
-    if verbose:
-        print(f"Added {groupby}_markers.")
-
-    ### Now running coexpression scoring.
-    coexpr_enrich(data, groupby, cluster_marker_key=cluster_marker_key,
-                                         min_counts=min_counts, verbose=verbose)
-
 
 
 
