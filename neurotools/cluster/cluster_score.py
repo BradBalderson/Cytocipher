@@ -143,7 +143,7 @@ def get_enrich_scores(full_expr: np.ndarray, all_genes: np.array,
     cell_scores = np.zeros((full_expr.shape[0], len(cluster_genes_List)))
     for i in prange( len(cluster_genes_List) ):
         genes_ = cluster_genes_List[i]
-        gene_indices = np.zeros( genes_.shape )
+        gene_indices = np.zeros( genes_.shape, dtype=np.int_ )
         for gene_index, gene in enumerate( genes_ ):
             gene_indices[gene_index] = np.where(all_genes == gene)[0][0]
 
