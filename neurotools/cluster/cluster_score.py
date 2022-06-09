@@ -249,7 +249,6 @@ def code_score(expr: np.ndarray, in_index_end: int, min_counts: int = 2):
     ### Must be coexpression of atleast min_count markers!
     nonzero_indices = np.where(coexpr_counts_all > 0)[0]
     coexpr_indices = np.where(coexpr_counts >= min_counts)[0]
-    print(len(coexpr_indices))
     cell_scores = np.zeros((expr.shape[0]), dtype=np.float64)
     for i in coexpr_indices:
         expr_probs = np.zeros(( expr.shape[1] ))
@@ -262,6 +261,7 @@ def code_score(expr: np.ndarray, in_index_end: int, min_counts: int = 2):
         # NOTE: if len(diff_indices) is 0, np.prod will return 1.
         cell_scores[i] = np.log2(np.prod(expr_probs[in_index_end:]) /
                                  np.prod(expr_probs[:in_index_end]))
+        print("cell scores", cell_scores[i])
 
     return cell_scores
 
@@ -292,6 +292,9 @@ def get_code_scores(full_expr: np.ndarray, all_genes: np.array,
             for gene_index2, gene2 in enumerate(all_genes):
                 if gene == gene2:
                     diff_indices[gene_index] = gene_index2
+
+        print(genes_)
+        print(genes_diff)
 
         all_indices = np.concatenate((gene_indices, diff_indices))
         cluster_scores_ = code_score(full_expr[:, all_indices],
