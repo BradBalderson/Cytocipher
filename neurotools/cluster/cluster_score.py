@@ -8,7 +8,8 @@ import scanpy as sc
 from scanpy import AnnData
 
 import numba
-from numba import njit, prange, List
+from numba.typed import List
+from numba import njit, prange
 
 def calc_page_enrich_input(data):
     """ Calculates stats necessary to calculate enrichment score.
