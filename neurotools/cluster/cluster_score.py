@@ -348,9 +348,13 @@ def get_code_scores(full_expr: np.ndarray, all_genes: np.array,
         #### Getting indices of which genes are in what cluster.
         clusts = np.unique(clusts_diff)
         negative_indices = np.zeros((len(clusts)), dtype=np.int_)
-        for clusti, clust in enumerate(clusts):
-            clust_end_index = np.where(clusts_diff==clust)[0][-1]
-            negative_indices[clusti] = clust_end_index
+        if len(clusts) > 0:
+            for clusti, clust in enumerate(clusts):
+                for clustj in enumerate(clusts_diff):
+                    if clusts_diff[clustj]==clust and \
+                            clusts_diff[clustj+1]!=clust:
+                        negative_indices[clusti] = clustj
+                        break
 
         #### Now getting the coexpression scores
         all_indices = np.concatenate((gene_indices, diff_indices))
