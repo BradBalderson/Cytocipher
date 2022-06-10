@@ -252,10 +252,15 @@ def code_score(expr: np.ndarray, in_index_end: int, min_counts: int = 2):
     if in_index_end < min_counts:
         min_counts = in_index_end
 
+    if (expr.shape[1] - in_index_end) < min_counts:
+        min_counts_neg = expr.shape[1] - in_index_end
+    else:
+        min_counts_neg = min_counts
+
     ### Getting which cells coexpress atleast min_counts of
     ###  positive set but not min_counts of negative set
     coexpr_bool = np.logical_and(coexpr_counts_pos >= min_counts,
-                                 coexpr_counts_neg < min_counts)
+                                 coexpr_counts_neg < min_counts_neg)
     coexpr_indices = np.where( coexpr_bool )[0]
 
     ### Need to check all nonzero indices to get expression level frequency.
@@ -452,7 +457,7 @@ def coexpr_specificity_score(data: sc.AnnData, groupby: str,
         else:
             include_indices = list(range(len(label_set)))
 
-        spec_scores[celli] = distance.cosine(perfect_score[include_indices],
+        spec_scores[celli] = 1-distance.cosine(perfect_score[include_indices],
                                              expr_scores[celli, include_indices])
 
     data.obs[f'{groupby}_specificity'] = spec_scores
