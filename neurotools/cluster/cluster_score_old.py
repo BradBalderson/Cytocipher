@@ -231,42 +231,7 @@ def coexpr_enrich_labelled(data: sc.AnnData, groupby: str, min_counts: int=2,
      # Coexpression scoring but taking into account other cluster genes #
 ################################################################################
 @njit
-def get_min_(total_genes: int, min_counts: int):
-    """ Gets the minimum no. of genes which must coexpress.
-    """
-    # Determining cutoff; if only 1 gene, must express it,
-    # if two genes, must coexpress both,
-    # if more than two genes, must express all except one gene.
-    if total_genes < min_counts:
-        min_ = total_genes
-    elif min_counts > total_genes:
-        min_ = total_genes - 1
-    else:
-        min_ = min_counts
-
-    return min_
-
-@njit
-def get_neg_cells_bool(expr_bool: np.ndarray, negative_indices: List,
-                                                           min_counts: int = 2):
-    """ Determines indices of which cells should not be score due to
-        coexpressing of genes in the negative set.
-    """
-    neg_cells_bool = np.zeros( (expr_bool.shape[0]) )
-    for indices in negative_indices:
-        coexpr_counts = expr_bool[:, indices].sum(axis=1)
-
-        # Determining cutoff
-        min_ = get_min_(len(indices), min_counts)
-
-        coexpr_bool = coexpr_counts > min_counts
-        neg_cells_bool[coexpr_bool] = 1
-
-    return neg_cells_bool
-
-@njit
-def code_score(expr: np.ndarray, in_index_end: int,
-               negative_indices: List, min_counts: int = 2):
+def code_score(expr: np.ndarray, in_index_end: int, min_counts: int = 2):
     """Enriches for the genes in the data, while controlling for genes that
         shouldn't be in the cells.
     """
@@ -279,17 +244,23 @@ def code_score(expr: np.ndarray, in_index_end: int,
     expr_bool_pos = expr_bool[:, :in_index_end]
     coexpr_counts_pos = expr_bool_pos.sum(axis=1)
 
-    ### Accounting for case where might have only one marker gene !!
-    # Determining cutoff
-    min_ = get_min_(in_index_end, min_counts)
+    ### Exclude cells which coexpress genes in the negative gene set...
+    expr_bool_neg = expr_bool[:, in_index_end:]
+    coexpr_counts_neg = expr_bool_neg.sum(axis=1)
 
-    ### Getting cells to exclude, since they coexpress genes in negative set.
-    neg_cells_bool = get_neg_cells_bool(expr_bool, negative_indices, min_counts)
+    ### Accounting for case where might have only one marker gene !!
+    if in_index_end < min_counts:
+        min_counts = in_index_end
+
+    if (expr.shape[1] - in_index_end) < min_counts:
+        min_counts_neg = expr.shape[1] - in_index_end
+    else:
+        min_counts_neg = min_counts
 
     ### Getting which cells coexpress atleast min_counts of
     ###  positive set but not min_counts of negative set
-    coexpr_bool = np.logical_and(coexpr_counts_pos >= min_,
-                                 neg_cells_bool==0)
+    coexpr_bool = np.logical_and(coexpr_counts_pos >= min_counts,
+                                 coexpr_counts_neg < min_counts_neg)
     coexpr_indices = np.where( coexpr_bool )[0]
 
     ### Need to check all nonzero indices to get expression level frequency.
@@ -310,9 +281,8 @@ def code_score(expr: np.ndarray, in_index_end: int,
 
 @njit(parallel=True)
 def get_code_scores(full_expr: np.ndarray, all_genes: np.array,
-                      cluster_genes_List: List,
-                      cluster_diff_List: List,
-                      cluster_diff_cluster_List: List,
+                      cluster_genes_List: np.array,
+                      cluster_diff_List: np.array,
                       min_counts: int,
                       ):
     """ Gets the enrichment of the cluster-specific gene combinations in each
@@ -322,7 +292,6 @@ def get_code_scores(full_expr: np.ndarray, all_genes: np.array,
     for i in prange( len(cluster_genes_List) ):
         genes_ = cluster_genes_List[i]
         genes_diff = cluster_diff_List[i]
-        clusts_diff = cluster_diff_cluster_List[i]
 
         #### Getting genes should be in cluster
         gene_indices = np.zeros( genes_.shape, dtype=np.int_ )
@@ -338,17 +307,10 @@ def get_code_scores(full_expr: np.ndarray, all_genes: np.array,
                 if gene == gene2:
                     diff_indices[gene_index] = gene_index2
 
-        #### Getting indices of which genes are in what cluster.
-        clusts = np.unique(clusts_diff)
-        negative_indices = List()
-        for clust in clusts:
-            negative_indices.append( np.where(clusts_diff==clust)[0] )
-
         #### Now getting the coexpression scores
         all_indices = np.concatenate((gene_indices, diff_indices))
         cluster_scores_ = code_score(full_expr[:, all_indices],
                                      in_index_end=len(gene_indices),
-                                     negative_indices=negative_indices,
                                                           min_counts=min_counts)
         cell_scores[:, i] = cluster_scores_
 
@@ -377,13 +339,10 @@ def code_enrich(data: sc.AnnData, groupby: str,
     str_dtype = f"<U{max([len(gene_name) for gene_name in all_genes])}"
     all_genes = np.unique( all_genes ).astype(str_dtype)
 
-    str_dtype_clust = f"<U{max([len(clust) for clust in cluster_genes_dict])}"
-
     #### Need to convert the markers into a Numba compatible format, easiest is
     #### List of numpy arrays.
     cluster_genes_List = List()
     cluster_diff_List = List() #Genes which the clusters shouldn't express!
-    cluster_diff_cluster_List = List()#Genes which these cluster belong to!
     for cluster in cluster_genes_dict:
         #### Genes stratified by cluster
         cluster_genes = np.array([gene for gene in cluster_genes_dict[cluster]],
@@ -392,7 +351,6 @@ def code_enrich(data: sc.AnnData, groupby: str,
 
         ### Getting genes which are different if clusters with similar genes
         cluster_diff_full = []
-        cluster_diff_clusters = []
         for clusterj in cluster_genes_dict:
             if cluster!=clusterj:
                 shared_genes_bool = [gene in cluster_genes_dict[clusterj]
@@ -400,26 +358,23 @@ def code_enrich(data: sc.AnnData, groupby: str,
 
                 # If it's possible to score for this cluster due to
                 # shared genes by coexpression scoring, get genes different
-                # to remove cells that coexpress these.
-                min_ = get_min_(len(cluster_genes), min_counts)
+                # to penalise.
+                min_ = min_counts \
+                    if len(cluster_genes) >= min_counts else len(cluster_genes)
                 if sum(shared_genes_bool) >= min_:
-                    for gene in cluster_genes_dict[clusterj]:
-                        if gene not in cluster_genes:
-                            cluster_diff_full.append( gene )
-                            cluster_diff_clusters.append( clusterj )
-        ##### Adding to the Lists
-        cluster_diff_full = np.array(cluster_diff_full, dtype=str_dtype)
+                    cluster_diff_full.extend(
+                        [gene for gene in cluster_genes_dict[clusterj]
+                                          if gene not in cluster_genes]
+                    )
+        cluster_diff_full = np.unique(np.array(cluster_diff_full,
+                                                               dtype=str_dtype))
         cluster_diff_List.append( cluster_diff_full )
-
-        cluster_diff_clusters = np.array(cluster_diff_clusters,
-                                                          dtype=str_dtype_clust)
-        cluster_diff_cluster_List.append( cluster_diff_clusters )
 
     full_expr = data[:, all_genes].X.toarray()
 
     ###### Getting the enrichment scores...
-    cell_scores = get_code_scores(full_expr, all_genes, cluster_genes_List,
-                                   cluster_diff_List, cluster_diff_cluster_List,
+    cell_scores = get_code_scores(full_expr, all_genes,
+                                    cluster_genes_List, cluster_diff_List,
                                                                      min_counts)
 
     ###### Adding to AnnData

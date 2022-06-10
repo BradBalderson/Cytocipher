@@ -45,7 +45,7 @@ def cluster_silhouettes(data: AnnData, groupby: str, n_rands: int=5000,
     if verbose:
         print(f"Added data.uns[f'{groupby}_sils']")
 
-##### Have literally already done this in cluster_score.py
+##### Have literally already done this in cluster_score_old.py
 """
 def cluster_enrich(data, groupby: str, group_genes: dict=None,
                   padj_cutoff: float=.05, logfc_cutoff: float=None,
