@@ -255,18 +255,17 @@ def get_neg_cells_bool(expr_bool_neg: np.ndarray, negative_indices: List,
     neg_cells_bool = np.zeros( (expr_bool_neg.shape[0]) )
     if len(negative_indices) > 0:
         start_index = 0
-        for indices in negative_indices:
-            for end_index in indices:
-                coexpr_counts = expr_bool_neg[:,
-                                          start_index:(end_index+1)].sum(axis=1)
+        for end_index in negative_indices:
+            coexpr_counts = expr_bool_neg[:,
+                                      start_index:(end_index+1)].sum(axis=1)
 
-                # Determining cutoff
-                min_ = get_min_((end_index-start_index)+1, min_counts)
+            # Determining cutoff
+            min_ = get_min_((end_index-start_index)+1, min_counts)
 
-                coexpr_bool = coexpr_counts > min_
-                neg_cells_bool[coexpr_bool] = 1
+            coexpr_bool = coexpr_counts > min_
+            neg_cells_bool[coexpr_bool] = 1
 
-                start_index = end_index + 1 # Go one position further along.
+            start_index = end_index + 1 # Go one position further along.
 
     return neg_cells_bool
 
