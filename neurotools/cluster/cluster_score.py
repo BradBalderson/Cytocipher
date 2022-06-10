@@ -257,7 +257,7 @@ def get_neg_cells_bool(expr_bool_neg: np.ndarray, negative_indices: List,
         coexpr_counts = expr_bool_neg[:, indices].sum(axis=1)
 
         # Determining cutoff
-        min_ = get_min_(sum(indices), min_counts)
+        min_ = get_min_(len(indices), min_counts)
 
         coexpr_bool = coexpr_counts > min_
         neg_cells_bool[coexpr_bool] = 1
@@ -343,9 +343,14 @@ def get_code_scores(full_expr: np.ndarray, all_genes: np.array,
         clusts = np.unique(clusts_diff)
         negative_indices = List()
         for clust in clusts:
-            #indices = np.array(np.where(clusts_diff==clust)[0], dtype=np.int64)
-            negative_indices.append( np.array(clusts_diff==clust,
-                                              dtype=np.bool_ ) )
+            is_clust_bool = clusts_diff==clust
+            clust_indices = np.zeros(( sum(is_clust_bool) ), dtype=np.int_)
+            i_ = 0
+            for i_clust, clust_bool in enumerate(is_clust_bool):
+                if clust_bool:
+                    clust_indices[i_] = i_clust
+                i_ += 1
+            negative_indices.append( clust_indices )
 
         #### Now getting the coexpression scores
         all_indices = np.concatenate((gene_indices, diff_indices))
