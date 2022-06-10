@@ -14,7 +14,7 @@ import matplotlib.pyplot as plt
 import seaborn as sb
 
 def enrich_heatmap(data: AnnData, groupby: str, per_cell: bool=True,
-                   plot_group: str=None,
+                   plot_group: str=None, figsize=(12, 12)
                    scale_rows: bool=False, scale_cols: bool=False):
     """Plots the Giotto enrichment scores for each clusters own Limma_DE genes to show
         specificity of gene coexpression in cluster.
@@ -37,7 +37,7 @@ def enrich_heatmap(data: AnnData, groupby: str, per_cell: bool=True,
         groupby = plot_group
 
     if per_cell:
-        ax = sc.pl.heatmap(score_data, score_data.var_names, figsize=(12, 12),
+        ax = sc.pl.heatmap(score_data, score_data.var_names, figsize=figsize,
                            groupby=groupby, show_gene_labels=True,
                            show=False)
         ax['heatmap_ax'].set_title("Cluster Limma_DE gene coexpression score",
@@ -45,7 +45,7 @@ def enrich_heatmap(data: AnnData, groupby: str, per_cell: bool=True,
                                              'fontsize': 20})
 
     else:
-        ax = sc.pl.matrixplot(score_data, score_data.var_names, figsize=(12,12),
+        ax = sc.pl.matrixplot(score_data, score_data.var_names, figsize=figsize,
                          groupby=groupby, dendrogram=False,
                             #show_gene_labels=True,
                               show=False
