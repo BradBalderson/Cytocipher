@@ -428,7 +428,9 @@ def coexpr_specificity_score(data: sc.AnnData, groupby: str,
     #### For each cell, min-max scale across it's scores since cosine
     #### sensitive to scale, ref:
     # https://stats.stackexchange.com/questions/292596/is-feature-normalisation-needed-prior-to-computing-cosine-distance
-    expr_scores = minmax_scale(expr_scores_df.values, axis=1) # per cell scale
+    ##### First min-max features to reduce effect of this on final score
+    expr_scores = minmax_scale(expr_scores_df.values, axis=0)  # per enrich scale
+    expr_scores = minmax_scale(expr_scores, axis=1) # per cell scale
 
     #### Distance to only having score in cluster but no other.
     label_set = expr_scores_df.columns.values.astype(str)
