@@ -344,7 +344,8 @@ def get_code_scores(full_expr: np.ndarray, all_genes: np.array,
         negative_indices = List()
         for clust in clusts:
             #indices = np.array(np.where(clusts_diff==clust)[0], dtype=np.int64)
-            negative_indices.append( clusts_diff==clust )
+            negative_indices.append( np.array(clusts_diff==clust,
+                                              dtype=np.bool_ )
 
         #### Now getting the coexpression scores
         all_indices = np.concatenate((gene_indices, diff_indices))
