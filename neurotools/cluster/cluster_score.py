@@ -253,14 +253,20 @@ def get_neg_cells_bool(expr_bool_neg: np.ndarray, negative_indices: List,
         coexpressing of genes in the negative set.
     """
     neg_cells_bool = np.zeros( (expr_bool_neg.shape[0]) )
-    for indices in negative_indices:
-        coexpr_counts = expr_bool_neg[:, indices].sum(axis=1)
+    if len(negative_indices) > 0:
+        start_index = 0
+        for indices in negative_indices:
+            for end_index in indices:
+                coexpr_counts = expr_bool_neg[:,
+                                          start_index:(end_index+1)].sum(axis=1)
 
-        # Determining cutoff
-        min_ = get_min_(len(indices), min_counts)
+                # Determining cutoff
+                min_ = get_min_((end_index-start_index)+1, min_counts)
 
-        coexpr_bool = coexpr_counts > min_
-        neg_cells_bool[coexpr_bool] = 1
+                coexpr_bool = coexpr_counts > min_
+                neg_cells_bool[coexpr_bool] = 1
+
+                start_index = end_index + 1 # Go one position further along.
 
     return neg_cells_bool
 
@@ -341,16 +347,10 @@ def get_code_scores(full_expr: np.ndarray, all_genes: np.array,
 
         #### Getting indices of which genes are in what cluster.
         clusts = np.unique(clusts_diff)
-        negative_indices = List()
-        for clust in clusts:
-            is_clust_bool = clusts_diff==clust
-            clust_indices = np.zeros(( is_clust_bool.sum() ), dtype=np.int_)
-            i_ = 0
-            for i_clust, clust_bool in enumerate(is_clust_bool):
-                if clust_bool:
-                    clust_indices[i_] = i_clust
-                i_ += 1
-            negative_indices.append( clust_indices )
+        negative_indices = np.zeros((len(clusts)), dtype=np.int_)
+        for clusti, clust in enumerate(clusts):
+            clust_end_index = np.where(clusts_diff==clust)[0][-1]
+            negative_indices[clusti] = clust_end_index
 
         #### Now getting the coexpression scores
         all_indices = np.concatenate((gene_indices, diff_indices))
@@ -423,7 +423,6 @@ def code_enrich(data: sc.AnnData, groupby: str,
                                                           dtype=str_dtype_clust)
         cluster_diff_cluster_List.append( cluster_diff_clusters )
 
-    print(cluster_diff_cluster_List[0].dtype)
     full_expr = data[:, all_genes].X.toarray()
 
     ###### Getting the enrichment scores...
