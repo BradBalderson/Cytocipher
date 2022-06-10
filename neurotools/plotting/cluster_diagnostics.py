@@ -14,7 +14,7 @@ import matplotlib.pyplot as plt
 import seaborn as sb
 
 def enrich_heatmap(data: AnnData, groupby: str, per_cell: bool=True,
-                   plot_group: str=None, figsize=(12, 12)
+                   plot_group: str=None, figsize=(12, 12),
                    scale_rows: bool=False, scale_cols: bool=False):
     """Plots the Giotto enrichment scores for each clusters own Limma_DE genes to show
         specificity of gene coexpression in cluster.
