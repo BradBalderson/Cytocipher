@@ -158,6 +158,7 @@ def cluster_label(data: sc.AnnData, var_key: str,
                   max_genes: int = 5, min_de: int = 1, t_cutoff: float = 10,
                   de_key: str = 'rank_genes_groups',
                   logfc_cutoff: float = 0, padj_cutoff: float = 1,
+                  iterative_merge: bool=True,
                   verbose: bool = True,
                   ):
     """ Labels clusters by the top Limma_DE genes, and subsequently merges clusters
@@ -186,8 +187,8 @@ def cluster_label(data: sc.AnnData, var_key: str,
     ### Now performing progressive merging if not all clusters labelled!
     # NOTE: each iteration has two mergings; merge based on labels & based on neighbour merging
     i = 0
-    while np.any([label_map[key].isdigit() for key in
-                  label_map]):  # Still clusters without label.
+    while iterative_merge and np.any([label_map[key].isdigit() for key in
+                                   label_map]):  # Still clusters without label.
         i += 1
 
         #### Adding intermediate clustering results...
