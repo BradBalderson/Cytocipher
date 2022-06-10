@@ -22,8 +22,9 @@ def enrich_heatmap(data: AnnData, groupby: str, per_cell: bool=True,
     cell_scores_df = data.obsm[f'{groupby}_enrich_scores']
 
     ##### Handling scale, only min-max implemented.
+    expr_scores = cell_scores_df.values
     if scale_cols:
-        expr_scores = minmax_scale(cell_scores_df.values, axis=0)  # per enrich scale
+        expr_scores = minmax_scale(expr_scores, axis=0)  # per enrich scale
     if scale_rows:
         expr_scores = minmax_scale(expr_scores, axis=1) # per cell scale
     if scale_rows or scale_cols:
