@@ -8,15 +8,28 @@ import pandas as pd
 import scanpy as sc
 from scanpy import AnnData
 
+from sklearn.preprocessing import minmax_scale
+
 import matplotlib.pyplot as plt
 import seaborn as sb
 
 def enrich_heatmap(data: AnnData, groupby: str, per_cell: bool=True,
-                   plot_group: str=None):
+                   plot_group: str=None,
+                   scale_rows: bool=False, scale_cols: bool=False):
     """Plots the Giotto enrichment scores for each clusters own Limma_DE genes to show
         specificity of gene coexpression in cluster.
     """
     cell_scores_df = data.obsm[f'{groupby}_enrich_scores']
+
+    ##### Handling scale, only min-max implemented.
+    if scale_cols:
+        expr_scores = minmax_scale(cell_scores_df.values, axis=0)  # per enrich scale
+    if scale_rows:
+        expr_scores = minmax_scale(expr_scores, axis=1) # per cell scale
+    if scale_rows or scale_cols:
+        cell_scores_df = pd.DataFrame(expr_scores, index=cell_scores_df.index,
+                                                 columns=cell_scores_df.columns)
+
     score_data = sc.AnnData(cell_scores_df, obs=data.obs)
 
     if type(plot_group)!=type(None):
