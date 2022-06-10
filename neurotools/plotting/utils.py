@@ -10,6 +10,7 @@ import seaborn as sb
 
 import colorsys
 import matplotlib
+import matplotlib.pyplot as plt
 from matplotlib import colors as mcolors
 
 def man_cmap(cmap, value=1.):
