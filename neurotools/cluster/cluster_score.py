@@ -247,19 +247,19 @@ def get_min_(total_genes: int, min_counts: int):
     return min_
 
 @njit
-def get_neg_cells_bool(expr_bool: np.ndarray, negative_indices: List,
+def get_neg_cells_bool(expr_bool_neg: np.ndarray, negative_indices: List,
                                                            min_counts: int = 2):
     """ Determines indices of which cells should not be score due to
         coexpressing of genes in the negative set.
     """
-    neg_cells_bool = np.zeros( (expr_bool.shape[0]) )
+    neg_cells_bool = np.zeros( (expr_bool_neg.shape[0]) )
     for indices in negative_indices:
-        coexpr_counts = expr_bool[:, indices].sum(axis=1)
+        coexpr_counts = expr_bool_neg[:, indices].sum(axis=1)
 
         # Determining cutoff
         min_ = get_min_(len(indices), min_counts)
 
-        coexpr_bool = coexpr_counts > min_counts
+        coexpr_bool = coexpr_counts > min_
         neg_cells_bool[coexpr_bool] = 1
 
     return neg_cells_bool
@@ -284,7 +284,8 @@ def code_score(expr: np.ndarray, in_index_end: int,
     min_ = get_min_(in_index_end, min_counts)
 
     ### Getting cells to exclude, since they coexpress genes in negative set.
-    neg_cells_bool = get_neg_cells_bool(expr_bool, negative_indices, min_counts)
+    neg_cells_bool = get_neg_cells_bool(expr_bool[:, in_index_end:],
+                                        negative_indices, min_counts)
 
     ### Getting which cells coexpress atleast min_counts of
     ###  positive set but not min_counts of negative set
@@ -340,10 +341,10 @@ def get_code_scores(full_expr: np.ndarray, all_genes: np.array,
 
         #### Getting indices of which genes are in what cluster.
         clusts = np.unique(clusts_diff)
-        negative_indices = List()
+        negatives_indices = List()
         for clust in clusts:
-            indices = np.array(np.where(clusts_diff==clust)[0], dtype=np.int64)
-            negative_indices.append( indices )
+            #indices = np.array(np.where(clusts_diff==clust)[0], dtype=np.int64)
+            negative_indices.append( clusts_diff==clust )
 
         #### Now getting the coexpression scores
         all_indices = np.concatenate((gene_indices, diff_indices))
