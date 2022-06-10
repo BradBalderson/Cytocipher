@@ -341,7 +341,7 @@ def get_code_scores(full_expr: np.ndarray, all_genes: np.array,
 
         #### Getting indices of which genes are in what cluster.
         clusts = np.unique(clusts_diff)
-        negatives_indices = List()
+        negative_indices = List()
         for clust in clusts:
             #indices = np.array(np.where(clusts_diff==clust)[0], dtype=np.int64)
             negative_indices.append( clusts_diff==clust )
