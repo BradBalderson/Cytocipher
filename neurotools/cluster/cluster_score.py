@@ -344,7 +344,7 @@ def get_code_scores(full_expr: np.ndarray, all_genes: np.array,
         negative_indices = List()
         for clust in clusts:
             is_clust_bool = clusts_diff==clust
-            clust_indices = np.zeros(( sum(is_clust_bool) ), dtype=np.int_)
+            clust_indices = np.zeros(( is_clust_bool.sum() ), dtype=np.int_)
             i_ = 0
             for i_clust, clust_bool in enumerate(is_clust_bool):
                 if clust_bool:
