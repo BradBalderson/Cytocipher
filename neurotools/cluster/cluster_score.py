@@ -418,6 +418,7 @@ def code_enrich(data: sc.AnnData, groupby: str,
                                                           dtype=str_dtype_clust)
         cluster_diff_cluster_List.append( cluster_diff_clusters )
 
+    print(cluster_diff_cluster_List)
     full_expr = data[:, all_genes].X.toarray()
 
     ###### Getting the enrichment scores...
