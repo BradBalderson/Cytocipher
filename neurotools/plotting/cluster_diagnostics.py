@@ -34,7 +34,7 @@ def enrich_heatmap(data: AnnData, groupby: str, per_cell: bool=True,
 
     score_data = sc.AnnData(cell_scores_df, obs=data.obs)
     if dendrogram:
-        sc.tl.dendrogram(score_data, groupby)
+        sc.tl.dendrogram(score_data, groupby, use_rep='X')
 
     if type(plot_group)!=type(None):
         groupby = plot_group
