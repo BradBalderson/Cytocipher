@@ -257,7 +257,7 @@ def get_neg_cells_bool(expr_bool_neg: np.ndarray, negative_indices: List,
         coexpr_counts = expr_bool_neg[:, indices].sum(axis=1)
 
         # Determining cutoff
-        min_ = get_min_(len(indices), min_counts)
+        min_ = get_min_(sum(indices), min_counts)
 
         coexpr_bool = coexpr_counts > min_
         neg_cells_bool[coexpr_bool] = 1
