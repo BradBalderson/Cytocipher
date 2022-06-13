@@ -48,6 +48,13 @@ def get_pairs(avg_data: np.ndarray, label_set: np.array):
 
     return pairs[order]
 
+def get_pairs_cell(expr: pd.DataFrame, cluster_labels: np.array):
+    """ Get nearest neighbour from the expression data, by first averaging.
+    """
+    label_set = np.unique(cluster_labels)
+    avg_data = average(expr, cluster_labels, label_set)
+    return get_pairs(avg_data, label_set), label_set
+
 def get_genesubset_de(data: sc.AnnData, data_sub: sc.AnnData,
                       groupby: str, de_key: str):
     """ Gets Limma_DE genes for subset of the data, but adds to the full data.
@@ -103,27 +110,26 @@ def label_clusters(data: sc.AnnData, groupby: str, de_key: str,
 
     return label_map, new_labels
 
-def merge_neighbours(expr: pd.DataFrame, cluster_labels: np.array, ):
+def merge_neighbours(expr: pd.DataFrame, cluster_labels: np.array,
+                     label_pairs: np.array=None):
     """ Merges unlabelled clusters to most similar neighbour.
     """
     ##### Getting the neighbours of each cluster based on average expression
-    label_set = np.unique(cluster_labels)
-    avg_data = average(expr, cluster_labels, label_set)
-
-    label_pairs = get_pairs(avg_data, label_set)
+    if type(label_pairs)==None:
+        label_pairs, label_set = get_pairs_cell(expr, cluster_labels)
 
     #### Getting groups of clusters which will be merged...
-    merge_groups = []
+    merge_groups = [] # List of lists, specifying groups of clusters to merge
     for pair in label_pairs:
         added = False
-        if pair[0].isdigit():
-            for merge_group in merge_groups:
+        if pair[0].isdigit(): # Indicates it is an unlabelled cluster.
+            for merge_group in merge_groups: #Check if add to existing group
                 if np.any([pair_ in merge_group for pair_ in pair]):
                     merge_group.extend(pair)
                     added = True
                     break
 
-            if not added:
+            if not added: #Make new group if unmerged group and need to be added
                 merge_groups.append(list(pair))
 
     #### Getting mapping from current clusters to merge clusters
@@ -137,7 +143,7 @@ def merge_neighbours(expr: pd.DataFrame, cluster_labels: np.array, ):
             cluster_map[label] = label
 
     merge_cluster_labels = np.array(
-        [cluster_map[clust] for clust in cluster_labels])
+                               [cluster_map[clust] for clust in cluster_labels])
 
     return cluster_map, merge_cluster_labels
 
@@ -217,4 +223,179 @@ def cluster_label(data: sc.AnnData, var_key: str,
     add_colors(data, obs_key, 'tab20')  # Also adding colors
     if verbose:
         print("Final no. clusters: ", len(np.unique(cluster_labels)))
+
+
+################################################################################
+             # Equivalent to the above approach, except cluster considered #
+            # significant if considered differentiable from it's most similar #
+            # cluster. #
+################################################################################
+def get_nearestcluster_genesubset_de(data: sc.AnnData, data_sub: sc.AnnData,
+                                     groupby: str, de_key: str,
+                                     expr: pd.DataFrame, cluster_labels: str):
+    """ Determines differentially expressed genes between each cluster and
+        it's nearest neighbour, adding the results to .uns[de_key] in the same
+        format as they normally running sc.tl.rank_genes_groups.
+        Also gets what the nearest clusters are!
+    """
+
+    ###### Getting the nearest neighbours
+    label_pairs, label_set = get_pairs_cell(expr, cluster_labels)
+
+    ##### Adding DE information for each pair.
+    gene_dfs, tval_dfs, padj_dfs, logfc_dfs = [], [], [], []
+    for pair_ in label_pairs:
+        cluster_bool = np.logical_or(cluster_labels == pair_[0],
+                                     cluster_labels == pair_[1])
+        data_sub_pair = data_sub[cluster_bool, :]
+        sc.tl.rank_genes_groups(data_sub_pair, groupby=groupby,
+                                key_added=de_key, groups=[pair_[0]])
+
+        gene_dfs.append( pd.DataFrame(data_sub_pair.uns[de_key]['names']) )
+        tval_dfs.append( pd.DataFrame(data_sub_pair.uns[de_key]['scores']) )
+        padj_dfs.append( pd.DataFrame(data_sub_pair.uns[de_key]['pvals_adj']) )
+        logfc_dfs.append( pd.DataFrame(data_sub_pair.uns[de_key]
+                                                           ['logfoldchanges']) )
+
+    #### Concatenating DE information
+    de_info = {}
+    de_info['names'] = pd.concat(gene_dfs, axis=1)
+    de_info['scores'] = pd.concat(tval_dfs, axis=1)
+    de_info['pvals_adj'] = pd.concat(padj_dfs, axis=1)
+    de_info['logfoldchanges'] = pd.concat(logfc_dfs, axis=1)
+
+    data.uns[de_key] = de_info
+
+    return label_pairs
+
+def merge_neighbours_unlabelled(data: sc.AnnData,
+                                expr: pd.DataFrame, cluster_labels: np.array,
+                                      de_key: str, min_de: int, t_cutoff: float,
+                                        logfc_cutoff: float, padj_cutoff: float,
+                                                    label_pairs: np.array=None):
+    """ Merges non-significantly different clusters.
+    """
+    ##### Getting the neighbours of each cluster based on average expression
+    if type(label_pairs) == None:
+        label_pairs, label_set = get_pairs_cell(expr, cluster_labels)
+
+    ##### Retrieving the DE results to decide which clusters to merge.
+    # NOTE get absolute values of tvals and logfcs since don't care about
+    # direction of difference.
+    genes_df = pd.DataFrame(data.uns[de_key]['names'])
+    tvals_df = pd.DataFrame(data.uns[de_key]['scores']).abs() #Absolute value
+    padjs_df = pd.DataFrame(data.uns[de_key]['pvals_adj'])
+    logfcs_df = pd.DataFrame(data.uns[de_key]['logfoldchanges']).abs()
+
+    de_bool = tvals_df.values >= t_cutoff
+    if padj_cutoff < 1 or logfc_cutoff > 0:  # necessary to add other criteria...
+        de_bool = np.logical_and(de_bool, padjs_df.values < padj_cutoff)
+        de_bool = np.logical_and(de_bool, logfcs_df.values >= logfc_cutoff)
+
+    #### Getting groups of clusters which will be merged...
+    merge_groups = []  # List of lists, specifying groups of clusters to merge
+    for i, pair in enumerate(label_pairs):
+        added = False
+        de_indices = np.where(de_bool[:, i])[0]
+        if len(de_indices) < min_de:  # Indicates is cluster needs merging!
+            for merge_group in merge_groups:  # Check if add to existing group
+                if np.any([pair_ in merge_group for pair_ in pair]):
+                    merge_group.extend(pair)
+                    added = True
+                    break
+
+            if not added:  # Make new group if unmerged group and need to be added
+                merge_groups.append(list(pair))
+
+    #### Getting mapping from current clusters to merge clusters
+    cluster_map = {}
+    for i in range(len(merge_groups)):  # For the merge groups
+        for cluster in merge_groups[i]:
+            cluster_map[cluster] = str(i)
+
+    for pair in label_pairs:  # Simply map to the same cluster if not merging
+        if pair[0] not in cluster_map:
+            cluster_map[pair[0]] = pair[0]
+
+    merge_cluster_labels = np.array(
+                               [cluster_map[clust] for clust in cluster_labels])
+
+    return cluster_map, merge_cluster_labels
+
+def cluster_label_nearest(data: sc.AnnData, var_key: str,
+                  groupby: str = 'leiden',
+                  obs_key: str = 'cluster_labels',
+                  # Stores final cluster labellings!
+                  reference_genes: np.array = None,
+                  # reference genes used for nts bfs, put these genes first for cluster label
+                  max_genes: int = 5, min_de: int = 1, t_cutoff: float = 10,
+                  de_key: str = 'rank_genes_groups',
+                  logfc_cutoff: float = 0, padj_cutoff: float = 1,
+                  iterative_merge: bool=True,
+                  verbose: bool = True,
+                  ):
+    """ Merges clusters which are not significantly different to their nearest
+                                                                      neighbour.
+    """
+
+    if verbose:
+        print("Start no. clusters: ",
+              len(np.unique(data.obs[groupby].values)))
+
+    #### Getting genes of interest
+    genes_bool = data.var[var_key].values
+
+    ### First calling differential expression
+    data_sub = data[:, genes_bool]
+    expr = data_sub.to_df()
+    cluster_labels = data.obs[groupby].values.astype(str)
+    label_pairs = get_nearestcluster_genesubset_de(data, data_sub, groupby,
+                                                   de_key, expr, cluster_labels)
+
+    ### Now merge clusters which are not significantly different according to
+    ### criteria.
+    cluster_map, cluster_labels_new = merge_neighbours_unlabelled(data,
+                                                           expr, cluster_labels,
+                                                       de_key, min_de, t_cutoff,
+                                                      logfc_cutoff, padj_cutoff,
+                                                                    label_pairs)
+
+    ### Now performing progressive merging if no convergence!
+    # NOTE: each iteration has two mergings; merge based on labels & based on neighbour merging
+    i = 0
+    while iterative_merge and \
+                    np.any(cluster_labels!=cluster_labels_new): # Not converged!
+        #### Adding intermediate clustering results...
+        merge_col = f'{groupby}_neighbour_merge{i}'
+        add_labels(data, merge_col, cluster_labels_new, verbose)
+
+        ### Changing what's considered 'new' and 'old'
+        cluster_labels = cluster_labels_new
+
+        #### Calling DE
+        add_labels(data_sub, merge_col, cluster_labels, False)
+        label_pairs = get_nearestcluster_genesubset_de(data, data_sub,
+                                                       merge_col, de_key, expr,
+                                                                 cluster_labels)
+
+        #### Performing a new merge operation.
+        cluster_map, cluster_labels_new = merge_neighbours_unlabelled(
+                                                     data, expr, cluster_labels,
+                                                     de_key, min_de, t_cutoff,
+                                                     logfc_cutoff, padj_cutoff,
+                                                                    label_pairs)
+
+        i += 1
+
+    #### Iteration complete, so can now add final labelled clusters.
+    #### TODO out final cluster labels...
+    ####  The final labels will be first-most the DE genes differentiating the
+    ####  cluster from everything else, then DE genes that separate cluster
+    ####  from nearest neighbour...
+    add_labels(data, obs_key, cluster_labels, verbose)
+    add_colors(data, obs_key, 'tab20')  # Also adding colors
+    if verbose:
+        print("Final no. clusters: ", len(np.unique(cluster_labels)))
+
+
 
