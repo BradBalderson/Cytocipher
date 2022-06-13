@@ -241,15 +241,15 @@ def get_tvals_ranked(expr: np.ndarray, cluster_labels: np.array,
     """
     tvals = np.zeros((expr.shape[1], len(clusts)))
     for i in prange(len(clusts)):
-        clust_indices = np.where( cluster_labels == clusts[i] )[0]
-        ref_indices = np.where( cluster_labels == refs[i] )[0]
+        clust_bool = cluster_labels == clusts[i]
+        ref_bool = cluster_labels == refs[i]
 
-        clust_denom = len(clust_indices)
-        ref_denom = len(ref_indices)
+        clust_denom = clust_bool.sum()
+        ref_denom = ref_bool.sum()
 
         for j in range(expr.shape[1]): # For each gene
-            clust_expr = expr[clust_indices, j]
-            ref_expr = expr[ref_indices, j]
+            clust_expr = expr[clust_bool, j]
+            ref_expr = expr[ref_bool, j]
 
             ##### Getting summary stats for tvalue calculation
             mean_clust = np.mean( clust_expr )
