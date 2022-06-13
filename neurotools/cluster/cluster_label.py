@@ -270,7 +270,7 @@ def get_tvals_ranked(expr: np.ndarray, cluster_labels: np.array,
             stderr_ref = np.var( ref_expr ) / ref_n
             t_ = (mean_clust - mean_ref) / np.sqrt( stderr_clust+stderr_ref )
 
-            tvals[i, j] = t_
+            tvals[j, i] = t_
 
     return tvals
 
