@@ -413,6 +413,8 @@ def cluster_label_nearest(data: sc.AnnData, var_key: str,
     cluster_labels = data.obs[groupby].values.astype(str)
     label_pairs = get_nearestcluster_genesubset_de(data, data_sub, groupby,
                                                    de_key, expr, cluster_labels)
+    if verbose:
+        print("Finished DE for clusters versus nearest neighbour.")
 
     ### Now merge clusters which are not significantly different according to
     ### criteria.
@@ -439,6 +441,8 @@ def cluster_label_nearest(data: sc.AnnData, var_key: str,
         label_pairs = get_nearestcluster_genesubset_de(data, data_sub,
                                                        merge_col, de_key, expr,
                                                                  cluster_labels)
+        if verbose:
+            print("Finished DE for clusters versus nearest neighbour.")
 
         #### Performing a new merge operation.
         cluster_map, cluster_labels_new = merge_neighbours_unlabelled(
