@@ -245,9 +245,9 @@ def get_tvals_ranked(expr: np.ndarray, cluster_labels: np.array,
         ref_bool = cluster_labels == refs[i]
 
         clust_denom, ref_denom = 0, 0
-        for iter_ in range(clust_bool):
-            clust_denom += 1 if clust_bool[i] else 0
-            ref_denom += 1 if ref_bool[i] else 0
+        for iter_ in range(len(clust_bool)):
+            clust_denom += 1 if clust_bool[iter_] else 0
+            ref_denom += 1 if ref_bool[iter_] else 0
 
         for j in range(expr.shape[1]): # For each gene
             clust_expr = expr[clust_bool, j]
