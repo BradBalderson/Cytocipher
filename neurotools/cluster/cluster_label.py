@@ -241,23 +241,32 @@ def get_tvals_ranked(expr: np.ndarray, cluster_labels: np.array,
     """
     tvals = np.zeros((expr.shape[1], len(clusts)))
     for i in prange(len(clusts)):
-        clust_bool = cluster_labels == clusts[i]
-        ref_bool = cluster_labels == refs[i]
-
-        clust_denom, ref_denom = 0, 0
+        # Need to count first so we know size of array to make for indices
+        clust_n, ref_n = 0, 0
         for iter_ in range(len(cluster_labels)):
             clust_denom += 1 if cluster_labels[iter_]==clusts[i] else 0
             ref_denom += 1 if cluster_labels[iter_]==refs[i] else 0
 
+        # Getting the relevant indices to subset array
+        clust_indices, ref_indices = np.zeros((clust_n)), np.zeros((ref_n))
+        clust_i, ref_i = 0, 0
+        for iter_ in range(len(cluster_labels)):
+            if cluster_labels[iter_] == clusts[i]:
+                clust_indices[clust_i] = iter_
+                clust_i += 1
+            elif cluster_labels[iter_] == refs[i]:
+                ref_indices[ref_i] = iter_
+                ref_i += 1
+
         for j in range(expr.shape[1]): # For each gene
-            clust_expr = expr[clust_bool, j]
-            ref_expr = expr[ref_bool, j]
+            clust_expr = expr[clust_indices, j]
+            ref_expr = expr[ref_indices, j]
 
             ##### Getting summary stats for tvalue calculation
             mean_clust = np.mean( clust_expr )
             mean_ref = np.mean( ref_expr )
-            stderr_clust = np.var( clust_expr ) / clust_denom
-            stderr_ref = np.var( ref_expr ) / ref_denom
+            stderr_clust = np.var( clust_expr ) / clust_n
+            stderr_ref = np.var( ref_expr ) / ref_n
             t_ = (mean_clust - mean_ref) / np.sqrt( stderr_clust+stderr_ref )
 
             tvals[i, j] = t_
