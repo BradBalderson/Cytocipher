@@ -117,7 +117,7 @@ def merge_neighbours(expr: pd.DataFrame, cluster_labels: np.array,
     """ Merges unlabelled clusters to most similar neighbour.
     """
     ##### Getting the neighbours of each cluster based on average expression
-    if type(label_pairs)==None:
+    if type(label_pairs)==type(None):
         label_pairs, label_set = get_pairs_cell(expr, cluster_labels)
 
     #### Getting groups of clusters which will be merged...
@@ -300,7 +300,6 @@ def get_nearestcluster_genesubset_de(data: sc.AnnData, data_sub: sc.AnnData,
     else:
         clusts, refs = [], []
         max_str = 0
-        label_set = []
         for pair in label_pairs:
             clusts.append( pair[0] )
             refs.append( pair[1] )
@@ -325,7 +324,7 @@ def merge_neighbours_unlabelled(data: sc.AnnData,
     """ Merges non-significantly different clusters.
     """
     ##### Getting the neighbours of each cluster based on average expression
-    if type(label_pairs) == None:
+    if type(label_pairs) == type(None):
         label_pairs, label_set = get_pairs_cell(expr, cluster_labels)
 
     ##### Retrieving the DE results to decide which clusters to merge.
