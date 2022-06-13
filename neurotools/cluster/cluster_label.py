@@ -244,8 +244,8 @@ def get_tvals_ranked(expr: np.ndarray, cluster_labels: np.array,
         # Need to count first so we know size of array to make for indices
         clust_n, ref_n = 0, 0
         for iter_ in range(len(cluster_labels)):
-            clust_denom += 1 if cluster_labels[iter_]==clusts[i] else 0
-            ref_denom += 1 if cluster_labels[iter_]==refs[i] else 0
+            clust_n += 1 if cluster_labels[iter_]==clusts[i] else 0
+            ref_n += 1 if cluster_labels[iter_]==refs[i] else 0
 
         # Getting the relevant indices to subset array
         clust_indices, ref_indices = np.zeros((clust_n)), np.zeros((ref_n))
