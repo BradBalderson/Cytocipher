@@ -321,8 +321,12 @@ def get_nearestcluster_genesubset_de(data: sc.AnnData, data_sub: sc.AnnData,
         refs = np.array(refs, dtype=str_dtype)
 
         tvals = get_tvals_ranked(expr.values, cluster_labels, clusts, refs)
+        print(tvals.shape)
+        print(expr.shape)
+        print(len(clusts))
         de_info['scores'] = pd.DataFrame(tvals,
-                                        index=expr.index.values, columns=clusts)
+                                        index=expr.index.values.astype(str),
+                                         columns=clusts)
 
     data.uns[de_key] = de_info
 
