@@ -232,7 +232,7 @@ def cluster_label(data: sc.AnnData, var_key: str,
             # significant if considered differentiable from it's most similar #
             # cluster. #
 ################################################################################
-#@njit(parallel=True)
+@njit(parallel=True)
 def get_tvals_ranked(expr: np.ndarray, cluster_labels: np.array,
                                               clusts: np.array, refs: np.array):
     """ Getting the Welch's t-vals from predefined comparisons...
