@@ -12,6 +12,8 @@ import numpy as np
 import pandas as pd
 import scanpy as sc
 
+import numba
+from numba import njit, prange
 from numba.typed import List
 
 import scipy.spatial as spatial
@@ -230,9 +232,40 @@ def cluster_label(data: sc.AnnData, var_key: str,
             # significant if considered differentiable from it's most similar #
             # cluster. #
 ################################################################################
+@njit(parallel=True)
+def get_tvals_ranked(expr: np.ndarray, cluster_labels: np.array,
+                                              clusts: np.array, refs: np.array):
+    """ Getting the Welch's t-vals from predefined comparisons...
+    Ref, see ttest_ind_from_stats, unequal variance implementation:
+    https://github.com/scipy/scipy/blob/v1.8.1/scipy/stats/_stats_py.py#L5775-L5898
+    """
+    tvals = np.zeros((expr.shape[1], len(clusts)))
+    for i in prange(len(clusts)):
+        clust_indices = np.where( cluster_labels == clusts[i] )[0]
+        ref_indices = np.where( cluster_labels == refs[i] )[0]
+
+        clust_denom = len(clust_indices)
+        ref_denom = len(ref_indices)
+
+        for j in range(expr.shape[1]): # For each gene
+            clust_expr = expr[clust_indices, j]
+            ref_expr = expr[ref_indices, j]
+
+            ##### Getting summary stats for tvalue calculation
+            mean_clust = np.mean( clust_expr )
+            mean_ref = np.mean( ref_expr )
+            stderr_clust = np.var( clust_expr ) / clust_denom
+            stderr_ref = np.var( ref_expr ) / ref_denom
+            t_ = (mean_clust - mean_ref) / np.sqrt( stderr_clust+stderr_ref )
+
+            tvals[i, j] = t_
+
+    return tvals
+
 def get_nearestcluster_genesubset_de(data: sc.AnnData, data_sub: sc.AnnData,
                                      groupby: str, de_key: str,
-                                     expr: pd.DataFrame, cluster_labels: str):
+                                  expr: pd.DataFrame, cluster_labels: np.array,
+                                     scanpy_method: bool=False):
     """ Determines differentially expressed genes between each cluster and
         it's nearest neighbour, adding the results to .uns[de_key] in the same
         format as they normally running sc.tl.rank_genes_groups.
@@ -243,26 +276,42 @@ def get_nearestcluster_genesubset_de(data: sc.AnnData, data_sub: sc.AnnData,
     label_pairs, label_set = get_pairs_cell(expr, cluster_labels)
 
     ##### Adding DE information for each pair.
-    gene_dfs, tval_dfs, padj_dfs, logfc_dfs = [], [], [], []
-    for pair_ in label_pairs:
-        cluster_bool = np.logical_or(cluster_labels == pair_[0],
-                                     cluster_labels == pair_[1])
-        data_sub_pair = data_sub[cluster_bool, :]
-        sc.tl.rank_genes_groups(data_sub_pair, groupby=groupby,
-                                key_added=de_key, groups=[pair_[0]])
-
-        gene_dfs.append( pd.DataFrame(data_sub_pair.uns[de_key]['names']) )
-        tval_dfs.append( pd.DataFrame(data_sub_pair.uns[de_key]['scores']) )
-        padj_dfs.append( pd.DataFrame(data_sub_pair.uns[de_key]['pvals_adj']) )
-        logfc_dfs.append( pd.DataFrame(data_sub_pair.uns[de_key]
-                                                           ['logfoldchanges']) )
-
-    #### Concatenating DE information
     de_info = {}
-    de_info['names'] = pd.concat(gene_dfs, axis=1)
-    de_info['scores'] = pd.concat(tval_dfs, axis=1)
-    de_info['pvals_adj'] = pd.concat(padj_dfs, axis=1)
-    de_info['logfoldchanges'] = pd.concat(logfc_dfs, axis=1)
+    if scanpy_method:
+        gene_dfs, tval_dfs, padj_dfs, logfc_dfs = [], [], [], []
+        for pair_ in label_pairs:
+            cluster_bool = np.logical_or(cluster_labels == pair_[0],
+                                         cluster_labels == pair_[1])
+            data_sub_pair = data_sub[cluster_bool, :]
+            sc.tl.rank_genes_groups(data_sub_pair, groupby=groupby,
+                                    key_added=de_key, groups=[pair_[0]])
+
+            gene_dfs.append( pd.DataFrame(data_sub_pair.uns[de_key]['names']) )
+            tval_dfs.append( pd.DataFrame(data_sub_pair.uns[de_key]['scores']) )
+            padj_dfs.append( pd.DataFrame(data_sub_pair.uns[de_key][
+                                                                 'pvals_adj']) )
+            logfc_dfs.append( pd.DataFrame(data_sub_pair.uns[de_key]
+                                                           ['logfoldchanges']) )
+        #### Concatenating DE information
+        de_info['names'] = pd.concat(gene_dfs, axis=1)
+        de_info['scores'] = pd.concat(tval_dfs, axis=1)
+        de_info['pvals_adj'] = pd.concat(padj_dfs, axis=1)
+        de_info['logfoldchanges'] = pd.concat(logfc_dfs, axis=1)
+    else:
+        clusts, refs = [], []
+        max_str = 0
+        label_set = []
+        for pair in label_pairs:
+            clusts.append( pair[0] )
+            refs.append( pair[1] )
+            max_str = max([max_str, len(pair[0])])
+        str_dtype = f"<U{max_str}"
+        clusts = np.array(clusts, dtype=str_dtype)
+        refs = np.array(refs, dtype=str_dtype)
+
+        tvals = get_tvals_ranked(expr.values, cluster_labels, clusts, refs)
+        de_info['scores'] = pd.DataFrame(tvals,
+                                        index=expr.index.values, columns=clusts)
 
     data.uns[de_key] = de_info
 
@@ -282,13 +331,12 @@ def merge_neighbours_unlabelled(data: sc.AnnData,
     ##### Retrieving the DE results to decide which clusters to merge.
     # NOTE get absolute values of tvals and logfcs since don't care about
     # direction of difference.
-    genes_df = pd.DataFrame(data.uns[de_key]['names'])
     tvals_df = pd.DataFrame(data.uns[de_key]['scores']).abs() #Absolute value
-    padjs_df = pd.DataFrame(data.uns[de_key]['pvals_adj'])
-    logfcs_df = pd.DataFrame(data.uns[de_key]['logfoldchanges']).abs()
 
     de_bool = tvals_df.values >= t_cutoff
     if padj_cutoff < 1 or logfc_cutoff > 0:  # necessary to add other criteria...
+        padjs_df = pd.DataFrame(data.uns[de_key]['pvals_adj'])
+        logfcs_df = pd.DataFrame(data.uns[de_key]['logfoldchanges']).abs()
         de_bool = np.logical_and(de_bool, padjs_df.values < padj_cutoff)
         de_bool = np.logical_and(de_bool, logfcs_df.values >= logfc_cutoff)
 
@@ -331,12 +379,15 @@ def cluster_label_nearest(data: sc.AnnData, var_key: str,
                   max_genes: int = 5, min_de: int = 1, t_cutoff: float = 10,
                   de_key: str = 'rank_genes_groups',
                   logfc_cutoff: float = 0, padj_cutoff: float = 1,
-                  iterative_merge: bool=True,
+                  iterative_merge: bool=True, n_cpus: int=1,
                   verbose: bool = True,
                   ):
     """ Merges clusters which are not significantly different to their nearest
                                                                       neighbour.
     """
+    # Setting threads for paralellisation #
+    if type(n_cpus) != type(None):
+        numba.set_num_threads(n_cpus)
 
     if verbose:
         print("Start no. clusters: ",
