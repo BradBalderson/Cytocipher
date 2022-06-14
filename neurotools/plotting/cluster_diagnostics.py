@@ -15,7 +15,7 @@ import seaborn as sb
 
 def enrich_heatmap(data: AnnData, groupby: str, per_cell: bool=True,
                    plot_group: str=None, figsize=(12, 12),
-                   dendrogram: bool=False,
+                   dendrogram: bool=False, vmax=1, show=True,
                    scale_rows: bool=False, scale_cols: bool=False):
     """Plots the Giotto enrichment scores for each clusters own Limma_DE genes to show
         specificity of gene coexpression in cluster.
@@ -41,7 +41,7 @@ def enrich_heatmap(data: AnnData, groupby: str, per_cell: bool=True,
 
     if per_cell:
         ax = sc.pl.heatmap(score_data, score_data.var_names, figsize=figsize,
-                           groupby=groupby, show_gene_labels=True,
+                           groupby=groupby, show_gene_labels=True, vmax=vmax,
                            show=False, dendrogram=dendrogram)
         ax['heatmap_ax'].set_title("Cluster Limma_DE gene coexpression score",
                                    fontdict={'fontweight': 'bold',
@@ -49,12 +49,13 @@ def enrich_heatmap(data: AnnData, groupby: str, per_cell: bool=True,
 
     else:
         ax = sc.pl.matrixplot(score_data, score_data.var_names, figsize=figsize,
-                         groupby=groupby, dendrogram=dendrogram,
+                         groupby=groupby, dendrogram=dendrogram, vmax=vmax,
                             #show_gene_labels=True,
                               show=False
                          )
 
-    plt.show()
+    if show:
+        plt.show()
 
 def plot_cluster_sils(data: AnnData, groupby: str):
     """ Plots the silhouette scores per cluster!
