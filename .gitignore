@@ -1,5 +1,4 @@
 neurotools/cluster/rogue.py
-neurotools/utils/r_helpers.py
 .DS_Store
 neurotools/__pycache__/*
 neurotools/activation/__pycache__/
