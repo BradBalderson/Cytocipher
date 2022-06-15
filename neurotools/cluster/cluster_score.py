@@ -529,6 +529,7 @@ def coexpr_specificity_score(data: sc.AnnData, groupby: str,
 def get_markers(data: sc.AnnData, groupby: str,
                 var_groups: str = None,
                 logfc_cutoff: float = 0, padj_cutoff: float = .05,
+                t_cutoff: float=3,
                 n_top: int = 5, rerun_de: bool = True, gene_order=None,
                 verbose: bool = True):
     """
@@ -545,11 +546,13 @@ def get_markers(data: sc.AnnData, groupby: str,
 
     #### Getting marker genes for each cluster...
     genes_rank = pd.DataFrame(data.uns['rank_genes_groups']['names'])
+    tvals_rank = pd.DataFrame(data.uns['rank_genes_groups']['scores'])
     logfcs_rank = pd.DataFrame(data.uns['rank_genes_groups']['logfoldchanges'])
     padjs_rank = pd.DataFrame(data.uns['rank_genes_groups']['pvals_adj'])
 
     up_bool = np.logical_and(logfcs_rank.values > logfc_cutoff,
                              padjs_rank.values < padj_cutoff)
+    up_bool = np.logical_and(up_bool, tvals_rank.values > t_cutoff)
 
     cluster_genes = {}
     for i, cluster in enumerate(genes_rank.columns):
