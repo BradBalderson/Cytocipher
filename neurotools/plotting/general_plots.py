@@ -241,7 +241,7 @@ def rank_scatter(
 
 def plot_go(go_results, n_top=12, lr_text_fp=None, highlight_go=None,
             highlight_color=None, figsize=(6,4.8), rot=45, show=True,
-            max_text=25):
+            max_text=25, point_size_exp: float=2):
     """Plots go terms outputted from beautifulcells.tools.go.go.
     """
 
@@ -264,6 +264,7 @@ def plot_go(go_results, n_top=12, lr_text_fp=None, highlight_go=None,
         width_ratio=0.4,
         show=show,
         point_size_name="n-genes",
+        point_size_exp=point_size_exp,
         show_all=n_top <= max_text,
     )
 
