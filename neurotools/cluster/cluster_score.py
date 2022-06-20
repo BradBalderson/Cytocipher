@@ -489,7 +489,7 @@ def coexpr_specificity_score(data: sc.AnnData, groupby: str,
     expr_scores = minmax_scale(expr_scores, axis=1) # per cell scale
 
     #### Distance to only having score in cluster but no other.
-    label_set = np.array(list(data.obs[groupby].cat.categories))
+    label_set = expr_scores_df.columns.values.astype(str)
     label_include_indices = []
     if broader_expr_adjust:
         label_genes = [label.split('-') for label in label_set]
@@ -506,7 +506,11 @@ def coexpr_specificity_score(data: sc.AnnData, groupby: str,
     spec_scores = np.zeros( (data.shape[0]) )
     for celli in range( data.shape[0] ):
         perfect_score = np.zeros( (len(label_set)) )
-        label_index = np.where(label_set == labels[celli])[0][0]
+        label_bool = label_set == labels[celli]
+        if sum(label_bool) == 0: # Cell type not scored, so is automatically 0
+            continue
+
+        label_index = np.where(label_bool)[0][0]
         perfect_score[label_index] = 1 # Just score for cluster
 
         # Adjust for cases where clusters express genes in this cluster!!
