@@ -239,7 +239,7 @@ def get_min_(total_genes: int, min_counts: int):
     # if more than two genes, must express all except one gene.
     if total_genes < min_counts:
         min_ = total_genes
-    elif min_counts > total_genes:
+    elif total_genes > min_counts: #Was a bug here where had these wrong way around...
         min_ = total_genes - 1
     else:
         min_ = min_counts
