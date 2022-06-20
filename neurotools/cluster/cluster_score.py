@@ -489,7 +489,7 @@ def coexpr_specificity_score(data: sc.AnnData, groupby: str,
     expr_scores = minmax_scale(expr_scores, axis=1) # per cell scale
 
     #### Distance to only having score in cluster but no other.
-    label_set = expr_scores_df.columns.values.astype(str)
+    label_set = np.array(list(data.obs[groupby].cat.categories))
     label_include_indices = []
     if broader_expr_adjust:
         label_genes = [label.split('-') for label in label_set]
