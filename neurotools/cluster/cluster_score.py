@@ -535,6 +535,7 @@ def get_markers(data: sc.AnnData, groupby: str,
                 logfc_cutoff: float = 0, padj_cutoff: float = .05,
                 t_cutoff: float=3,
                 n_top: int = 5, rerun_de: bool = True, gene_order=None,
+                pts: bool=False,
                 verbose: bool = True):
     """
     Gets the marker genes as a dictionary...
@@ -543,10 +544,12 @@ def get_markers(data: sc.AnnData, groupby: str,
     if rerun_de:
         if type(var_groups) != type(None):
             data_sub = data[:, data.var[var_groups]]
-            sc.tl.rank_genes_groups(data_sub, groupby=groupby, use_raw=False)
+            sc.tl.rank_genes_groups(data_sub, groupby=groupby, use_raw=False,
+                                    pts=pts)
             data.uns['rank_genes_groups'] = data_sub.uns['rank_genes_groups']
         else:
-            sc.tl.rank_genes_groups(data, groupby=groupby, use_raw=False)
+            sc.tl.rank_genes_groups(data, groupby=groupby, use_raw=False,
+                                    pts=pts)
 
     #### Getting marker genes for each cluster...
     genes_rank = pd.DataFrame(data.uns['rank_genes_groups']['names'])
