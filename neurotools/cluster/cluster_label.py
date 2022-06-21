@@ -101,10 +101,12 @@ def label_clusters(data: sc.AnnData, groupby: str, de_key: str,
                 other_de = [gene for gene in de_genes if
                             gene not in reference_genes]
                 if len(ref_de) == 0 and ref_prefix:  # If no reference genes Limma_DE, then put the first reference gene with max t-value
-                    ref_indices = [np.where(genes_ == ref)[0][0] for ref in
-                                                                reference_genes]
-                    highest_index = np.argmax(tvals_df.values[ref_indices, i])
-                    ref_de = [reference_genes[highest_index]]
+                    #ref_indices = [np.where(genes_ == ref)[0][0] for ref in
+                    #                                            reference_genes]
+                    #highest_index = np.argmax(tvals_df.values[ref_indices, i])
+                    #ref_de = [reference_genes[highest_index]]
+                    ref_de = [gene for gene in genes_
+                              if gene in reference_genes][0:1]
                 de_genes = ref_de + other_de
 
             label_map[cluster] = '-'.join(de_genes[0:max_genes])
