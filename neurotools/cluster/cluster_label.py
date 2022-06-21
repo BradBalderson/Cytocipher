@@ -82,6 +82,10 @@ def label_clusters(data: sc.AnnData, groupby: str, de_key: str,
         de_bool = np.logical_and(de_bool, padjs_df.values < padj_cutoff)
         de_bool = np.logical_and(de_bool, logfcs_df.values >= logfc_cutoff)
 
+    ##### Subsetting only to reference genes which were called DE
+    reference_genes = np.array([gene for gene in reference_genes
+                                if gene in genes_df.values[:,0]])
+
     ##### Labelling clusters based on Limma_DE genes
     label_map = {}
     for i, cluster in enumerate(genes_df.columns):
@@ -97,7 +101,7 @@ def label_clusters(data: sc.AnnData, groupby: str, de_key: str,
                             gene not in reference_genes]
                 if len(ref_de) == 0:  # If no reference genes Limma_DE, then put the first reference gene with max t-value
                     ref_indices = [np.where(genes_ == ref)[0][0] for ref in
-                                   reference_genes if ref in genes_]
+                                                                reference_genes]
                     highest_index = np.argmax(tvals_df.values[ref_indices, i])
                     ref_de = [reference_genes[highest_index]]
                 de_genes = ref_de + other_de
