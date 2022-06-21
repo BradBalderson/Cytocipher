@@ -67,7 +67,8 @@ def get_genesubset_de(data: sc.AnnData, data_sub: sc.AnnData,
 def label_clusters(data: sc.AnnData, groupby: str, de_key: str,
                    reference_genes: np.array,
                    max_genes: int, min_de: int, t_cutoff: float,
-                   logfc_cutoff: float, padj_cutoff: float
+                   logfc_cutoff: float, padj_cutoff: float,
+                   ref_prefix: bool=True, #Whether to always prefix cluster with reference gene
                    ):
     """ Labels the clusters based on top Limma_DE genes.
     """
@@ -99,7 +100,7 @@ def label_clusters(data: sc.AnnData, groupby: str, de_key: str,
                 ref_de = [gene for gene in de_genes if gene in reference_genes]
                 other_de = [gene for gene in de_genes if
                             gene not in reference_genes]
-                if len(ref_de) == 0:  # If no reference genes Limma_DE, then put the first reference gene with max t-value
+                if len(ref_de) == 0 and ref_prefix:  # If no reference genes Limma_DE, then put the first reference gene with max t-value
                     ref_indices = [np.where(genes_ == ref)[0][0] for ref in
                                                                 reference_genes]
                     highest_index = np.argmax(tvals_df.values[ref_indices, i])
