@@ -46,7 +46,7 @@ def load_cams():
     path = os.path.dirname(os.path.realpath(__file__))
     cams = pd.read_csv(path +
                       '/../dbs/Foldy_2016_SynapseCAMs.txt',
-                      sep=' ', index_col=None).values[:, 0].astype(str)
+                      sep=' ', index_col=None)#.values[:, 0].astype(str)
     return cams
 
 def balanced_feature_select_graph(data: AnnData, reference_genes: np.array,
