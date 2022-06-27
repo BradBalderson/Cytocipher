@@ -40,6 +40,15 @@ def load_tfs():
     all_tfs_and_cofactors = np.unique( list(tfs)+list(tfs2) )
     return all_tfs_and_cofactors
 
+def load_cams():
+    """ Loads Synapse related Cellular Adhesion Molecules (CAMs)
+    """
+    path = os.path.dirname(os.path.realpath(__file__))
+    cams = pd.read_csv(path +
+                      '/../dbs/Foldy_2016_SynapseCAMs.txt',
+                      sep=' ', index_col=0).values[:, 0].astype(str)
+    return cams
+
 def balanced_feature_select_graph(data: AnnData, reference_genes: np.array,
                                   batch_key=None, n_total: int=500,
                                   pca: bool=False, n_pcs: int=100,
