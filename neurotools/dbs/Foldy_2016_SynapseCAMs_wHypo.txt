@@ -1,0 +1,406 @@
+Gene	Family	hippocampus_timing	hypothalamus_timing
+Amigo1	Amigo	Late	Late
+Amigo2	Amigo		Late
+Amigo3	Amigo		
+App	App	Late	Late
+Bai1	Bai	Late	
+Bai2	Bai	Late	
+Bai3	Bai	Early	
+Bsg	Bsg		Late
+C1ql1	C1ql		
+C1ql2	C1ql		
+C1ql3	C1ql		
+C1ql4	C1ql		
+Cadm1	SynCAM		Late
+Cadm2	SynCAM	Late	Late
+Cadm3	SynCAM	Late	Late
+Cadm4	SynCAM	Early	Late
+Car1	Carbonic		
+Car2	Carbonic	Late	
+Car3	Carbonic		Early
+Car4	Carbonic	Late	
+Cbln1	Cerebellin		Late
+Cbln2	Cerebellin	Early	
+Cbln3	Cerebellin		
+Cbln4	Cerebellin		Late
+Cd14	Cd		
+Cd164	Cd	Late	Late
+Cd200	Cd	Early	Late
+Cd200r1	Cd		
+Cd200r2	Cd		
+Cd200r3	Cd		
+Cd300a	Cd		
+Cd47	Cd	Late	Late
+Cd8a	Cd		
+Cdh1	Cadherin		
+Cdh2	Cadherin	Early	Late
+Cdh3	Cadherin		
+Cdh4	Cadherin	Early	
+Cdh5	Cadherin		
+Cdh6	Cadherin	Early	
+Cdh7	Cadherin		
+Cdh8	Cadherin	Early	
+Cdh9	Cadherin		
+Cdh10	Cadherin	Early	
+Cdh11	Cadherin	Early	
+Cdh12	Cadherin	Late	
+Cdh13	Cadherin	Early	Late
+Cdh15	Cadherin		
+Cdh16	Cadherin		
+Cdh17	Cadherin		
+Cdh18	Cadherin		
+Cdh19	Cadherin		
+Cdh20	Cadherin		
+Cdh22	Cadherin		Late
+Cdh23	Cadherin		
+Cdh24	Cadherin		
+Cdh26	Cadherin		
+Cdhr1	CdhRelated		
+Cdhr2	CdhRelated		
+Cdhr3	CdhRelated		
+Cdhr5	CdhRelated		
+Ceacam16	Ceacam		
+Celsr1	Flamingo		
+Celsr2	Flamingo	Late	Late
+Celsr3	Flamingo	Early	
+Chl1	Chl	Early	Late
+Clstn1	Calsyntenin	Late	Late
+Clstn2	Calsyntenin		Late
+Clstn3	Calsyntenin	Late	Late
+Cntn1	Contactin	Late	Late
+Cntn2	Contactin	Early	Late
+Cntn3	Contactin		
+Cntn4	Contactin		Late
+Cntn5	Contactin	Early	
+Cntn6	Contactin	Early	Late
+Cntnap1	CntnRelated	Late	Late
+Cntnap2	CntnRelated	Early	Late
+Cntnap3	CntnRelated	Early	
+Cntnap4	CntnRelated	Early	Late
+Cntnap5a	CntnRelated		Late
+Cntnap5b	CntnRelated	Early	
+Cntnap5c	CntnRelated	Late	
+Cntfr	Cntfr	Late	
+Csf1r	Csf1r	Late	
+Ctnna1	Catenin		
+Ctnna2	Catenin	Early	
+Ctnna3	Catenin		
+Ctnnal1	Catenin		
+Ctnnb1	Catenin	Early	
+Ctnnd1	Catenin	Early	
+Ctnnd2	Catenin		Late
+Cxadr	Cxadr	Early	Early
+Dag1	Dystroglycan	Early	Late
+Dscaml1	Dscam1l		
+Elfn2	Elfn2	Late	
+Emb	Emb	Late	Late
+Efna1	Ephrin		
+Efna2	Ephrin		Early
+Efna3	Ephrin		Late
+Efna4	Ephrin		Early
+Efna5	Ephrin	Early	
+Efnb1	Ephrin	Early	
+Efnb2	Ephrin	Early	
+Efnb3	Ephrin	Early	Late
+Epha1	EphrinR		
+Epha2	EphrinR		
+Epha3	EphrinR	Early	Early
+Epha4	EphrinR		Late
+Epha5	EphrinR	Early	Late
+Epha6	EphrinR	Late	
+Epha7	EphrinR		
+Epha8	EphrinR		
+Epha10	EphrinR	Late	Late
+Ephb1	EphrinR		
+Ephb2	EphrinR	Early	
+Ephb3	EphrinR	Late	
+Ephb4	EphrinR		
+Ephb6	EphrinR		
+Fam19a1	Tafa		Late
+Fam19a2	Tafa	Late	
+Fam19a3	Tafa		
+Fam19a4	Tafa		
+Fam19a5	Tafa	Late	Late
+Fat1	Fat	Early	
+Fat2	Fat		
+Fat3	Fat	Early	
+Fat4	Fat	Early	
+Fcgr2b	Fcgr2b		
+Fgfr1	Fgfr		Late
+Fgfr2	Fgfr		
+Fgfr3	Fgfr		
+Fgfr4	Fgfr		
+Flrt1	Flrt	Early	
+Flrt2	Flrt	Early	
+Flrt3	Flrt		Late
+Flt1	Flt		
+Flt3	Flt	Late	
+Fshr	Fshr		
+Fstl4	Fstl	Late	
+Fstl5	Fstl	Early	Late
+Gp1ba	Gp		
+Gp1bb	Gp		
+Gp5	Gp		
+Gp9	Gp		
+Gpr116	Gpr		
+Gpr124	Gpr		
+Gpr125	Gpr		
+Hepacam	Hepacam	Late	
+Hepacam2	Hepacam		Early
+Icam1	Icam		
+Icam2	Icam		
+Icam4	Icam		
+Igdcc4	Igdcc4	Early	
+Iglon5	Iglon5	Early	
+Igsf3	Igsf	Early	
+Igsf8	Igsf	Late	Late
+Igsf9	Igsf		Early
+Igsf10	Igsf		
+Igsf11	Igsf	Late	
+Il1r1	Il1r1		
+Il1rap	ILRap		
+Il1rapl1	ILRap		Late
+Il1rapl2	ILRap		
+Islr	Islr		
+Islr2	Islr	Early	Early
+Jam2	Jam		
+Jam3	Jam	Late	
+Kirrel	Kirrel		
+Kirrel2	Kirrel		
+Kirrel3	Kirrel	Late	
+Kit	Kit		
+Lgr4	Lgr		
+Lgr5	Lgr		
+Lgr6	Lgr		
+Lhcgr	Lhcgr		
+Lilra5	Lilra5		
+Lphn1	Latrophilin		
+Lphn2	Latrophilin		
+Lphn3	Latrophilin	Early	
+Lrfn1	Lrfn	Late	
+Lrfn2	Lrfn		
+Lrfn3	Lrfn		
+Lrfn4	Lrfn	Early	
+Lrfn5	Lrfn	Early	Late
+Lrig1	Lrig		
+Lrig2	Lrig	Late	
+Lrig3	Lrig		
+Lrrc3	Lrrc	Early	
+Lrrc3b	Lrrc		
+Lrrc4	Lrrc	Late	
+Lrrc4b	Lrrc		Late
+Lrrc4c	Lrrc		Late
+Lrrc8b	Lrrc	Early	
+Lrrc8c	Lrrc		
+Lrrc8d	Lrrc		
+Lrrc8e	Lrrc		
+Lrrc15	Lrrc		
+Lrrc24	Lrrc	Late	Late
+Lrrc25	Lrrc		
+Lrrc32	Lrrc		
+Lrrc33	Lrrc		
+Lrrc38	Lrrc		
+Lrrc52	Lrrc		
+Lrrc55	Lrrc		
+Lrrn1	Lrrn	Late	
+Lrrn2	Lrrn	Late	Late
+Lrrn3	Lrrn	Early	
+Lrrtm1	Lrrtm	Late	
+Lrrtm2	Lrrtm	Late	Late
+Lrrtm3	Lrrtm		Late
+Lrrtm4	Lrrtm	Late	
+Lrtm1	Lrtm		
+Lrtm2	Lrtm	Late	Late
+Lsamp	Lsamp	Late	Late
+Mag	Mag		
+Mcam	Mcam		
+Mdga1	Mdga	Early	
+Mdga2	Mdga	Early	
+Mertk	Mertk		
+Mfap3	Mfap3	Early	Early
+Ncam1	Ncam	Early	Late
+Ncam2	Ncam	Late	
+Negr1	Negr	Early	Late
+Neo1	Neo	Early	Late
+Neurog1	Neurog		Early
+Nfasc	Nfasc	Late	Late
+Nlgn1	Neuroligin		Late
+Nlgn2	Neuroligin	Late	Late
+Nlgn3	Neuroligin		Late
+Nphs1	Nphs		
+Nptn	Nptn	Late	Late
+Nptx1	Pentraxin	Late	Late
+Nptx2	Pentraxin	Late	Late
+Nrcam	Nrcam	Late	Late
+Nrg1	Nrg		
+Nrxn1	Neurexin	Early	Late
+Nrxn2	Neurexin		Late
+Nrxn3	Neurexin	Late	Late
+Ntm	Ntm		Late
+Ntn1	Netrin		
+Ntn3	Netrin		
+Ntn4	Netrin		
+Ntn5	Netrin		
+Ntng1	NetrinG		Late
+Ntng2	NetrinG		
+Ntrk1	Ntrk		
+Ntrk2	Ntrk	Late	Late
+Ntrk3	Ntrk		Late
+Nxph1	Neurexophilin	Early	
+Nxph2	Neurexophilin		
+Odz1	Odz/Teneurin	Early	
+Odz2	Odz/Teneurin	Early	
+Odz3	Odz/Teneurin	Early	
+Odz4	Odz/Teneurin	Early	
+Omg	Omg	Late	Late
+Opcml	Opcml	Early	Late
+Pcdh1	Protocadherin		Late
+Pcdh7	Protocadherin		Late
+Pcdh8	Protocadherin	Early	Late
+Pcdh9	Protocadherin		Late
+Pcdh10	Protocadherin		Late
+Pcdh11x	Protocadherin		Late
+Pcdh12	Protocadherin		
+Pcdh15	Protocadherin		Late
+Pcdh17	Protocadherin	Early	Late
+Pcdh18	Protocadherin	Early	
+Pcdh19	Protocadherin	Early	Late
+Pcdh20	Protocadherin	Late	Late
+Pcdha1	Protocadherin		
+Pcdha2	Protocadherin	Early	
+Pcdha3	Protocadherin		
+Pcdha4	Protocadherin		
+Pcdha5	Protocadherin		
+Pcdha6	Protocadherin		
+Pcdha7	Protocadherin		
+Pcdha8	Protocadherin		
+Pcdha9	Protocadherin		
+Pcdha10	Protocadherin		
+Pcdha11	Protocadherin		
+Pcdha12	Protocadherin	Early	
+Pcdhac1	Protocadherin		
+Pcdhac2	Protocadherin	Early	
+Pcdhb1	Protocadherin		
+Pcdhb2	Protocadherin		
+Pcdhb3	Protocadherin		
+Pcdhb4	Protocadherin		
+Pcdhb5	Protocadherin		
+Pcdhb6	Protocadherin		
+Pcdhb7	Protocadherin	Early	
+Pcdhb8	Protocadherin		
+Pcdhb9	Protocadherin		
+Pcdhb10	Protocadherin		
+Pcdhb11	Protocadherin		
+Pcdhb12	Protocadherin		
+Pcdhb13	Protocadherin		
+Pcdhb14	Protocadherin		
+Pcdhb15	Protocadherin		
+Pcdhb16	Protocadherin	Early	
+Pcdhb17	Protocadherin		
+Pcdhb18	Protocadherin		
+Pcdhb19	Protocadherin		
+Pcdhb20	Protocadherin		
+Pcdhb21	Protocadherin		
+Pcdhb22	Protocadherin		
+Pcdhga1	Protocadherin		
+Pcdhga2	Protocadherin		
+Pcdhga3	Protocadherin		
+Pcdhga4	Protocadherin		
+Pcdhga5	Protocadherin		
+Pcdhga6	Protocadherin		
+Pcdhga7	Protocadherin		
+Pcdhga8	Protocadherin		
+Pcdhga9	Protocadherin	Early	
+Pcdhga10	Protocadherin		
+Pcdhga11	Protocadherin		
+Pcdhga12	Protocadherin		
+Pcdhgb1	Protocadherin		
+Pcdhgb2	Protocadherin		
+Pcdhgb4	Protocadherin		Early
+Pcdhgb5	Protocadherin		
+Pcdhgb6	Protocadherin	Early	
+Pcdhgb7	Protocadherin		
+Pcdhgb8	Protocadherin		
+Pcdhgc3	Protocadherin	Early	
+Pcdhgc4	Protocadherin	Early	
+Pcdhgc5	Protocadherin	Late	
+Pdgfra	Pdgfr		
+Pdgfrb	Pdgfr		
+Pigr	Pigr		
+Pkd1	Pkd		
+Ppfia1	Liprin		
+Ppfia2	Liprin	Late	
+Ppfia3	Liprin	Late	
+Ppfia4	Liprin		Late
+Ptgfrn	Ptgfrn		
+Ptk7	Ptk		
+Ptpn2	Ptpn	Early	
+Ptpn5	Ptpn	Early	
+Ptpra	Ptpr		
+Ptprb	Ptpr		
+Ptprc	Ptpr		
+Ptprd	Ptpr		Late
+Ptpre	Ptpr	Late	Late
+Ptprf	Ptpr	Early	Late
+Ptprg	Ptpr	Early	
+Ptprh	Ptpr		
+Ptprj	Ptpr	Late	Late
+Ptprk	Ptpr	Early	
+Ptprm	Ptpr		Late
+Ptprn	Ptpr	Late	Late
+Ptprn2	Ptpr	Late	
+Ptpro	Ptpr	Early	Late
+Ptprr	Ptpr	Early	
+Ptprs	Ptpr	Early	Late
+Ptprt	Ptpr	Early	
+Ptpru	Ptpr	Late	
+Ptprz1	Ptpr		Late
+Pvrl1	Pvrl		
+Pvrl2	Pvrl	Early	
+Pvrl3	Pvrl	Early	
+Pvrl4	Pvrl	Late	
+Rtn4r	Rtn	Early	
+Rtn4rl1	Rtn	Late	
+Rtn4rl2	Rtn		
+Sdc1	Syndecan		Early
+Sdc2	Syndecan		Late
+Sdc3	Syndecan	Early	Late
+Sdc4	Syndecan	Late	
+Sdk2	Sdk		
+Sema3b	Semaphorin		
+Sema3e	Semaphorin		
+Sema3f	Semaphorin		
+Sema4d	Semaphorin	Late	
+Sema4g	Semaphorin	Early	
+Sema6d	Semaphorin	Early	Late
+Sema7a	Semaphorin		
+Slitrk1	Slitrk		Late
+Slitrk2	Slitrk	Early	
+Slitrk3	Slitrk		
+Slitrk4	Slitrk	Late	Late
+Slitrk5	Slitrk		Late
+Slitrk6	Slitrk		
+Tek	Tek		
+Tie1	Tie		
+Tlr1	Tlr		
+Tlr2	Tlr		
+Tlr3	Tlr		
+Tlr4	Tlr		
+Tlr5	Tlr		
+Tlr6	Tlr		
+Tlr7	Tlr	Late	
+Tlr8	Tlr		
+Tlr9	Tlr		
+Tlr11	Tlr		
+Tlr12	Tlr		
+Tpbg	Tpbg		
+Tshr	Tshr		
+Tspan5	Tspan	Late	
+Tyro3	Tyro	Late	
+Unc5a	Unc5	Late	Late
+Unc5b	Unc5	Late	
+Unc5c	Unc5		Late
+Unc5d	Unc5	Early	Late
+Vcam1	Vcam		
+Vstm2a	Vstm		Late
+Vstm2b	Vstm		
