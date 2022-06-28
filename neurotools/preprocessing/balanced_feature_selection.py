@@ -58,7 +58,7 @@ def load_cams(early: bool=False, late: bool=False,
             sub_bool = np.logical_or(sub_bool, timings=='Late')
         gene_df = gene_df.loc[sub_bool]
 
-    if not full_df:
+    if full_df:
         return gene_df
     else:
         return gene_df.values[:, 0].astype(str)
