@@ -42,15 +42,18 @@ def load_tfs():
 
 def load_cams(early: bool=False, late: bool=False,
               full_df: bool=False,
+              hippocampus: bool=True,
               # Whether to subset to early or late hippocampuse CAMs
               ):
     """ Loads Synapse related Cellular Adhesion Molecules (CAMs)
     """
     path = os.path.dirname(os.path.realpath(__file__))
-    gene_df = pd.read_csv(path + '/../dbs/Foldy_2016_SynapseCAMs.txt',
+    gene_df = pd.read_csv(path + '/../dbs/Foldy_2016_SynapseCAMs_wHypo.txt',
                                                        sep='\t', index_col=None)
+
+    region = 'hippocampus' if hippocampus else 'hypothalamus'
     if early or late: # Need to subset CAMs based on dev. timing
-        timings = gene_df['hippocampus_timing'].values.astype(str)
+        timings = gene_df[f'{region}_timing'].values.astype(str)
         sub_bool = np.full(timings.shape, fill_value=False)
         if early:
             sub_bool = np.logical_or(sub_bool, timings=='Early')
