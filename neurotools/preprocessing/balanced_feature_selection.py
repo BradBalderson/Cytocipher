@@ -40,7 +40,8 @@ def load_tfs():
     all_tfs_and_cofactors = np.unique( list(tfs)+list(tfs2) )
     return all_tfs_and_cofactors
 
-def load_cams(early: bool=False, late: bool=False
+def load_cams(early: bool=False, late: bool=False,
+              full_df: bool=False,
               # Whether to subset to early or late hippocampuse CAMs
               ):
     """ Loads Synapse related Cellular Adhesion Molecules (CAMs)
@@ -48,7 +49,6 @@ def load_cams(early: bool=False, late: bool=False
     path = os.path.dirname(os.path.realpath(__file__))
     gene_df = pd.read_csv(path + '/../dbs/Foldy_2016_SynapseCAMs.txt',
                                                        sep='\t', index_col=None)
-    cams = gene_df.values[:, 0].astype(str)
     if early or late: # Need to subset CAMs based on dev. timing
         timings = gene_df['hippocampus_timing'].values.astype(str)
         sub_bool = np.full(timings.shape, fill_value=False)
@@ -56,9 +56,12 @@ def load_cams(early: bool=False, late: bool=False
             sub_bool = np.logical_or(sub_bool, timings=='Early')
         if late:
             sub_bool = np.logical_or(sub_bool, timings=='Late')
-        cams = cams[sub_bool]
+        gene_df = gene_df.loc[sub_bool]
 
-    return cams
+    if not full_df:
+        return gene_df
+    else:
+        return gene_df.values[:, 0].astype(str)
 
 def balanced_feature_select_graph(data: AnnData, reference_genes: np.array,
                                   batch_key=None, n_total: int=500,
