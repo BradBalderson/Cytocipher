@@ -152,13 +152,16 @@ def annot_overlap_barplot(data: sc.AnnData, groupby1: str, groupby2: str,
             axs.set_xlabel(f"{groupby1} Clusters")
 
 def annot_overlap_heatmap(data: sc.AnnData, overlap_key: str,
-                          show: bool=True):
+                          transpose: bool=False, show: bool=True):
     """Plots a heatmap of the number of cells overlapping two sets of anotations.
     """
     overlap_counts = minmax_scale(data.uns[overlap_key].values, axis=0)
     overlap_counts = pd.DataFrame(overlap_counts,
                                   index=data.uns[overlap_key].index,
                                   columns=data.uns[overlap_key].columns)
+
+    if transpose:
+        overlap_counts = overlap_counts.transpose()
 
     cluster_overlaps = sc.AnnData(overlap_counts)
     cluster_overlaps.obs['sc_clusters'] = cluster_overlaps.obs_names.values
