@@ -10,8 +10,6 @@ from numba import njit
 
 from tqdm import tqdm
 
-from collections import defaultdict
-
 from statsmodels.stats.multitest import multipletests
 
 from .bbknn_functions import bbknn_modified
@@ -481,11 +479,12 @@ def odds_cutoff(data: AnnData, bg_size: int=10000,
         print("Added data.var['highly_variable']")
 
 ##### Helper functions for summarising results across batches...
-def get_selected_batch_counts(data, batch_names, verbose: bool=False):
+def get_selected_batch_counts(data, batch_names, 
+                          include_ref: bool=False, verbose: bool=False):
     """ For each batch, get the set of genes which were significantly
         co-expressed, then count for how many batches this occured.
     """
-    sig_gene_counts = defaultdict(int)
+    sig_gene_counts = {}
     batch_sig_genes = {}
     all_genes = data.var_names.values.astype(str)
     for i, batch_name in enumerate(batch_names):
@@ -493,18 +492,29 @@ def get_selected_batch_counts(data, batch_names, verbose: bool=False):
         sig_odds = data.varm[f'{batch_name}_bfs_results'][
             f'{batch_name}_sig_odds'
         ].values.astype(float)
-        sig_genes_bool = sig_odds > 0
+        
+        if include_ref:
+            sig_bool = sig_odds > 0
+        else:
+            reference_bool = data.varm[f'{batch_name}_bfs_results'][
+                                       f'{batch_name}_bfs_reference'].values
+            sig_bool = np.logical_and(sig_odds>0, reference_bool==False)
+
+        sig_genes_indices = np.where(sig_bool)[0]
         # TODO solve nan problem so can switch batch to this method !!!
         # sig_genes_bool = data.varm[f'{batch_name}_bfs_results'][f'{batch_name}_sig'
         #                                                    ].values.astype(np.bool_)
-        sig_genes = all_genes[sig_genes_bool]
+        sig_genes = all_genes[sig_genes_indices]
 
         # Saving for batch
-        batch_sig_genes[batch_name] = sig_genes
+        batch_sig_genes[batch_name] = np.array( sig_genes )
 
         # Getting count
         for gene in sig_genes:
-            sig_gene_counts[gene] += 1
+            if gene in sig_gene_counts:
+                sig_gene_counts[gene] += 1
+            else:
+                sig_gene_counts[gene] = 1
 
     return sig_gene_counts, batch_sig_genes, all_genes
 

@@ -16,6 +16,9 @@ from .bfs_helpers import pearson_r,  get_selected_dist, get_selected_corr, \
                       balanced_feature_selection_graph_core, odds_cutoff_core, \
                         get_selected_batch_counts
 
+#################################################################################
+      # Functions for loading neuron biologicall relevant gene sets #
+#################################################################################
 def load_nps():
     """ Loads the neuropeptidergic/dopaminergic genes.
     """
@@ -65,6 +68,10 @@ def load_cams(early: bool=False, late: bool=False,
         return gene_df
     else:
         return gene_df.values[:, 0].astype(str)
+
+#################################################################################
+             # Main functions for balanced feature selection #
+#################################################################################
 
 def balanced_feature_select_graph(data: AnnData, reference_genes: np.array,
                                   batch_key=None, n_total: int=500,
@@ -175,6 +182,15 @@ def balanced_feature_select_graph(data: AnnData, reference_genes: np.array,
                   f"{len(reference_genes)-len(reference_genesi)} "
                   f"reference genes in batch {batch_name} due to insufficient "
                   f"expression (expressed in less than min_cells={min_cells}).")
+
+        ## Checking n_total is reasonable input...
+        remaining = n_total-len(reference_genesi)
+        if remaining < len(reference_genesi):
+            raise Exception(
+	        "Total number of genes to select results in less than one " 
+		"gene to select per reference gene.\n"
+	         "Needs to be atleast greater than"
+                 f">>{2*len(reference_genesi)}.")
 
         ## Balanced feature selection from query features
         selected, selected_corrs, selected_match, expr_genes, gene_features = \
@@ -291,6 +307,10 @@ def balanced_feature_select_graph(data: AnnData, reference_genes: np.array,
         data.varm[f'{batch_name}_bfs_results'] = final_results_df
         data.uns[f'{batch_name}_bfs_background'] = bg
 
+#################################################################################
+       # Supporting function for downstream analysis after performing BFS #
+#################################################################################
+
 def get_batch_names(data, batch_name: str=None, verbose: bool = True):
     """ Gets the set of possible labels for the batch information.
     """
@@ -336,15 +356,17 @@ def update_odds_cutoff(data, batch_name: str = None, padj_cutoff: float = 0.01,
         if verbose:
             print(f"Updated data.varm['{batch_name}_bfs_results']")
 
-def get_sig_counts_per_batch(data, verbose: bool=False):
+def get_sig_counts_per_batch(data, include_ref: bool=False, verbose: bool=True):
     """ Gets the count of the no. of batches the gene was significant for!
     """
     batch_names = get_batch_names(data, verbose=verbose)
     sig_gene_counts, batch_sig_genes, all_genes = \
                              get_selected_batch_counts(data,
-                                                       batch_names, verbose)
+                                                       batch_names, 
+							include_ref,
+							verbose)
     groups = list(batch_names)
-    sig_genes_grouped = [list(batch_sig_genes[batch]) for batch in
+    sig_genes_grouped = [batch_sig_genes[batch] for batch in
                          batch_sig_genes]
 
     data.uns['bfs_sig_gene_count_info'] = {'sig_gene_counts': sig_gene_counts,
@@ -356,7 +378,34 @@ def get_sig_counts_per_batch(data, verbose: bool=False):
     if verbose:
         print("Added data.uns['bfs_sig_gene_count_info']")
 
+def get_selected_across_batches(data: sc.AnnData, n_batches: int, include_ref: bool=True, 
+                                add_key: str='highly_variable', verbose: bool=True):
+    """ Selects genes which are consistent across batches, by evidence of
+        significant coexpression in >n_batches. Always includes refereence genes.
+    """
+    #### Getting the reference genes...
+    col = [col for col in data.varm.keys() if col.endswith('bfs_results')][0]
+    ref_genes = data.var_names.values[ data.varm[col][col.split('_bfs_results')[0]+'_bfs_reference'].values ]
 
+    #### Getting significantly coexpressed genes...
+    sig_genes = []
+    gene_batch_counts = data.uns['bfs_sig_gene_count_info']['sig_gene_counts']
+    for gene in gene_batch_counts:
+        if gene_batch_counts[gene] >= n_batches and gene not in ref_genes:
+            sig_genes.append( gene )
+
+    if include_ref:
+        selected_genes = sig_genes + list(ref_genes)
+    else:
+        selected_genes = sig_genes
+
+    data.var[add_key] = [gene in selected_genes for gene in data.var_names]
+    
+    if verbose:
+        print("N reference genes: ", len(ref_genes))
+        print("N coexpressed genes: ", len(sig_genes))
+        print("N selected genes: ", len(selected_genes))  
+        print(f"Added data.var['{add_key}']") 
 
 
 
