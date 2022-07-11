@@ -89,7 +89,7 @@ def annot_overlap_barplot(data: sc.AnnData, groupby1: str, groupby2: str,
                           uns_key: str = 'annot_overlaps',
                           bar_width: float = .85,
                           figsize=(10, 5), scale: bool = True,
-                          transpose: bool = False,
+                          transpose: bool = False, edge_color=None,
                           remove_labelling: bool = False):
     """Plots relationship between annotations by showing proportions of each type found within
         each of the other categories.
@@ -134,7 +134,7 @@ def annot_overlap_barplot(data: sc.AnnData, groupby1: str, groupby2: str,
             bottom = [0] * len(props)
 
         axs.bar(col_locs, props, bottom=bottom,
-                color=colors[label], edgecolor='white',
+                color=colors[label], edgecolor=edge_color,
                 width=bar_width, )
         bottom = list(np.array(bottom) + props)
 
