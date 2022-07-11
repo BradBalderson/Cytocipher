@@ -35,12 +35,16 @@ def giotto_page_enrich_min(gene_set, var_names, fcs, mean_fcs, std_fcs):
     giotto_scores = ((set_fcs - mean_fcs) * np.sqrt(len(gene_indices)))/std_fcs
     return giotto_scores
 
-def giotto_page_enrich_geneset(data, gene_set):
+def giotto_page_enrich_geneset(data, gene_set, obs_key: str=None):
     """ Re-implementation of giotto page-enrichment score.
     """
     fcs, mean_fcs, std_fcs = calc_page_enrich_input(data)
-    return giotto_page_enrich_min(gene_set, data.var_names.values,
-                                  fcs, mean_fcs, std_fcs)
+    giotto_scores = giotto_page_enrich_min(gene_set, data.var_names.values,
+                                                         fcs, mean_fcs, std_fcs)
+    if type(obs_key)==type(None):
+        return giotto_scores
+    else:
+        data.obs[obs_key] = giotto_scores
 
 def giotto_page_enrich(data: AnnData, groupby: str,
                        var_groups: str='highly_variable',
