@@ -69,6 +69,7 @@ def label_clusters(data: sc.AnnData, groupby: str, de_key: str,
                    max_genes: int, min_de: int, t_cutoff: float,
                    logfc_cutoff: float, padj_cutoff: float,
                    ref_prefix: bool=True, #Whether to always prefix cluster with reference gene
+                   exclude_genes: np.array=None,
                    ):
     """ Labels the clusters based on top Limma_DE genes.
     """
@@ -93,6 +94,9 @@ def label_clusters(data: sc.AnnData, groupby: str, de_key: str,
         de_indices = np.where(de_bool[:, i])[0]
         if len(de_indices) >= min_de:  # Significant number of Limma_DE genes detected !!!!
             genes_ = genes_df.values[:, i]
+            if type(exclude_genes) != type(None):
+                genes_ = np.array([gene for gene in genes_
+                                                  if gene not in exclude_genes])
             de_genes = np.unique(genes_[de_indices][0:max_genes])  # Sorts alphabetically
 
             # Need to put the reference genes first...

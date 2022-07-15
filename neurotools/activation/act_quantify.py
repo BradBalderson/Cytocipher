@@ -147,4 +147,3 @@ def ieg_activation(data: AnnData, iegs: np.array,
 
 
 
-
