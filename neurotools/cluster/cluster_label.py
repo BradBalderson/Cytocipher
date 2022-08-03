@@ -85,7 +85,8 @@ def label_clusters(data: sc.AnnData, groupby: str, de_key: str,
         de_bool = np.logical_and(de_bool, logfcs_df.values >= logfc_cutoff)
 
     ##### Subsetting only to reference genes which were called DE
-    reference_genes = np.array([gene for gene in reference_genes
+    if type(reference_genes) != type(None):
+        reference_genes = np.array([gene for gene in reference_genes
                                 if gene in genes_df.values[:,0]])
 
     ##### Labelling clusters based on Limma_DE genes
@@ -474,6 +475,46 @@ def cluster_label_nearest(data: sc.AnnData, var_key: str,
     add_colors(data, obs_key, 'tab20')  # Also adding colors
     if verbose:
         print("Final no. clusters: ", len(np.unique(cluster_labels)))
+
+def merge_clusters_and_label(data: sc.AnnData, var_key: str,
+                  groupby: str = 'leiden',
+                  obs_key: str = 'cluster_labels',
+                  # Stores final cluster labellings!
+                  reference_genes: np.array = None,
+                  # reference genes used for nts bfs, put these genes first for cluster label
+                  max_genes: int = 5, min_de: int = 1, t_cutoff: float = 10,
+                  de_key: str = 'rank_genes_groups',
+                  logfc_cutoff: float = 0, padj_cutoff: float = 1,
+                  iterative_merge: bool=True, n_cpus: int=1,
+                  verbose: bool = True,
+                  ):
+    """ Merges cluster from initial over-clustering, ensuring a minimum no.
+        of de genes between clusters and the rest of the cells, and between
+        the cluster and it's nearest neighbour.
+    """
+    cluster_label(data, var_key=var_key,
+                     groupby=groupby,
+                     obs_key=obs_key,
+                     min_de=min_de, max_genes=max_genes, t_cutoff=t_cutoff,
+                     verbose=verbose,
+                     )
+    cluster_label_nearest(data, var_key=var_key,
+                     groupby=obs_key,
+                     obs_key=obs_key,
+                     min_de=min_de, max_genes=max_genes, t_cutoff=t_cutoff,
+                     n_cpus=n_cpus,
+                     verbose=verbose,
+                     )
+    # One last final run to get the labels
+    cluster_label(data, var_key=var_key,
+                  groupby=obs_key,
+                  obs_key=obs_key,
+                  min_de=min_de, max_genes=max_genes, t_cutoff=t_cutoff,
+                  verbose=verbose,
+                  )
+
+
+
 
 
 

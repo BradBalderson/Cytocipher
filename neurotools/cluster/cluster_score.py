@@ -472,6 +472,50 @@ def code_enrich_labelled(data: sc.AnnData, groupby: str, min_counts: int=2,
                                                                  n_cpus=n_cpus,)
 
 ################################################################################
+ # Methods for normalizing scores and assigning to cell type based on score #
+################################################################################
+def scale_scores(data: sc.AnnData, enrich_scores_key: str,
+                 result_key: str=None, verbose: bool=True):
+    """ Minmax scales the enrichment scores, first performed across features
+        (i.e. so each gene set score is on scale 0 to 1), then per observation
+        (i.e. so then each cell gets a score of 0 to 1 per feature).
+    """
+    cell_scores_df = data.obsm[enrich_scores_key]
+
+    ##### Handling scale, only min-max implemented.
+    expr_scores = cell_scores_df.values
+    expr_scores = minmax_scale(expr_scores, axis=0)  # per enrich scale
+    expr_scores = minmax_scale(expr_scores, axis=1) # per cell scale
+    cell_scores_df = pd.DataFrame(expr_scores, index=cell_scores_df.index,
+                                             columns=cell_scores_df.columns)
+
+    if type(result_key)==type(None):
+        result_key = f'{enrich_scores_key}_scaled'
+
+    data.obsm[result_key] = cell_scores_df
+    if verbose:
+        print(f"Added data.obsm['{result_key}']")
+
+def assign_cells(data: sc.AnnData, label_key: str, enrich_scores_key: str,
+                 verbose: bool=True):
+    """Assigns each cell to the cluster where it has the maximum score.
+        If has no scores, then does not get labelled.
+    """
+    cell_scores_df = data.obsm[enrich_scores_key]
+
+    max_vals = np.apply_along_axis(np.max, 1, cell_scores_df.values)
+    max_indices = np.apply_along_axis(np.argmax, 1, cell_scores_df.values)
+    np_labels = np.array(
+        [cell_scores_df.columns.values[index] for index in max_indices])
+    np_labels[max_vals == 0] = ''
+    data.obs[label_key] = np_labels
+    data.obs[label_key] = data.obs[label_key].astype('category')
+
+    if verbose:
+        print(f"Added data.obs['{label_key}']")
+
+
+################################################################################
                    # Coexpression specificity score #
 ################################################################################
 """ Looking at how specific the coexpression of the gene is for the group of 
