@@ -513,8 +513,51 @@ def merge_clusters_and_label(data: sc.AnnData, var_key: str,
                   verbose=verbose,
                   )
 
+################################################################################
+     # Working on a new method of cluster merging which considers the
+     # coexpression scores themselves as a metric for cluster similarity to
+     # determine if they significantly different
+################################################################################
 
 
+##### Merging the clusters....
+def merge_neighbours_v2(cluster_labels: np.array,
+                        label_pairs: np.array):
+    """ Merges unlabelled clusters to most similar neighbour.
+    """
+    ##### Getting the neighbours of each cluster based on average expression
+    label_set = np.unique(cluster_labels)
+
+    #### Getting groups of clusters which will be merged...
+    merge_groups = []  # List of lists, specifying groups of clusters to merge
+    for pair in label_pairs:
+        added = False
+
+        for merge_group in merge_groups:  # Check if add to existing group
+            if np.any([pair_ in merge_group for pair_ in pair]):
+                merge_group.extend(pair)
+                added = True
+                break
+
+        if not added:  # Make new group if unmerged group and need to be added
+            merge_groups.append(list(pair))
+
+    #### Getting mapping from current clusters to merge clusters
+    cluster_map = {}
+    for i in range(len(merge_groups)):  # For the merge groups
+        for cluster in merge_groups[i]:
+            cluster_map[cluster] = str(i)
+
+    clusti = len(merge_groups)  # New start of the cluster....
+    for label in label_set:
+        if label not in cluster_map:
+            cluster_map[label] = clusti
+            clusti += 1
+
+    merge_cluster_labels = np.array(
+        [cluster_map[clust] for clust in cluster_labels])
+
+    return cluster_map, merge_cluster_labels
 
 
 
