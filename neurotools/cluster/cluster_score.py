@@ -60,12 +60,13 @@ def giotto_page_enrich(data: AnnData, groupby: str,
     n_top = data.shape[1] if type(n_top)==type(None) else n_top
 
     #### First performing differential expression...
-    if type(cluster_marker_key)==type(None):
-        if type(var_groups)!=type(None):
+    if type(cluster_marker_key)==type(None) and \
+            f'{groupby}_markers' not in data.uns:
+        if type(var_groups)!=type(None) and rerun_de:
             data_sub = data[:,data.var[var_groups]]
             sc.tl.rank_genes_groups(data_sub, groupby=groupby, use_raw=False)
             data.uns['rank_genes_groups'] = data_sub.uns['rank_genes_groups']
-        elif rerun_de:
+        elif rerun_de and 'rank_genes_groups' not in data.uns:
             sc.tl.rank_genes_groups(data, groupby=groupby, use_raw=False)
 
         #### Getting marker genes for each cluster...
