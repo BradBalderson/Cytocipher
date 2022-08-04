@@ -567,7 +567,7 @@ def merge_neighbours_v2(cluster_labels: np.array,
 ##### Getting MNNs based on the scores
 def merge_clusters_single(data: sc.AnnData, groupby: str, key_added: str,
                           k: int = 15, knn: int = 5, random_state=20,
-                          verbose: bool = True):
+                          p_cut: float=.1, verbose: bool = True):
     """ Gets pairs of clusters which are not significantly different from one another based on the enrichment score.
     """
     ### Extracting required information ###
@@ -585,7 +585,6 @@ def merge_clusters_single(data: sc.AnnData, groupby: str, key_added: str,
     point_tree = spatial.cKDTree(avg_data)
     for i, labeli in enumerate(label_set):
         nearest_info = point_tree.query(avg_data[i, :], k=knn + 1)
-        nearest_dists = nearest_info[0][1:]
         nearest_indexes = nearest_info[1][1:]
 
         neighbours.append([label_set[index] for index in nearest_indexes])
@@ -604,21 +603,30 @@ def merge_clusters_single(data: sc.AnnData, groupby: str, key_added: str,
 
                 labeli_labelj_scores = label_scores[j][labels == labeli]
                 labelj_labelj_scores = label_scores[j][labels == labelj]
-                groupsi = kmeans.fit_predict(
-                    labeli_labelj_scores.reshape(-1, 1))
-                groupsj = kmeans.fit_predict(
-                    labelj_labelj_scores.reshape(-1, 1))
-                labeli_labelj_scores_mean = \
-                    [np.mean(labeli_labelj_scores[groupsi == k]) for k in
-                     np.unique(groupsi)]
-                labelj_labelj_scores_mean = \
-                    [np.mean(labelj_labelj_scores[groupsj == k]) for k in
-                     np.unique(groupsj)]
+
+                ### Account for n cells <= k
+                if len(labeli_labelj_scores) > k:
+                    groupsi = kmeans.fit_predict(
+                        labeli_labelj_scores.reshape(-1, 1))
+                    labeli_labelj_scores_mean = \
+                        [np.mean(labeli_labelj_scores[groupsi == k]) for k in
+                         np.unique(groupsi)]
+                else:
+                    labeli_labelj_scores_mean = labeli_labelj_scores
+
+                if len(labelj_labelj_scores) > k:
+                    groupsj = kmeans.fit_predict(
+                        labelj_labelj_scores.reshape(-1, 1))
+                    labelj_labelj_scores_mean = \
+                        [np.mean(labelj_labelj_scores[groupsj == k]) for k in
+                         np.unique(groupsj)]
+                else:
+                    labelj_labelj_scores_mean = labelj_labelj_scores
 
                 t, p = ttest_ind(labeli_labelj_scores_mean,
                                  labelj_labelj_scores_mean)
 
-                if p > .05:
+                if p > p_cut:
                     pairs.append((labeli, labelj))
 
     # Now identifying pairs which are mutually not-significant from one another;
@@ -670,6 +678,7 @@ def run_enrich(data: sc.AnnData, groupby: str, enrich_method: str,
 
 def merge_clusters(data: sc.AnnData, groupby: str,
                    k: int = 15, knn: int = 5, n_top_genes: int = 6,
+                   p_cut: float=.1,
                    n_cpus: int = 1, random_state=20, max_iter: int = 5,
                    enrich_method: str = 'code',
                    verbose: bool = True):
@@ -686,7 +695,7 @@ def merge_clusters(data: sc.AnnData, groupby: str,
     old_labels = data.obs[groupby].values.astype(str)
     merge_clusters_single(data, groupby, f'{groupby}_merged',
                           k=k, knn=knn, random_state=random_state,
-                          verbose=False)
+                          p_cut=p_cut, verbose=False)
 
     ## Merging per iteration until convergence ##
     for i in range(max_iter):
@@ -713,7 +722,7 @@ def merge_clusters(data: sc.AnnData, groupby: str,
         old_labels = data.obs[f'{groupby}_merged'].values.astype(str)
         merge_clusters_single(data, f'{groupby}_merged', f'{groupby}_merged',
                               k=k, knn=knn, random_state=random_state,
-                              verbose=False)
+                              p_cut=p_cut, verbose=False)
 
         #sc.pl.umap(data, color=f'{groupby}_merged')
 
