@@ -551,7 +551,7 @@ def merge_neighbours_v2(cluster_labels: np.array,
     clusti = len(merge_groups)  # New start of the cluster....
     for label in label_set:
         if label not in cluster_map:
-            cluster_map[label] = clusti
+            cluster_map[label] = str(clusti)
             clusti += 1
 
     merge_cluster_labels = np.array(
