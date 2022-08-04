@@ -12,6 +12,10 @@ import numpy as np
 import pandas as pd
 import scanpy as sc
 
+import scipy.spatial as spatial
+from scipy.stats import ttest_ind
+from sklearn.cluster import KMeans
+
 import numba
 from numba import njit, prange
 from numba.typed import List
@@ -19,6 +23,8 @@ from numba.typed import List
 import scipy.spatial as spatial
 from ..utils.general import summarise_data_fast
 from ..plotting.utils import add_colors
+from .cluster_score import giotto_page_enrich, code_enrich, coexpr_enrich, \
+                            get_markers
 
 def average(expr: pd.DataFrame, labels: np.array, label_set: np.array):
     """Averages the expression by label.
@@ -516,10 +522,8 @@ def merge_clusters_and_label(data: sc.AnnData, var_key: str,
 ################################################################################
      # Working on a new method of cluster merging which considers the
      # coexpression scores themselves as a metric for cluster similarity to
-     # determine if they significantly different
+     # determine if they significantly different, as opposed to no. of DE genes.
 ################################################################################
-
-
 ##### Merging the clusters....
 def merge_neighbours_v2(cluster_labels: np.array,
                         label_pairs: np.array):
@@ -558,6 +562,171 @@ def merge_neighbours_v2(cluster_labels: np.array,
                                [cluster_map[clust] for clust in cluster_labels])
 
     return cluster_map, merge_cluster_labels
+
+
+##### Getting MNNs based on the scores
+def merge_clusters_single(data: sc.AnnData, groupby: str, key_added: str,
+                          k: int = 15, knn: int = 5, random_state=20,
+                          verbose: bool = True):
+    """ Gets pairs of clusters which are not significantly different from one another based on the enrichment score.
+    """
+    ### Extracting required information ###
+    labels = data.obs[groupby].values
+    enrich_scores = data.obsm[f'{groupby}_enrich_scores']
+    label_set = enrich_scores.columns.values
+    label_scores = [enrich_scores.values[:, i] for i in range(len(label_set))]
+
+    ### Averaging data to get nearest neighbours ###
+    if verbose:
+        print("Getting nearest neighbours by enrichment scores.")
+    avg_data = average(enrich_scores, labels, label_set)
+
+    neighbours = []
+    point_tree = spatial.cKDTree(avg_data)
+    for i, labeli in enumerate(label_set):
+        nearest_info = point_tree.query(avg_data[i, :], k=knn + 1)
+        nearest_dists = nearest_info[0][1:]
+        nearest_indexes = nearest_info[1][1:]
+
+        neighbours.append([label_set[index] for index in nearest_indexes])
+
+    # Now going through the MNNs and testing if their cross-scores are significantly different
+    if verbose:
+        print(
+            "Getting pairs of clusters where atleast in one direction not significantly different from one another.")
+
+    kmeans = KMeans(n_clusters=k, random_state=random_state)
+
+    pairs = []
+    for i, labeli in enumerate(label_set):
+        for j, labelj in enumerate(label_set):
+            if labelj in neighbours[i] and labeli in neighbours[j]:
+
+                labeli_labelj_scores = label_scores[j][labels == labeli]
+                labelj_labelj_scores = label_scores[j][labels == labelj]
+                groupsi = kmeans.fit_predict(
+                    labeli_labelj_scores.reshape(-1, 1))
+                groupsj = kmeans.fit_predict(
+                    labelj_labelj_scores.reshape(-1, 1))
+                labeli_labelj_scores_mean = \
+                    [np.mean(labeli_labelj_scores[groupsi == k]) for k in
+                     np.unique(groupsi)]
+                labelj_labelj_scores_mean = \
+                    [np.mean(labelj_labelj_scores[groupsj == k]) for k in
+                     np.unique(groupsj)]
+
+                t, p = ttest_ind(labeli_labelj_scores_mean,
+                                 labelj_labelj_scores_mean)
+
+                if p > .05:
+                    pairs.append((labeli, labelj))
+
+    # Now identifying pairs which are mutually not-significant from one another;
+    # i.e. cluster 1 is not signicant from cluster 2, and cluster 2 not significant from cluster 1.
+    if verbose:
+        print(
+            "Getting pairs of clusters which are mutually not different from one another.")
+
+    mutual_pairs = []
+    for pairi in pairs:
+        for pairj in pairs:
+            if pairi[0] == pairj[1] and pairi[1] == pairj[0] \
+                    and pairi not in mutual_pairs and pairj not in mutual_pairs:
+                mutual_pairs.append(pairi)
+
+    data.uns[f'{groupby}_mutualpairs'] = mutual_pairs
+    if verbose:
+        print(f"Added data.uns['{groupby}_mutualpairs']")
+
+    # Now merging the non-signficant clusters #
+    cluster_map, merge_cluster_labels = cl.merge_neighbours_v2(labels,
+                                                               mutual_pairs, )
+    data.obs[key_added] = merge_cluster_labels
+    data.obs[key_added] = data.obs[key_added].astype('category')
+    data.obs[key_added] = data.obs[key_added].cat.set_categories(
+        np.unique(merge_cluster_labels.astype(int)).astype(str))
+
+    if verbose:
+        print(f"Added data.obs['{key_added}']")
+
+
+def run_enrich(data: sc.AnnData, groupby: str, enrich_method: str,
+               n_cpus: int):
+    """ Runs desired enrichment method.
+    """
+    enrich_options = ['code', 'coexpr', 'giotto']
+    if enrich_method not in enrich_options:
+        raise Exception(
+       f"Got enrich_method={enrich_method}; expected one of : {enrich_options}")
+
+    if enrich_method == 'code':
+        code_enrich(data, groupby, n_cpus=n_cpus, verbose=False)
+    elif enrich_method == 'coexpr':
+        coexpr_enrich(data, groupby, n_cpus=n_cpus, verbose=False)
+    elif enrich_method == 'giotto':
+        giotto_page_enrich(data, groupby,
+                              rerun_de=False, verbose=False)
+
+
+def merge_clusters(data: sc.AnnData, groupby: str,
+                   k: int = 15, knn: int = 5, n_top_genes: int = 6,
+                   n_cpus: int = 1, random_state=20, max_iter: int = 5,
+                   enrich_method: str = 'code',
+                   verbose: bool = True):
+    """ Merges the clusters following an expectation maximisation approach...
+    """
+
+    ### Initial merge ##
+    if verbose:
+        print("Initial merge.")
+
+    get_markers(data, groupby, n_top=n_top_genes, verbose=False)
+    run_enrich(data, groupby, enrich_method, n_cpus)
+
+    old_labels = data.obs[groupby].values.astype(str)
+    merge_clusters_single(data, groupby, f'{groupby}_merged',
+                          k=k, knn=knn, random_state=random_state,
+                          verbose=False)
+
+    ## Merging per iteration until convergence ##
+    for i in range(max_iter):
+
+        # Running marker gene determination #
+        get_markers(data, f'{groupby}_merged', n_top=n_top_genes,
+                       verbose=False)
+
+        # Running the enrichment scoring #
+        run_enrich(data, f'{groupby}_merged', enrich_method, n_cpus)
+
+        # Checking if we have converged #
+        new_labels = data.obs[f'{groupby}_merged'].values.astype(str)
+        if len(np.unique(old_labels)) == len(np.unique(new_labels)):
+            if verbose:
+                print(f"Added data.obs[f'{groupby}_merged']")
+                print("Exiting due to convergence.")
+                return
+
+        if verbose:
+            print(f"Merge iteration {i}.")
+
+        # Running new merge operation #
+        old_labels = data.obs[f'{groupby}_merged'].values.astype(str)
+        merge_clusters_single(data, f'{groupby}_merged', f'{groupby}_merged',
+                              k=k, knn=knn, random_state=random_state,
+                              verbose=False)
+
+        #sc.pl.umap(data, color=f'{groupby}_merged')
+
+    ## Reached max iter, exit with current solution ##
+    # Running marker gene determination #
+    get_markers(data, f'{groupby}_merged', n_top=n_top_genes, verbose=False)
+
+    # Running the enrichment scoring #
+    run_enrich(data, f'{groupby}_merged', enrich_method, n_cpus)
+
+    if verbose:
+        print(f"Added data.obs[f'{groupby}_merged']")
+        print(f"Exiting due to reaching max_iter {max_iter}")
 
 
 
