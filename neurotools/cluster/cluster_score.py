@@ -91,6 +91,8 @@ def giotto_page_enrich(data: AnnData, groupby: str,
         cluster_marker_key = f'{groupby}_markers'
         if verbose:
             print(f"Added data.uns['{groupby}_markers']")
+    elif type(cluster_marker_key)==type(None):
+        cluster_marker_key = f'{groupby}_markers'
 
     cluster_genes = data.uns[cluster_marker_key]
 

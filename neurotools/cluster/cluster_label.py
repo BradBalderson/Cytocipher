@@ -555,7 +555,7 @@ def merge_neighbours_v2(cluster_labels: np.array,
             clusti += 1
 
     merge_cluster_labels = np.array(
-        [cluster_map[clust] for clust in cluster_labels])
+                               [cluster_map[clust] for clust in cluster_labels])
 
     return cluster_map, merge_cluster_labels
 
