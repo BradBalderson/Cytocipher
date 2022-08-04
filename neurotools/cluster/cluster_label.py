@@ -639,7 +639,7 @@ def merge_clusters_single(data: sc.AnnData, groupby: str, key_added: str,
         print(f"Added data.uns['{groupby}_mutualpairs']")
 
     # Now merging the non-signficant clusters #
-    cluster_map, merge_cluster_labels = cl.merge_neighbours_v2(labels,
+    cluster_map, merge_cluster_labels = merge_neighbours_v2(labels,
                                                                mutual_pairs, )
     data.obs[key_added] = merge_cluster_labels
     data.obs[key_added] = data.obs[key_added].astype('category')
