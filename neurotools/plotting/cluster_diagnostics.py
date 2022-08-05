@@ -19,7 +19,7 @@ import seaborn as sb
 def enrich_heatmap(data: AnnData, groupby: str, per_cell: bool=True,
                    plot_group: str=None, figsize=(12, 12),
                    dendrogram: bool=False, vmax=1, show=True,
-                   scale_rows: bool=False, scale_cols: bool=False):
+                   scale_rows: bool=True, scale_cols: bool=True):
     """Plots the enrichment scores for each cluster to show specificity of
         gene coexpression.
     """
