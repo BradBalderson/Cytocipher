@@ -93,6 +93,8 @@ def sig_cluster_diagnostics(data: sc.AnnData, groupby: str,
     enrich_scores = data.obsm[f'{groupby}_enrich_scores']
     label_set = enrich_scores.columns.values
     label_scores = [enrich_scores.values[:, i] for i in range(len(label_set))]
+    colors = {name: data.uns[f'{groupby}_colors'][i] for i, name in \
+                                    enumerate(data.obs[groupby].cat.categories)}
 
     ################## Determining which pairs to plot #########################
     if type(plot_pair) != type(None):
