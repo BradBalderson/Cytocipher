@@ -591,7 +591,7 @@ def merge_clusters_single(data: sc.AnnData, groupby: str, key_added: str,
             neighbours.append([label_set[index] for index in nearest_indexes])
     else:
         for label in label_set:
-            neighbours.extend( label_set[label_set!=label] )
+            neighbours.append( list(label_set[label_set!=label]) )
 
     # Now going through the MNNs and testing if their cross-scores are significantly different
     if verbose:
