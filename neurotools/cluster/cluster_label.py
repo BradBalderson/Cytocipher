@@ -625,6 +625,12 @@ def merge_clusters_single(data: sc.AnnData, groupby: str, key_added: str,
 
                 t, p = ttest_ind(labeli_labelj_scores_mean,
                                  labelj_labelj_scores_mean)
+                #### Above outputs nan if all 0's for one-case, indicate significant difference
+                if np.isnan(p) and (
+                        np.all(np.array(labeli_labelj_scores_mean) == 0) or
+                        np.all(np.array(labelj_labelj_scores_mean) == 0)):
+
+                    p = 0
 
                 if p > p_cut:
                     pairs.append((labeli, labelj))
