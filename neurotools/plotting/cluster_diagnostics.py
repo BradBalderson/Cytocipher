@@ -64,10 +64,9 @@ def enrich_heatmap(data: AnnData, groupby: str, per_cell: bool=True,
      # Diagnostics after testing for significantly different clusters #
 ################################################################################
 def sig_cluster_diagnostics(data: sc.AnnData, groupby: str,
-                            plot_pair: tuple=None
-                            plot_examples: bool=True
-                            skip: int=10 #When not plotting limited examples, can skip every x cluster to plot...
-                            show=True, verbose=True):
+                            plot_pair: tuple=None,
+                            plot_examples: bool=True,
+                            skip: int=10, show=True, verbose=True):
     """ Plots violins of enrichment scores compared between clusters with
         with statistics. Useful to diagnose if significance threshold is
         too stringent/relaxed.
