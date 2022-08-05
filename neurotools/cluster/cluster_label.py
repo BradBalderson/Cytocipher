@@ -601,6 +601,7 @@ def merge_clusters_single(data: sc.AnnData, groupby: str, key_added: str,
     kmeans = KMeans(n_clusters=k, random_state=random_state)
 
     pairs = []
+    ps_dict = {}
     for i, labeli in enumerate(label_set):
         for j, labelj in enumerate(label_set):
             if labelj in neighbours[i] and labeli in neighbours[j]:
@@ -636,6 +637,7 @@ def merge_clusters_single(data: sc.AnnData, groupby: str, key_added: str,
 
                     p = 0
 
+                ps_dict[f'{labeli}_{labelj}'] = p
                 if p > p_cut:
                     pairs.append((labeli, labelj))
 
@@ -653,8 +655,10 @@ def merge_clusters_single(data: sc.AnnData, groupby: str, key_added: str,
                 mutual_pairs.append(pairi)
 
     data.uns[f'{groupby}_mutualpairs'] = mutual_pairs
+    data.uns[f'{groupby}_ps'] = ps_dict
     if verbose:
         print(f"Added data.uns['{groupby}_mutualpairs']")
+        print(f"Added data.uns['{groupby}_ps']")
 
     # Now merging the non-signficant clusters #
     cluster_map, merge_cluster_labels = merge_neighbours_v2(labels,
