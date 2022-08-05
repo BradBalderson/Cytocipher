@@ -577,17 +577,21 @@ def merge_clusters_single(data: sc.AnnData, groupby: str, key_added: str,
     label_scores = [enrich_scores.values[:, i] for i in range(len(label_set))]
 
     ### Averaging data to get nearest neighbours ###
-    if verbose:
-        print("Getting nearest neighbours by enrichment scores.")
-    avg_data = average(enrich_scores, labels, label_set)
-
     neighbours = []
-    point_tree = spatial.cKDTree(avg_data)
-    for i, labeli in enumerate(label_set):
-        nearest_info = point_tree.query(avg_data[i, :], k=knn + 1)
-        nearest_indexes = nearest_info[1][1:]
+    if knn < len(label_set):
+        if verbose:
+            print("Getting nearest neighbours by enrichment scores.")
 
-        neighbours.append([label_set[index] for index in nearest_indexes])
+        avg_data = average(enrich_scores, labels, label_set)
+        point_tree = spatial.cKDTree(avg_data)
+        for i, labeli in enumerate(label_set):
+            nearest_info = point_tree.query(avg_data[i, :], k=knn + 1)
+            nearest_indexes = nearest_info[1][1:]
+
+            neighbours.append([label_set[index] for index in nearest_indexes])
+    else:
+        for label in label_set:
+            neighbours.extend( label_set[label_set!=label] )
 
     # Now going through the MNNs and testing if their cross-scores are significantly different
     if verbose:
@@ -699,6 +703,7 @@ def merge_clusters(data: sc.AnnData, groupby: str,
     run_enrich(data, groupby, enrich_method, n_cpus)
 
     old_labels = data.obs[groupby].values.astype(str)
+
     merge_clusters_single(data, groupby, f'{groupby}_merged',
                           k=k, knn=knn, random_state=random_state,
                           p_cut=p_cut, verbose=False)
