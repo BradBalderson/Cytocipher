@@ -578,7 +578,7 @@ def merge_clusters_single(data: sc.AnnData, groupby: str, key_added: str,
 
     ### Averaging data to get nearest neighbours ###
     neighbours = []
-    if knn < len(label_set):
+    if type(knn)!=type(None) and knn < (len(label_set)-1):
         if verbose:
             print("Getting nearest neighbours by enrichment scores.")
 
