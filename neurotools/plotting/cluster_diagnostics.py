@@ -143,7 +143,7 @@ def sig_cluster_diagnostics(data: sc.AnnData, groupby: str,
 
         if verbose:
             print(
-           "Printing top and bottom most significant/non-significant clusters.")
+         "Printing top and bottom most significant/non-significant clusters.\n")
 
     else:
         # Determining order from least to most significant #
@@ -184,7 +184,7 @@ def sig_cluster_diagnostics(data: sc.AnnData, groupby: str,
         if verbose:
             print(
                 f"Plotting every {skip} pairs in order of most distinct clusters"
-                f" to least distinct.")
+                f" to least distinct.\n")
 
     ################## Determining which pairs to plot #########################
     for i_ in range(0, len(pairs_to_plot), skip):
