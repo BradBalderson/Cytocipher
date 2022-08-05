@@ -47,7 +47,7 @@ def enrich_heatmap(data: AnnData, groupby: str, per_cell: bool=True,
         ax = sc.pl.heatmap(score_data, score_data.var_names, figsize=figsize,
                            groupby=groupby, show_gene_labels=True, vmax=vmax,
                            show=False, dendrogram=dendrogram)
-        ax['heatmap_ax'].set_title("Cluster Limma_DE gene coexpression score",
+        ax['heatmap_ax'].set_title("Cluster enrich scores",
                                    fontdict={'fontweight': 'bold',
                                              'fontsize': 20})
 
