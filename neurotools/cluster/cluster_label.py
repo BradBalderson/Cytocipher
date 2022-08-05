@@ -566,7 +566,7 @@ def merge_neighbours_v2(cluster_labels: np.array,
 
 ##### Getting MNNs based on the scores
 def merge_clusters_single(data: sc.AnnData, groupby: str, key_added: str,
-                          k: int = 15, knn: int = 5, random_state=20,
+                          k: int = 15, knn: int = None, random_state=20,
                           p_cut: float=.1, verbose: bool = True):
     """ Gets pairs of clusters which are not significantly different from one another based on the enrichment score.
     """
@@ -685,11 +685,10 @@ def run_enrich(data: sc.AnnData, groupby: str, enrich_method: str,
         giotto_page_enrich(data, groupby,
                               rerun_de=False, verbose=False)
 
-
 def merge_clusters(data: sc.AnnData, groupby: str,
-                   k: int = 15, knn: int = 5, n_top_genes: int = 6,
+                   k: int = 15, knn: int = None, n_top_genes: int = 6,
                    p_cut: float=.1,
-                   n_cpus: int = 1, random_state=20, max_iter: int = 5,
+                   n_cpus: int = 1, random_state=20, max_iter: int = 0,
                    enrich_method: str = 'code',
                    verbose: bool = True):
     """ Merges the clusters following an expectation maximisation approach...
