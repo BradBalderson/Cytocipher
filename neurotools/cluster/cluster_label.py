@@ -591,7 +591,7 @@ def merge_clusters_single(data: sc.AnnData, groupby: str, key_added: str,
             dists_ = nearest_info[0][1:]
 
             neighbours.append([label_set[index] for index in nearest_indexes])
-            dists.append([dists_[index] for index in nearest_indexes])
+            dists.append( dists_ )
     else:
         for label in label_set:
             neighbours.append( list(label_set[label_set!=label]) )
