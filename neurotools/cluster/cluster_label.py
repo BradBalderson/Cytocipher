@@ -578,6 +578,7 @@ def merge_clusters_single(data: sc.AnnData, groupby: str, key_added: str,
 
     ### Averaging data to get nearest neighbours ###
     neighbours = []
+    dists = []
     if type(knn)!=type(None) and knn < (len(label_set)-1):
         if verbose:
             print("Getting nearest neighbours by enrichment scores.")
@@ -587,13 +588,17 @@ def merge_clusters_single(data: sc.AnnData, groupby: str, key_added: str,
         for i, labeli in enumerate(label_set):
             nearest_info = point_tree.query(avg_data[i, :], k=knn + 1)
             nearest_indexes = nearest_info[1][1:]
+            dists_ = nearest_info[0][1:]
 
             neighbours.append([label_set[index] for index in nearest_indexes])
+            dists.append([dists_[index] for index in nearest_indexes])
     else:
         for label in label_set:
             neighbours.append( list(label_set[label_set!=label]) )
 
     data.uns[f'{groupby}_neighbours'] = {label: neighbours[i]
+                                         for i, label in enumerate(label_set)}
+    data.uns[f'{groupby}_neighdists'] = {label: dists[i]
                                          for i, label in enumerate(label_set)}
 
     # Now going through the MNNs and testing if their cross-scores are significantly different
