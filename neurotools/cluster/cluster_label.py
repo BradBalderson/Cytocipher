@@ -604,7 +604,6 @@ def merge_clusters_single(data: sc.AnnData, groupby: str, key_added: str,
     kmeans = KMeans(n_clusters=k, random_state=random_state)
 
     pairs = []
-    mutual_pairs = []
     ps_dict = {}
     for i, labeli in enumerate(label_set):
         for j, labelj in enumerate(label_set):
@@ -645,13 +644,18 @@ def merge_clusters_single(data: sc.AnnData, groupby: str, key_added: str,
                 if p > p_cut:
                     pairs.append((labeli, labelj))
 
-                mutual_pairs.append( (labeli, labelj) )
-
     # Now identifying pairs which are mutually not-significant from one another;
     # i.e. cluster 1 is not signicant from cluster 2, and cluster 2 not significant from cluster 1.
     if verbose:
         print(
             "Getting pairs of clusters which are mutually not different from one another.")
+
+    mutual_pairs = []
+    for pairi in pairs:
+        for pairj in pairs:
+            if pairi[0] == pairj[1] and pairi[1] == pairj[0] \
+                    and pairi not in mutual_pairs and pairj not in mutual_pairs:
+                mutual_pairs.append(pairi)
 
     data.uns[f'{groupby}_mutualpairs'] = mutual_pairs
     data.uns[f'{groupby}_ps'] = ps_dict
