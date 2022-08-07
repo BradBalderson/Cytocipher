@@ -690,7 +690,7 @@ def run_enrich(data: sc.AnnData, groupby: str, enrich_method: str,
                               rerun_de=False, verbose=False)
 
 def merge_clusters(data: sc.AnnData, groupby: str,
-                   var_group: str=None,
+                   var_groups: str=None,
                    k: int = 15, knn: int = None, n_top_genes: int = 6,
                    p_cut: float=.1,
                    n_cpus: int = 1, random_state=20, max_iter: int = 0,
@@ -704,7 +704,7 @@ def merge_clusters(data: sc.AnnData, groupby: str,
         print("Initial merge.")
 
     get_markers(data, groupby, n_top=n_top_genes, verbose=False,
-                var_groups=var_group)
+                var_groups=var_groups)
     run_enrich(data, groupby, enrich_method, n_cpus)
 
     old_labels = data.obs[groupby].values.astype(str)
@@ -718,7 +718,7 @@ def merge_clusters(data: sc.AnnData, groupby: str,
 
         # Running marker gene determination #
         get_markers(data, f'{groupby}_merged', n_top=n_top_genes,
-                       verbose=False, var_groups=var_group)
+                       verbose=False, var_groups=var_groups)
 
         # Running the enrichment scoring #
         run_enrich(data, f'{groupby}_merged', enrich_method, n_cpus)
@@ -745,7 +745,7 @@ def merge_clusters(data: sc.AnnData, groupby: str,
     ## Reached max iter, exit with current solution ##
     # Running marker gene determination #
     get_markers(data, f'{groupby}_merged', n_top=n_top_genes, verbose=False,
-                var_groups=var_group)
+                var_groups=var_groups)
 
     # Running the enrichment scoring #
     run_enrich(data, f'{groupby}_merged', enrich_method, n_cpus)
