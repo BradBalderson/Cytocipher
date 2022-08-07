@@ -593,6 +593,9 @@ def merge_clusters_single(data: sc.AnnData, groupby: str, key_added: str,
         for label in label_set:
             neighbours.append( list(label_set[label_set!=label]) )
 
+    data.uns[f'{groupby}_neighbours'] = {label: neighbours[i]
+                                         for i, label in enumerate(label_set)}
+
     # Now going through the MNNs and testing if their cross-scores are significantly different
     if verbose:
         print(
@@ -659,6 +662,7 @@ def merge_clusters_single(data: sc.AnnData, groupby: str, key_added: str,
     if verbose:
         print(f"Added data.uns['{groupby}_mutualpairs']")
         print(f"Added data.uns['{groupby}_ps']")
+        print(f"Added data.uns['{groupby}_neighbours']")
 
     # Now merging the non-signficant clusters #
     cluster_map, merge_cluster_labels = merge_neighbours_v2(labels,
