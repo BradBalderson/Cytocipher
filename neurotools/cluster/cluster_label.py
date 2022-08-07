@@ -587,11 +587,13 @@ def merge_clusters_single(data: sc.AnnData, groupby: str, key_added: str,
         point_tree = spatial.cKDTree(avg_data)
         for i, labeli in enumerate(label_set):
             nearest_info = point_tree.query(avg_data[i, :], k=knn + 1)
-            nearest_indexes = nearest_info[1][1:]
-            dists_ = nearest_info[0][1:]
+            nearest_indexes = nearest_info[1]
+            dists_ = nearest_info[0]
 
-            neighbours.append([label_set[index] for index in nearest_indexes])
-            dists.append( dists_ )
+            neighbours.append([label_set[index] for index in nearest_indexes
+                               if label_set[index]!=labeli])
+            dists.append( [dist for i_, dist in enumerate(dists_)
+                           if label_set[nearest_indexes[i_]]!=labeli] )
     else:
         for label in label_set:
             neighbours.append( list(label_set[label_set!=label]) )
@@ -668,6 +670,7 @@ def merge_clusters_single(data: sc.AnnData, groupby: str, key_added: str,
         print(f"Added data.uns['{groupby}_mutualpairs']")
         print(f"Added data.uns['{groupby}_ps']")
         print(f"Added data.uns['{groupby}_neighbours']")
+        print(f"Added data.uns['{groupby}_neighdists']")
 
     # Now merging the non-signficant clusters #
     cluster_map, merge_cluster_labels = merge_neighbours_v2(labels,

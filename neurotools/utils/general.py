@@ -65,7 +65,8 @@ def summarise_data_fast(data, label_indices):
                                                                 dtype=np.float_)
     for i in prange(len(label_indices)):
         for j in range(data.shape[1]):
-            formatted_data[i, j] = np.median( data[label_indices[i], j] )
+            #NOTE was np.median, changed 08/08/22
+            formatted_data[i, j] = np.mean( data[label_indices[i], j] )
 
     return formatted_data
 
