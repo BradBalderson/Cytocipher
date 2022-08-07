@@ -690,7 +690,7 @@ def run_enrich(data: sc.AnnData, groupby: str, enrich_method: str,
                               rerun_de=False, verbose=False)
 
 def merge_clusters(data: sc.AnnData, groupby: str,
-                   var_groups: str=None, n_top_genes: int = 6, t_cutoff: int=1,
+                   var_groups: str=None, n_top_genes: int = 6, t_cutoff: int=3,
                    k: int = 15, knn: int = None,
                    p_cut: float=.1,
                    n_cpus: int = 1, random_state=20, max_iter: int = 0,
