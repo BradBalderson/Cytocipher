@@ -280,7 +280,7 @@ def get_neg_cells_bool(expr_bool_neg: np.ndarray, negative_indices: List,
     return neg_cells_bool
 
 @njit
-def code_score_v1(expr: np.ndarray, in_index_end: int,
+def code_score(expr: np.ndarray, in_index_end: int,
                negative_indices: List, min_counts: int = 2):
     """Enriches for the genes in the data, while controlling for genes that
         shouldn't be in the cells.
@@ -325,7 +325,7 @@ def code_score_v1(expr: np.ndarray, in_index_end: int,
     return cell_scores
 
 @njit
-def code_score(expr: np.ndarray, in_index_end: int,
+def code_score_penalise_negs(expr: np.ndarray, in_index_end: int,
                negative_indices: List, min_counts: int = 2):
     """Enriches for the genes in the data, while controlling for genes that
         shouldn't be in the cells.
