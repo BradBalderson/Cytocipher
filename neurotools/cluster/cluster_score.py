@@ -479,10 +479,11 @@ def code_enrich(data: sc.AnnData, groupby: str,
                 ##### Accounting for full overlap!!!!
                 if np.all( np.unique(cluster_genes_dict[clusterj])==\
                                                      np.unique(cluster_genes) ):
-                    error = "Full overlap of + and - gene sets detected" + \
+                    error = "Full overlap of + and - gene sets detected " + \
                             f"for {cluster} and {clusterj}; need to " + \
                             f"increase number of marker genes for code " + \
-                            f"scoring."
+                            f"scoring; or switch to alternate method coexpr " +\
+                            f"or giotto."
                     if not squash_exception:
                         raise Exception(error)
                     else:
