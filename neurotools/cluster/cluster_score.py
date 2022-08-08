@@ -378,6 +378,7 @@ def get_code_scores(full_expr: np.ndarray, all_genes: np.array,
 def code_enrich(data: sc.AnnData, groupby: str,
                   cluster_marker_key: str = None,
                   min_counts: int = 2, n_cpus: int=1,
+                  squash_exception: bool=False,
                   verbose: bool = True):
     """ NOTE: unlike the giotto function version, this one assumes have already done DE.
     """
@@ -428,6 +429,18 @@ def code_enrich(data: sc.AnnData, groupby: str,
                         if gene not in cluster_genes:
                             cluster_diff_full.append( gene )
                             cluster_diff_clusters.append( clusterj )
+
+                ##### Accounting for full overlap!!!!
+                if sum(shared_genes_bool) == len(cluster_genes):
+                    error = "Full overlap of + and - gene sets detected"
+                                    f"for {cluster} and {clusterj}; need to "
+                                    f"increase number of marker genes for code "
+                                    f"scoring."
+                    if not squash_exception:
+                        raise Exception(error)
+                    else:
+                        print(error)
+                
         ##### Adding to the Lists
         cluster_diff_full = np.array(cluster_diff_full, dtype=str_dtype)
         cluster_diff_List.append( cluster_diff_full )
