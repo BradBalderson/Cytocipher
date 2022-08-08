@@ -280,7 +280,7 @@ def get_neg_cells_bool(expr_bool_neg: np.ndarray, negative_indices: List,
     return neg_cells_bool
 
 @njit
-def code_score(expr: np.ndarray, in_index_end: int,
+def code_score_v1(expr: np.ndarray, in_index_end: int,
                negative_indices: List, min_counts: int = 2):
     """Enriches for the genes in the data, while controlling for genes that
         shouldn't be in the cells.
@@ -321,6 +321,64 @@ def code_score(expr: np.ndarray, in_index_end: int,
 
         joint_coexpr_prob = np.prod( expr_probs[expr_probs > 0] )
         cell_scores[i] = np.log2(coexpr_counts_pos[i] / joint_coexpr_prob)
+
+    return cell_scores
+
+@njit
+def code_score(expr: np.ndarray, in_index_end: int,
+               negative_indices: List, min_counts: int = 2):
+    """Enriches for the genes in the data, while controlling for genes that
+        shouldn't be in the cells.
+    """
+    ### Need to check all places of expression to get expression probablility
+    expr_bool = expr > 0
+    coexpr_counts_all = expr_bool.sum(axis=1)
+
+    ### Include cells which coexpress genes in positive set
+    expr_pos = expr[:, :in_index_end] # Get this for downstream calcs
+    expr_bool_pos = expr_bool[:, :in_index_end]
+    coexpr_counts_pos = expr_bool_pos.sum(axis=1)
+
+    ### Accounting for case where might have only one marker gene !!
+    # Determining cutoff
+    min_ = get_min_(in_index_end, min_counts)
+
+    ### Getting cells to exclude, since they coexpress genes in negative set.
+    #neg_cells_bool = get_neg_cells_bool(expr_bool[:, in_index_end:],
+    #                                    negative_indices, min_counts)
+    ### Instead, will try penalising negative set...
+    expr_neg = expr[:, in_index_end:]
+    expr_bool_neg = expr_bool[:, in_index_end:]
+
+    ### Getting which cells coexpress atleast min_counts of
+    ###  positive set but not min_counts of negative set
+    #coexpr_bool = np.logical_and(coexpr_counts_pos >= min_,
+    #                             neg_cells_bool==0)
+    coexpr_bool = coexpr_counts_pos >= min_
+    coexpr_indices = np.where( coexpr_bool )[0]
+
+    ### Need to check all nonzero indices to get expression level frequency.
+    nonzero_indices = np.where(coexpr_counts_all > 0)[0]
+    cell_scores = np.zeros((expr.shape[0]), dtype=np.float64)
+    for i in coexpr_indices:
+        expr_probs = np.zeros(( expr_pos.shape[1] ))
+        expr_probs_neg = np.zeros(( expr_neg.shape[1] ))
+
+        cell_nonzero = np.where( expr_bool_pos[i, :] )[0]
+        for j, genej in enumerate(cell_nonzero):
+            expr_level_count = len(np.where(expr_pos[nonzero_indices, genej]
+                                                      >= expr_pos[i, genej])[0])
+            expr_probs[j] = expr_level_count / expr.shape[0]
+
+        cell_nonzero_neg = np.where( expr_bool_neg[i, :] )[0]
+        for j, genej in enumerate(cell_nonzero_neg):
+            expr_level_count = len(np.where(expr_neg[nonzero_indices, genej]
+                                                      >= expr_neg[i, genej])[0])
+            expr_probs_neg[j] = expr_level_count / expr.shape[0]
+
+        joint_coexpr_prob = np.prod( expr_probs[expr_probs > 0] )
+        joint_coexpr_neg = np.prod( expr_probs_neg[expr_probs_neg > 0] )
+        cell_scores[i] = np.log2( joint_coexpr_neg / joint_coexpr_prob )
 
     return cell_scores
 
