@@ -417,6 +417,19 @@ def code_enrich(data: sc.AnnData, groupby: str,
         cluster_diff_clusters = []
         for clusterj in cluster_genes_dict:
             if cluster!=clusterj:
+
+                ##### Accounting for full overlap!!!!
+                if np.all( np.unique(cluster_genes_dict[clusterj])==\
+                                                     np.unique(cluster_genes) ):
+                    error = "Full overlap of + and - gene sets detected" + \
+                            f"for {cluster} and {clusterj}; need to " + \
+                            f"increase number of marker genes for code " + \
+                            f"scoring."
+                    if not squash_exception:
+                        raise Exception(error)
+                    else:
+                        print(error)
+
                 shared_genes_bool = [gene in cluster_genes_dict[clusterj]
                                                       for gene in cluster_genes]
 
@@ -429,17 +442,6 @@ def code_enrich(data: sc.AnnData, groupby: str,
                         if gene not in cluster_genes:
                             cluster_diff_full.append( gene )
                             cluster_diff_clusters.append( clusterj )
-
-                ##### Accounting for full overlap!!!!
-                if sum(shared_genes_bool) == len(cluster_genes):
-                    error = "Full overlap of + and - gene sets detected" +\
-                                f"for {cluster} and {clusterj}; need to " +\
-                                f"increase number of marker genes for code " +\
-                                f"scoring."
-                    if not squash_exception:
-                        raise Exception(error)
-                    else:
-                        print(error)
 
         ##### Adding to the Lists
         cluster_diff_full = np.array(cluster_diff_full, dtype=str_dtype)
