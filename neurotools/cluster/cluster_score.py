@@ -432,15 +432,15 @@ def code_enrich(data: sc.AnnData, groupby: str,
 
                 ##### Accounting for full overlap!!!!
                 if sum(shared_genes_bool) == len(cluster_genes):
-                    error = "Full overlap of + and - gene sets detected"
-                                    f"for {cluster} and {clusterj}; need to "
-                                    f"increase number of marker genes for code "
-                                    f"scoring."
+                    error = "Full overlap of + and - gene sets detected" +\
+                                f"for {cluster} and {clusterj}; need to " +\
+                                f"increase number of marker genes for code " +\
+                                f"scoring."
                     if not squash_exception:
                         raise Exception(error)
                     else:
                         print(error)
-                
+
         ##### Adding to the Lists
         cluster_diff_full = np.array(cluster_diff_full, dtype=str_dtype)
         cluster_diff_List.append( cluster_diff_full )
