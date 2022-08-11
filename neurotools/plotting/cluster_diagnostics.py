@@ -19,10 +19,31 @@ import seaborn as sb
 def enrich_heatmap(data: AnnData, groupby: str, per_cell: bool=True,
                    plot_group: str=None, figsize=(8, 8),
                    dendrogram: bool=False, vmax=1, show=True,
+                   n_clust_cells: int=50,
                    scale_rows: bool=True, scale_cols: bool=True):
     """Plots the enrichment scores for each cluster to show specificity of
         gene coexpression.
     """
+    # Make sure color data transfered! #
+    if f'{groupby}_colors' in data.uns:
+        colors = data.uns[f'{groupby}_colors']
+    else:
+        colors = None
+
+    if per_cell and type(n_clust_cells)!=type(None):
+        #### Visualising enrichment scores per cell
+        #### Do per cell, but subset to x cells per cell type so can see...
+        cell_indices = []
+        labels = data.obs[groupby].values.astype(str)
+        label_set = np.unique(labels)
+        for i, label in enumerate(label_set):
+            indices = np.where(labels == label)[0]
+            cell_indices.extend(
+                np.random.choice(indices, min([len(indices), n_clust_cells]),
+                                                                 replace=False))
+
+        data = data[cell_indices]
+
     cell_scores_df = data.obsm[f'{groupby}_enrich_scores']
 
     ##### Handling scale, only min-max implemented.
@@ -36,6 +57,9 @@ def enrich_heatmap(data: AnnData, groupby: str, per_cell: bool=True,
                                                  columns=cell_scores_df.columns)
 
     score_data = sc.AnnData(cell_scores_df, obs=data.obs)
+    if type(colors)!=type(None):
+        score_data.uns[f'{groupby}_colors'] = colors
+
     if dendrogram:
         sc.tl.dendrogram(score_data, groupby, use_rep='X')
 

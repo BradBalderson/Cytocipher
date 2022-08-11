@@ -597,6 +597,7 @@ def merge_clusters_single(data: sc.AnnData, groupby: str, key_added: str,
     else:
         for label in label_set:
             neighbours.append( list(label_set[label_set!=label]) )
+            dists.append( [np.nan]*(len(label_set)-1) )
 
     data.uns[f'{groupby}_neighbours'] = {label: neighbours[i]
                                          for i, label in enumerate(label_set)}
