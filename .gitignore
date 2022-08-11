@@ -1,6 +1,6 @@
-neurotools/cluster/rogue.py
+cytocipher/cluster/rogue.py
 .DS_Store
-neurotools/__pycache__/*
-neurotools/activation/__pycache__/
-neurotools/plotting/__pycache__/
+cytocipher/__pycache__/*
+cytocipher/activation/__pycache__/
+cytocipher/plotting/__pycache__/
 *.pyc
