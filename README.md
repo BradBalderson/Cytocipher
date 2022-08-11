@@ -1,6 +1,11 @@
 # Cytocipher - detection of significantly different cell populations in scRNA-seq
 ![title](img/cytocipher_icon.png)
 
+For a more complete tutorial that installs cytocipher & 
+reproduces the pancreatus development analysis,
+please see 
+[here](https://github.com/BradBalderson/Cytocipher/tree/main/tutorials/cytocipher_pancreas.ipynb).
+
 ## Installation 
 pip install coming soon, for this early release, 
 just going with git clone, add to path, and pip install -r requirements.txt.
@@ -14,7 +19,9 @@ source code to your current working directory***).
 ```
 !git clone https://github.com/BradBalderson/Cytocipher.git
 !pip install -r Cytocipher/requirements.txt
-
+!pip install --no-deps scanpy==1.9.1
+```
+```
 import sys
 sys.path.append('Cytocipher')
 
