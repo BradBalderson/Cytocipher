@@ -26,7 +26,7 @@ Given an AnnData object, *data*, that has had been processed similarly to the
 [scanpy standard workflow](https://scanpy-tutorials.readthedocs.io/en/latest/pbmc3k.html)
 to produce log-cpm normalised data with putative cluster labels 
 (e.g. from Leiden clustering), then the following sections detail minimal code 
-for Cytocipher code scoring and cluster merging. 
+for cytocipher code scoring and cluster merging. 
 
 ## Code Scoring Minimal Example
 Functions below run the marker gene identification, code scoring, & 
