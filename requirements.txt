@@ -1,7 +1,7 @@
 numba==0.56.0
 #numpy==1.23.1
 pandas==1.4.3
-scanpy==1.9.1 --no-deps
+scanpy==1.9.1 --install-option="--no-deps"
 scipy==1.9.0
 anndata==0.8.0
 umap-learn==0.5.2
