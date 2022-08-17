@@ -705,12 +705,69 @@ def run_enrich(data: sc.AnnData, groupby: str, enrich_method: str,
 def merge_clusters(data: sc.AnnData, groupby: str,
                    var_groups: str=None, n_top_genes: int = 6, t_cutoff: int=3,
                    marker_padj_cutoff: float=.05,
-                   k: int = 15, knn: int = None,
-                   p_cut: float=.1,
-                   n_cpus: int = 1, random_state=20, max_iter: int = 0,
-                   enrich_method: str = 'code',
+                   enrich_method: str = 'code', p_cut: float=.1,
+                   max_iter: int = 0, knn: int = None,
+                   k: int = 15, random_state=20,
+                   n_cpus: int = 1,
                    verbose: bool = True):
-    """ Merges the clusters following an expectation maximisation approach...
+    """ Merges the clusters following an expectation maximisation approach.
+
+    Parameters
+    ----------
+    data: sc.AnnData
+        Single cell RNA-seq anndata, QC'd a preprocessed to log-cpm in data.X
+    groupby: str
+        Specifies the clusters to merge, defined in data.obs[groupby]. Must
+        be categorical type.
+    var_groups: str
+        Specifies a column in data.var of type boolean, with True indicating
+        the candidate genes to use when determining marker genes per cluster.
+        Useful to, for example, remove ribosomal and mitochondrial genes.
+        None indicates use all genes in data.var_names as candidates.
+    n_top_genes: int
+        The maximimum no. of marker genes per cluster.
+    t_cutoff: float
+        The minimum t-value a gene must have to be considered a marker gene
+        (Welch's t-statistic with one-versus-rest comparison).
+    marker_padj_cutoff: float
+        Adjusted p-value (Benjamini-Hochberg correction) below which a gene
+        can be considered a marker gene.
+    enrich_method: str
+        Enrichment method to use for scoring cluster membership.
+        Must be one of 'code', 'coexpr', or 'giotto'.
+    p_cut: float
+        P-value cutoff for merging clusters. Cluster pairs above this value are
+        considered non-significant and thus merged.
+    max_iter: int
+        Maximum number of iterations of the expectation-maximisation to perform,
+        returns solution at this number of iterations or when convergence
+        achieved.
+    knn: int
+        Number of nearest-neighbours for each cluster to determine, after
+        which mutual nearest neighbour clusters are compared. Default None
+        indicates to perform pair-wise comparison between clusters.
+    k: int
+        k for the k-means clustering of the enrichment scores prior to
+        significance testing, to reduce inflated statistical power and
+        group imbalance.
+    random_state: int
+        Random seed for the k-means clustering. Set by default to ensure
+        reproducibility each time function run with same data & input params.
+    n_cpus: int
+        Number of cpus to perform for the computation.
+    verbose: bool
+        Print statements during computation (True) or silent run (False).
+    Returns
+    --------
+        data.obs[f'{groupby}_merged']
+            New cell type labels with non-sigificant clusters merged.
+        data.uns[f'{groupby}_merged_markers']
+            Dictionary with merged cluster names as keys, and list of marker
+            genes as values.
+        data.obsm[f'{groupby}_merged_enrich_scores']
+            Dataframe with cells as rows and merged clusters as columns.
+            Values are the enrichment scores for each cluster, using the
+            marker genes in data.uns[f'{groupby}_merged_markers']
     """
 
     ### Initial merge ##

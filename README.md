@@ -1,7 +1,7 @@
 # Cytocipher - detection of significantly different cell populations in scRNA-seq
 ![title](img/cytocipher_icon.png)
 
-For a more complete tutorial that installs cytocipher & 
+For a complete tutorial that installs cytocipher & 
 reproduces the pancreatus development analysis,
 please see 
 [here](https://github.com/BradBalderson/Cytocipher/tree/main/tutorials/cytocipher_pancreas.ipynb).
@@ -29,7 +29,7 @@ import cytocipher as cc
 ```
 
 ## Expected Input
-Given an AnnData object, *data*, that has had been processed similarly to the 
+Given an AnnData object, *data*, that has been processed similarly to the 
 [scanpy standard workflow](https://scanpy-tutorials.readthedocs.io/en/latest/pbmc3k.html)
 to produce log-cpm normalised data with putative cluster labels 
 (e.g. from Leiden clustering), then the following sections detail minimal code 
