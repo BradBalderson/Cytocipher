@@ -1,10 +1,7 @@
 # Cytocipher - detection of significantly different cell populations in scRNA-seq
 ![title](img/cytocipher_icon.png)
 
-For a complete tutorial that installs cytocipher & 
-reproduces the pancreatus development analysis,
-please see 
-[here](https://github.com/BradBalderson/Cytocipher/tree/main/tutorials/cytocipher_pancreas.ipynb).
+## For a complete tutorial that installs cytocipher & reproduces the pancreas development analysis, please see [here](https://github.com/BradBalderson/Cytocipher/tree/main/tutorials/cytocipher_pancreas.ipynb).
 
 ## Installation 
 pip install coming soon, for this early release, 

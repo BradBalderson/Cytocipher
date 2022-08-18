@@ -1,8 +1,9 @@
 #from .activation.act_quantify import ieg_activation
 
 #### For cluster scoring ####
-from .cluster.cluster_score import code_enrich
+from .score_and_merge.cluster_score import get_markers, \
+                                  code_enrich, coexpr_enrich, giotto_page_enrich
 
-#### For cluster merginging ####
-from .cluster.cluster_label import merge_clusters, get_markers
+#### For cluster merging ####
+from .score_and_merge.cluster_merge import merge_clusters
 
