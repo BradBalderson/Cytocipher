@@ -9,3 +9,6 @@ functionality is:
     score_and_merge/
 
 Other modules will be communicated when adequately developed and tested. 
+
+The dependencies of other modules are not currently taken into account when 
+installing Cytocipher, and are not yet intended for use by others.

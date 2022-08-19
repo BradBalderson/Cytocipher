@@ -55,7 +55,52 @@ def giotto_page_enrich(data: AnnData, groupby: str,
                        n_top: int=5, cluster_marker_key: str=None,
                        rerun_de: bool=True, gene_order='logfc',
                        verbose: bool=True):
-    """ Runs Giotto PAGE enrichment for cluster markers.
+    """ Runs Giotto PAGE enrichment for cluster markers, imporant to note that
+        by default this function will automatically determine marker genes,
+        as opposed to coexpr_enrich and code_enrich. To disable this,
+        specify a value for cluster_marker_key.
+
+        Parameters
+        ----------
+        data: sc.AnnData
+            Single cell RNA-seq anndata, QC'd a preprocessed to log-cpm in
+                                                                         data.X.
+        groupby: str
+            Specifies the clusters to merge, defined in data.obs[groupby]. Must
+            be categorical type.
+        var_groups: str
+            Specifies a column in data.var of type boolean, with True indicating
+            the candidate genes to use when determining marker genes per cluster.
+            Useful to, for example, remove ribosomal and mitochondrial genes.
+            None indicates use all genes in data.var_names as candidates.
+            logfc_cutoff: float
+            Minimum logfc for a gene to be a considered a marker gene for a
+            given cluster.
+        logfc_cutoff: float
+            Log-FC above which a gene can be considered a marker when comparing
+            a given cluster and all other cells.
+        padj_cutoff: float
+            Adjusted p-value (Benjamini-Hochberg correction) below which a gene
+            can be considered a marker gene.
+        n_top: int
+            The maximimum no. of marker genes per cluster.
+        cluster_marker_key: str
+            Key in data.uns, which specifies the marker genes for each cluster
+            in data.obs[groupby]. In format where keys are the clusters, and
+            values are a list of genes in data.var_names.
+        rerun_de: bool
+            Whether to rerun the DE analysis, or using existing results in
+            data.uns['rank_genes_groups']
+        gene_order: str
+            By default, gets n_top qualifying genes ranked by log-FC.
+            Specifying 't' here will rank by t-value, instead.
+        verbose: bool
+            Print statements during computation (True) or silent run (False).
+        Returns
+        --------
+            data.obsm[f'{groupby}_enrich_scores']
+                Cell by cell type data frame, with the coexpr enrichment scores
+                for the values.
     """
     n_top = data.shape[1] if type(n_top)==type(None) else n_top
 

@@ -6,15 +6,11 @@
 
 import pandas as pd
 import numpy as np
-import scipy
 import types
 import sys
 from annoy import AnnoyIndex
 import pynndescent
-from packaging import version
 from scipy.spatial import cKDTree
-from scipy.sparse import coo_matrix
-from umap.umap_ import fuzzy_simplicial_set
 from sklearn.neighbors import KDTree
 from sklearn.neighbors import DistanceMetric
 try:
