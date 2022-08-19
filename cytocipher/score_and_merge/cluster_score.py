@@ -235,8 +235,10 @@ def coexpr_enrich(data: sc.AnnData, groupby: str,
             in data.obs[groupby]. In format where keys are the clusters, and
             values are a list of genes in data.var_names.
         min_counts: int
-            Controls what's considered a 'small' gene set, marker gene lists
-            with len(markers)<=min_counts must have all genes coexpressed.
+            Controls what's considered a 'small' gene set for winsorisation,
+            marker gene lists with len(markers)<=min_counts must have all genes
+            coexpressed. While marker gene lists with len(markers)>min_counts
+            must have atleast len(markers)-1 genes expressed.
         n_cpus: int
             Number of cpus to use.
         verbose: bool
@@ -451,8 +453,10 @@ def code_enrich(data: sc.AnnData, groupby: str,
             in data.obs[groupby]. In format where keys are the clusters, and
             values are a list of genes in data.var_names.
         min_counts: int
-            Controls what's considered a 'small' gene set, marker gene lists
-            with len(markers)<=min_counts must have all genes coexpressed.
+            Controls what's considered a 'small' gene set for winsorisation,
+            marker gene lists with len(markers)<=min_counts must have all genes
+            coexpressed. While marker gene lists with len(markers)>min_counts
+            must have atleast len(markers)-1 genes expressed.
         n_cpus: int
             Number of cpus to use.
         squash_exception: bool
@@ -636,8 +640,10 @@ def get_markers(data: sc.AnnData, groupby: str,
             Single cell RNA-seq anndata, QC'd a preprocessed to log-cpm in
                                                                          data.X.
         groupby: str
-            Specifies the clusters to merge, defined in data.obs[groupby]. Must
-            be categorical type.
+            Specifies the clusters to perform one-versus-rest Welch's t-test
+            comparison of genes for.
+            Must specify defined column in data.obs[groupby].
+            Must be categorical type.
         var_groups: str
             Specifies a column in data.var of type boolean, with True indicating
             the candidate genes to use when determining marker genes per cluster.
@@ -656,13 +662,15 @@ def get_markers(data: sc.AnnData, groupby: str,
             The maximimum no. of marker genes per cluster.
         rerun_de: bool
             Whether to rerun the DE analysis, or using existing results in
-            data.uns['rank_genes_groups']
+            data.uns['rank_genes_groups']. Useful if have ran get_markers()
+            with the same 'groupby' as input, but want to adjust the other
+            parameters to determine marker genes.
         gene_order: str
             By default, gets n_top qualifying genes ranked by t-value.
             Specifying logfc here will rank by log-FC, instead.
         pts: bool
             Whether to calculate percentage cells expressing gene within/without
-            of each cluster. Only relevant in rerun_de=True.
+            of each cluster. Only relevant if rerun_de=True.
         verbose: bool
             Print statements during computation (True) or silent run (False).
         Returns

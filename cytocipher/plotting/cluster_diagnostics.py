@@ -29,10 +29,10 @@ def enrich_heatmap(data: AnnData, groupby: str, per_cell: bool=True,
         Parameters
         ----------
         data: AnnData
-            Single cell data on which cc.tl.merge_clusters has been performed.
+            Single cell data on which enrichment for cluster marker genes has
+            been performed.
         groupby: str
-            Column in data.obs specifying pre-merged clusters input
-                                                        to cc.tl.merge_clusters.
+            Column in data.obs specifying the cell cluster labels.
         per_cell: bool
             True to plot enrichment scores per cell. False will take average of
             cells within each cluster.
@@ -141,7 +141,7 @@ def sig_cluster_diagnostics(data: sc.AnnData, groupby: str,
         Parameters
         ----------
         data: AnnData
-            Single cell data on which nts.tl.merge_clusters has been performed.
+            Single cell data on which cc.tl.merge_clusters has been performed.
         groupby: str
             Column in data.obs specifying pre-merged clusters input
                                                         to cc.tl.merge_clusters.
