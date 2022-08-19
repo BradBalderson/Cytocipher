@@ -74,9 +74,6 @@ def giotto_page_enrich(data: AnnData, groupby: str,
             the candidate genes to use when determining marker genes per cluster.
             Useful to, for example, remove ribosomal and mitochondrial genes.
             None indicates use all genes in data.var_names as candidates.
-            logfc_cutoff: float
-            Minimum logfc for a gene to be a considered a marker gene for a
-            given cluster.
         logfc_cutoff: float
             Log-FC above which a gene can be considered a marker when comparing
             a given cluster and all other cells.
@@ -239,7 +236,7 @@ def coexpr_enrich(data: sc.AnnData, groupby: str,
             values are a list of genes in data.var_names.
         min_counts: int
             Controls what's considered a 'small' gene set, marker gene lists
-            equal to or greater than this value must have all genes coexpressed.
+            with len(markers)<=min_counts must have all genes coexpressed.
         n_cpus: int
             Number of cpus to use.
         verbose: bool

@@ -18,11 +18,52 @@ import seaborn as sb
 ################################################################################
 def enrich_heatmap(data: AnnData, groupby: str, per_cell: bool=True,
                    plot_group: str=None, figsize=(8, 8),
-                   dendrogram: bool=False, vmax=1, show=True,
+                   dendrogram: bool=False, vmax=1,
                    n_clust_cells: int=50,
-                   scale_rows: bool=True, scale_cols: bool=True):
+                   scale_rows: bool=True, scale_cols: bool=True,
+                   show=True
+                   ):
     """Plots the enrichment scores for each cluster to show specificity of
         gene coexpression.
+
+        Parameters
+        ----------
+        data: AnnData
+            Single cell data on which cc.tl.merge_clusters has been performed.
+        groupby: str
+            Column in data.obs specifying pre-merged clusters input
+                                                        to cc.tl.merge_clusters.
+        per_cell: bool
+            True to plot enrichment scores per cell. False will take average of
+            cells within each cluster.
+        plot_group: str
+            Categorical column in data.obs to group the cells by, this can be
+            useful to see if there is some other correspondence between a
+            difference set of labels and the clusters scores.
+        figsize: tuple
+            Size of the figure to plot.
+        dendrogram: bool
+            Whether to group the cells using the enrichment score based on a
+            dendrogram. If False, then it aligns the cell cluster membership
+            and the respective clusters such that scores along the diagonal
+            indicate scores for cells in their respective cluster.
+        vmax: int
+            Upper limit on the scores to plot, color scale saturates past this
+            point.
+        n_clust_cells: int
+            The no. of cells to plot per cluster. If less than this, plots
+            all cells for a given cluster. If greater than this, than randomly
+            samples n_clust_cells from the cluster to plot. Set to None to plot
+            all cells, though this can be difficult to visualise if there are
+            large group imbalances (which is often the case).
+        scale_rows: bool
+            Whether to min-max scale the enrichment scores per cell. If scale_cols
+            also specified, then scale_cols performed before scale_rows.
+        scale_cols: bool
+            Whether to min-max scale the enrichment scores per cluster.
+            If scale_rows also specified, scale_cols performed before scale_rows.
+        show: bool
+            Whether to show the plot.
     """
     # Make sure color data transfered! #
     if f'{groupby}_colors' in data.uns:
@@ -93,22 +134,29 @@ def sig_cluster_diagnostics(data: sc.AnnData, groupby: str,
                             skip: int=10, show=True, verbose=True):
     """ Plots violins of enrichment scores compared between clusters with
         with statistics. Useful to diagnose if significance threshold is
-        too stringent/relaxed.
+        too stringent/relaxed. Note that will throw error if input plot_pair
+        were cluster pairs that were not compared if used the MNN heuristic
+        for cluster comparison.
 
         Parameters
         ----------
-        data: AnnData     Single cell data on which nts.tl.merge_clusters has
-                                                                 been performed.
-        groupby: str    Column in data.obs specifying pre-merged clusters input
-                                                       to nts.tl.merge_clusters.
-        plot_pair: tuple     Input pair of clusters to plot, in format ('1', '2').
-        plot_examples: bool If true, plots 4 example pairs; representing the
-                            upper- and lower- bounds of significant versus
-                            non-significant cluster pairs. Only if plot_pair==None.
-        skip: int   Only if plot_pair==None and plot_examples==None,
-                    skip this many pairs when plotting cluster pairs from most
-                    to least significant in difference.
-        show: bool  Whether to show the plot; only works if plot_pair specified.
+        data: AnnData
+            Single cell data on which nts.tl.merge_clusters has been performed.
+        groupby: str
+            Column in data.obs specifying pre-merged clusters input
+                                                        to cc.tl.merge_clusters.
+        plot_pair: tuple
+            Input pair of clusters to plot, in format ('1', '2').
+        plot_examples: bool
+            If true, plots 4 example pairs; representing the upper- and lower-
+            bounds of significant versus non-significant cluster pairs.
+            Only if plot_pair==None.
+        skip: int
+            Only if plot_pair==None and plot_examples==None, skip this many
+            pairs when plotting cluster pairs from most to least significant in
+            difference.
+        show: bool
+            Whether to show the plot; only works if plot_pair specified.
     """
     mutual_pairs = data.uns[f'{groupby}_mutualpairs']
     ps_dict = data.uns[f'{groupby}_ps']
