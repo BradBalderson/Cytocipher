@@ -55,10 +55,11 @@ def giotto_page_enrich(data: AnnData, groupby: str,
                        n_top: int=5, cluster_marker_key: str=None,
                        rerun_de: bool=True, gene_order='logfc',
                        verbose: bool=True):
-    """ Runs Giotto PAGE enrichment for cluster markers, imporant to note that
+    """ Runs Giotto PAGE enrichment for cluster markers. Imporant to note that
         by default this function will automatically determine marker genes,
         as opposed to coexpr_enrich and code_enrich. To disable this,
-        specify a value for cluster_marker_key.
+        specify a value for cluster_marker_key, after running get_markers()
+        with the same 'groupby' as input.
 
         Parameters
         ----------
@@ -147,6 +148,10 @@ def giotto_page_enrich(data: AnnData, groupby: str,
 
     cell_scores = np.zeros((data.shape[0], len(cluster_genes)))
     for i, clusteri in enumerate(cluster_genes):
+        if len(cluster_genes[clusteri])==0:
+            raise Exception(f"No marker genes for {clusteri}. "
+                            f"Rerun with more relaxed marker gene parameters.")
+
         cluster_scores_ = giotto_page_enrich_min(cluster_genes[clusteri],
                                                     data.var_names, fcs,
                                                     mean_fcs, std_fcs)
@@ -218,7 +223,7 @@ def coexpr_enrich(data: sc.AnnData, groupby: str,
                   n_cpus: int=1, min_counts: int = 2,
                   verbose: bool = True):
     """ Runs coexpr enrichment for cluster markers.
-        Assumes have already previous ran get_markers() with relevant clusters.
+        Assumes have ran get_markers() with the same 'groupby' input.
 
         Parameters
         ----------
@@ -270,6 +275,11 @@ def coexpr_enrich(data: sc.AnnData, groupby: str,
         cluster_genes = np.array([gene for gene in cluster_genes_dict[cluster]],
                                                                 dtype=str_dtype)
         cluster_genes_List.append( cluster_genes )
+
+        if len(cluster_genes)==0:
+            raise Exception(f"No marker genes for {cluster}. "
+                            f"Rerun cc.tl.mark_genes() with more relaxed "
+                            f"marker gene parameters.")
 
     full_expr = data[:, all_genes].X.toarray()
 
@@ -429,7 +439,7 @@ def code_enrich(data: sc.AnnData, groupby: str,
                   squash_exception: bool=False,
                   verbose: bool = True):
     """ Runs code enrichment for cluster markers.
-        Assumes have already previous ran get_markers() with relevant clusters.
+        Assumes have ran get_markers() with the same 'groupby' input.
 
         Parameters
         ----------
@@ -445,7 +455,7 @@ def code_enrich(data: sc.AnnData, groupby: str,
             values are a list of genes in data.var_names.
         min_counts: int
             Controls what's considered a 'small' gene set, marker gene lists
-            equal to or greater than this value must have all genes coexpressed.
+            with len(markers)<=min_counts must have all genes coexpressed.
         n_cpus: int
             Number of cpus to use.
         squash_exception: bool
@@ -491,6 +501,10 @@ def code_enrich(data: sc.AnnData, groupby: str,
         cluster_genes = np.array([gene for gene in cluster_genes_dict[cluster]],
                                                                 dtype=str_dtype)
         cluster_genes_List.append( cluster_genes )
+
+        if len(cluster_genes)==0:
+            raise Exception(f"No marker genes for {cluster}. Relax marker gene "
+                            f"parameters.")
 
         ### Getting genes which are different if clusters with similar genes
         cluster_diff_full = []
