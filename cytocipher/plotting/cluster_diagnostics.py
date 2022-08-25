@@ -13,6 +13,8 @@ from sklearn.preprocessing import minmax_scale
 import matplotlib.pyplot as plt
 import seaborn as sb
 
+from scipy.stats import spearmanr
+
 ################################################################################
                     # Coexpression scoring plots #
 ################################################################################
@@ -310,6 +312,140 @@ def sig_cluster_diagnostics(data: sc.AnnData, groupby: str,
         ax.spines['right'].set_visible(False)
         if show or type(plot_pair) == type(None):
             plt.show()
+
+def volcano(data: sc.AnnData, groupby: str, p_cut: float,
+            show_legend: bool=True, show: bool=True):
+    """Plots a Volcano plot showing relationship between logFC of enrichment
+        values between clusters and the -log10(p-value) significance.
+
+        Parameters
+        ----------
+        data: AnnData
+            Single cell data on which cc.tl.merge_clusters has been performed.
+        groupby: str
+            Column in data.obs specifying pre-merged clusters input
+                                                        to cc.tl.merge_clusters.
+        p_cut: float
+            P-value used as cutoff to determine significantly different clusters
+        show_legend: bool
+            Whether to show the legend that highlights significant versus non-
+            significant cluster pairs.
+        show: bool
+            Whether to show the plot.
+    """
+    enrich_scores = data.obsm[f'{groupby}_enrich_scores']
+
+    labels = data.obs[groupby].values.astype(str)
+    label_set = enrich_scores.columns.values.astype(str)
+
+    mean_scores = pd.DataFrame(average(enrich_scores, labels, label_set),
+                               index=label_set, columns=label_set)
+
+    #### Getting the pairs which were compared
+    pvals = np.array(list(data.uns[f'{groupby}_ps'].values()))
+    min_sig_nonzero = min(pvals[pvals > 0])
+    log10_ps = np.array(
+        [-np.log10(pval + sys.float_info.min) for pval in pvals])
+    log10_ps[pvals == 0] = -np.log10(min_sig_nonzero)
+    pairs = np.array(list(data.uns[f'{groupby}_ps'].keys()))
+    pair1s = np.array([pair.split('_')[-1] for pair in pairs])
+    pair2s = np.array([pair.split('_')[0] for pair in pairs])
+
+    fcs = np.array([mean_scores.loc[pair1s[i], pair1s[i]] - mean_scores.loc[
+                              pair2s[i], pair1s[i]] for i in range(len(pairs))])
+
+    sig_bool = pvals < p_cut
+    nonsig_bool = pvals >= p_cut
+
+    fig, ax = plt.subplots()
+    ax.scatter(fcs[sig_bool], log10_ps[sig_bool], s=3, c='dodgerblue', )
+    ax.scatter(fcs[nonsig_bool], log10_ps[nonsig_bool], s=3, c='red', )
+    ax.hlines(-np.log10(p_cut), plt.xlim()[0], plt.xlim()[1], colors='red')
+    ax.set_xlabel("log-FC of enrichment scores")
+    ax.set_ylabel("-log10(p-value)")
+    ax.set_title("Cluster pair comparison statistics")
+    ax.spines["top"].set_visible(False)
+    ax.spines["right"].set_visible(False)
+    if show_legend:
+        ax.legend([f'Significant pairs ({sum(sig_bool)})',
+                   f'Non-significant pairs ({sum(nonsig_bool)})'])
+    if show:
+        plt.show()
+
+def check_abundance_bias(data: sc.AnnData, groupby: str, p_cut: None,
+                         show_legend: bool=True):
+    """ Checks for bias between pair significance and the number of cells in
+        each cluster being compared. Spearman correlation displayed. Should be
+        no bias, i.e. correlation close to 0.
+
+        Parameters
+        ----------
+        data: AnnData
+            Single cell data on which cc.tl.merge_clusters has been performed.
+        groupby: str
+            Column in data.obs specifying pre-merged clusters input
+                                                        to cc.tl.merge_clusters.
+        p_cut: float
+           P-value used as cutoff to determine significantly different clusters.
+           If None then just shows the relationship without highlighting the
+           significant versus non-significant cluster pairs.
+        show_legend: bool
+            Whether to show the legend that highlights significant versus non-
+            significant cluster pairs.
+        show: bool
+            Whether to show the plot.
+    """
+
+    labels = data.obs[groupby].values.astype(str)
+    label_set = enrich_scores.columns.values.astype(str)
+
+    cell_counts = np.array(
+                     [len(np.where(labels == label)[0]) for label in label_set])
+
+    #### Getting the pairs which were compared
+    pvals = np.array(list(data.uns[f'{groupby}_ps'].values()))
+    min_sig_nonzero = min(pvals[pvals > 0])
+    log10_ps = np.array(
+                       [-np.log10(pval + sys.float_info.min) for pval in pvals])
+    log10_ps[pvals == 0] = -np.log10(min_sig_nonzero)
+    pairs = np.array(list(data.uns[f'{groupby}_ps'].keys()))
+    pair1s = np.array([pair.split('_')[-1] for pair in pairs])
+    pair2s = np.array([pair.split('_')[0] for pair in pairs])
+
+    ### Calculating log-FCs for pairs tested.
+    count_fcs = np.array([np.log2(cell_counts[label_set == pair1s[i]])[0] -
+                          np.log2(cell_counts[label_set == pair2s[i]])[0]
+                          for i in range(len(pairs))])
+
+    if type(p_cut) != type(None):
+        sig_bool = pvals < p_cut
+        nonsig_bool = pvals >= p_cut
+
+    corr = round(spearmanr(count_fcs, log10_ps)[0], 3)
+
+    fig, ax = plt.subplots()
+    if type(p_cut) != type(None):
+        ax.scatter(count_fcs[sig_bool], log10_ps[sig_bool], s=3, c='dodgerblue')
+        ax.scatter(count_fcs[nonsig_bool], log10_ps[nonsig_bool], s=3, c='red')
+    else:
+        ax.scatter(count_fcs, log10_ps, s=3, c='orchid')
+
+    ax.hlines(-np.log10(p_cut), plt.xlim()[0], plt.xlim()[1], colors='red')
+    ax.set_xlabel("log-FC of cell counts in each cluster")
+    ax.set_ylabel("-log10(p-value)")
+    ax.set_title("Cluster pair cell abundance bias check")
+    ax.spines["top"].set_visible(False)
+    ax.spines["right"].set_visible(False)
+    if show_legend and type(p_cut)!=type(None):
+        ax.legend([f'Significant pairs ({sum(sig_bool)})',
+                   f'Non-significant pairs ({sum(nonsig_bool)})'])
+    else:
+        ax.legend([f'Cluster pairs ({len(count_fcs)})'])
+    ax.text((plt.xlim()[0] + np.min(count_fcs)) / 2, np.max(log10_ps),
+            f'ρ: {corr}', c='k')
+
+    if show:
+        plt.show()
 
 ################################################################################
                     # Comparing cluster plots #
