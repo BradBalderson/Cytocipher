@@ -15,6 +15,8 @@ import seaborn as sb
 
 from scipy.stats import spearmanr
 
+..score_and_merge.cluster_merge import average
+
 ################################################################################
                     # Coexpression scoring plots #
 ################################################################################
