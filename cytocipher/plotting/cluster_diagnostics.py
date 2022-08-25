@@ -446,7 +446,7 @@ def check_abundance_bias(data: sc.AnnData, groupby: str, p_cut: float=None,
     if show_legend and type(p_cut)!=type(None):
         ax.legend([f'Significant pairs ({sum(sig_bool)})',
                    f'Non-significant pairs ({sum(nonsig_bool)})'])
-    else:
+    elif show_legend:
         ax.legend([f'Cluster pairs ({len(count_fcs)})'])
     ax.text((plt.xlim()[0] + np.min(count_fcs)) / 2, np.max(log10_ps),
             f'ρ: {corr}', c='k')
