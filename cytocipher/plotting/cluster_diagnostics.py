@@ -318,7 +318,7 @@ def sig_cluster_diagnostics(data: sc.AnnData, groupby: str,
             plt.show()
 
 def volcano(data: sc.AnnData, groupby: str, p_cut: float,
-            show_legend: bool=True, show: bool=True):
+            show_legend: bool=True, figsize: tuple=(6,6), show: bool=True):
     """Plots a Volcano plot showing relationship between logFC of enrichment
         values between clusters and the -log10(p-value) significance.
 
@@ -334,6 +334,8 @@ def volcano(data: sc.AnnData, groupby: str, p_cut: float,
         show_legend: bool
             Whether to show the legend that highlights significant versus non-
             significant cluster pairs.
+        fig_size: tuple
+            Size of figure to plot.
         show: bool
             Whether to show the plot.
     """
@@ -361,7 +363,7 @@ def volcano(data: sc.AnnData, groupby: str, p_cut: float,
     sig_bool = pvals < p_cut
     nonsig_bool = pvals >= p_cut
 
-    fig, ax = plt.subplots()
+    fig, ax = plt.subplots(figsize=figsize)
     ax.scatter(fcs[sig_bool], log10_ps[sig_bool], s=3, c='dodgerblue', )
     ax.scatter(fcs[nonsig_bool], log10_ps[nonsig_bool], s=3, c='red', )
     ax.hlines(-np.log10(p_cut), plt.xlim()[0], plt.xlim()[1], colors='red')
@@ -377,7 +379,8 @@ def volcano(data: sc.AnnData, groupby: str, p_cut: float,
         plt.show()
 
 def check_abundance_bias(data: sc.AnnData, groupby: str, p_cut: None,
-                         show_legend: bool=True):
+                         show_legend: bool=True, figsize: tuple=(6,6),
+                         show: bool=True):
     """ Checks for bias between pair significance and the number of cells in
         each cluster being compared. Spearman correlation displayed. Should be
         no bias, i.e. correlation close to 0.
@@ -427,7 +430,7 @@ def check_abundance_bias(data: sc.AnnData, groupby: str, p_cut: None,
 
     corr = round(spearmanr(count_fcs, log10_ps)[0], 3)
 
-    fig, ax = plt.subplots()
+    fig, ax = plt.subplots(figsize=figsize)
     if type(p_cut) != type(None):
         ax.scatter(count_fcs[sig_bool], log10_ps[sig_bool], s=3, c='dodgerblue')
         ax.scatter(count_fcs[nonsig_bool], log10_ps[nonsig_bool], s=3, c='red')
