@@ -379,7 +379,7 @@ def volcano(data: sc.AnnData, groupby: str, p_cut: float,
         plt.show()
 
 def check_abundance_bias(data: sc.AnnData, groupby: str, p_cut: float=None,
-                         show_legend: bool=True, figsize: tuple=(6,6),
+                         show_legend: bool=True, figsize: tuple=(6,4),
                          show: bool=True):
     """ Checks for bias between pair significance and the number of cells in
         each cluster being compared. Spearman correlation displayed. Should be
