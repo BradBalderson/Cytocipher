@@ -318,7 +318,7 @@ def sig_cluster_diagnostics(data: sc.AnnData, groupby: str,
             plt.show()
 
 def volcano(data: sc.AnnData, groupby: str, p_cut: float,
-            show_legend: bool=True, figsize: tuple=(6,6), show: bool=True):
+            show_legend: bool=True, figsize: tuple=(6,5), show: bool=True):
     """Plots a Volcano plot showing relationship between logFC of enrichment
         values between clusters and the -log10(p-value) significance.
 
@@ -378,7 +378,7 @@ def volcano(data: sc.AnnData, groupby: str, p_cut: float,
     if show:
         plt.show()
 
-def check_abundance_bias(data: sc.AnnData, groupby: str, p_cut: None,
+def check_abundance_bias(data: sc.AnnData, groupby: str, p_cut: float=None,
                          show_legend: bool=True, figsize: tuple=(6,6),
                          show: bool=True):
     """ Checks for bias between pair significance and the number of cells in
@@ -404,7 +404,7 @@ def check_abundance_bias(data: sc.AnnData, groupby: str, p_cut: None,
     """
 
     labels = data.obs[groupby].values.astype(str)
-    label_set = enrich_scores.columns.values.astype(str)
+    label_set = np.unique( labels )
 
     cell_counts = np.array(
                      [len(np.where(labels == label)[0]) for label in label_set])
