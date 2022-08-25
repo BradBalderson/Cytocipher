@@ -434,10 +434,10 @@ def check_abundance_bias(data: sc.AnnData, groupby: str, p_cut: float=None,
     if type(p_cut) != type(None):
         ax.scatter(count_fcs[sig_bool], log10_ps[sig_bool], s=3, c='dodgerblue')
         ax.scatter(count_fcs[nonsig_bool], log10_ps[nonsig_bool], s=3, c='red')
+        ax.hlines(-np.log10(p_cut), plt.xlim()[0], plt.xlim()[1], colors='red')
     else:
         ax.scatter(count_fcs, log10_ps, s=3, c='orchid')
 
-    ax.hlines(-np.log10(p_cut), plt.xlim()[0], plt.xlim()[1], colors='red')
     ax.set_xlabel("log-FC of cell counts in each cluster")
     ax.set_ylabel("-log10(p-value)")
     ax.set_title("Cluster pair cell abundance bias check")
