@@ -126,7 +126,7 @@ def merge_clusters_single(data: sc.AnnData, groupby: str, key_added: str,
                 labelj_labelj_scores = label_scores[j][labels == labelj]
 
                 ### Account for n cells <= k
-                if len(labeli_labelj_scores) > k:
+                if type(k)!=type(None) and len(labeli_labelj_scores) > k:
                     groupsi = kmeans.fit_predict(
                         labeli_labelj_scores.reshape(-1, 1))
                     labeli_labelj_scores_mean = \
@@ -135,7 +135,7 @@ def merge_clusters_single(data: sc.AnnData, groupby: str, key_added: str,
                 else:
                     labeli_labelj_scores_mean = labeli_labelj_scores
 
-                if len(labelj_labelj_scores) > k:
+                if type(k)!=type(None) and len(labelj_labelj_scores) > k:
                     groupsj = kmeans.fit_predict(
                         labelj_labelj_scores.reshape(-1, 1))
                     labelj_labelj_scores_mean = \
@@ -254,8 +254,9 @@ def merge_clusters(data: sc.AnnData, groupby: str,
         indicates to perform pair-wise comparison between clusters.
     k: int
         k for the k-means clustering of the enrichment scores prior to
-        significance testing, to reduce inflated statistical power and
-        group imbalance.
+        significance testing, to reduce group imbalance bias and inflated
+        statistical power due to pseudoreplication.
+        Set to None to use each cell as an observation.
     random_state: int
         Random seed for the k-means clustering. Set by default to ensure
         reproducibility each time function run with same data & input params.
