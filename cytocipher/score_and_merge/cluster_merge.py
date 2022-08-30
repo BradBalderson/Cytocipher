@@ -7,6 +7,8 @@ import scanpy as sc
 
 import scipy.spatial as spatial
 from scipy.stats import ttest_ind
+from statsmodels.stats.multitest import multipletests
+
 from sklearn.cluster import KMeans
 
 from numba.typed import List
@@ -14,6 +16,7 @@ from numba.typed import List
 from ..utils.general import summarise_data_fast
 from .cluster_score import giotto_page_enrich, code_enrich, coexpr_enrich, \
                                                                      get_markers
+from ._group_methods import group_scores
 
 def average(expr: pd.DataFrame, labels: np.array, label_set: np.array):
     """Averages the expression by label.
@@ -67,11 +70,58 @@ def merge_neighbours_v2(cluster_labels: np.array,
 
     return cluster_map, merge_cluster_labels
 
+def merge(data: sc.AnnData, groupby: str,
+          p_cut: float, key_added: str=None,
+          use_p_adjust: bool=False, verbose: bool=True):
+    """ Merges clusters defined by groupby which are mutually non-significantly
+        different such that comparing scores betwen clusters both scores have
+        p-value or p-adjusted value >= p_cut.
+    """
+    if type(key_added)==type(None):
+        key_added = f'{groupby}_merged'
+
+    if use_p_adjust:
+        pvals_dict = data.uns[f'{groupby}_padjs']
+    else:
+        pvals_dict = data.uns[f'{groupby}_ps']
+
+    pvals = np.array( list(pvals_dict.values()) )
+    pairs = np.array( list(pvals_dict.keys()) )
+
+    nonsig_pairs = pairs[pvals >= p_cut]
+    nonsig_pairs = [tuple(pair.split('_')) for pair in nonsig_pairs]
+
+    merge_pairs = []
+    for pairi in nonsig_pairs:
+        for pairj in nonsig_pairs:
+            if pairi[0] == pairj[1] and pairi[1] == pairj[0] \
+                    and pairi not in merge_pairs and pairj not in merge_pairs:
+
+                merge_pairs.append(pairi)
+
+    #### Now merging..
+    labels = data.obs[groupby].values.astype(str)
+    cluster_map, merge_cluster_labels = merge_neighbours_v2(labels,
+                                                            merge_pairs)
+
+    data.obs[key_added] = merge_cluster_labels
+    data.obs[key_added] = data.obs[key_added].astype('category')
+    data.obs[key_added] = data.obs[key_added].cat.set_categories(
+                        np.unique(merge_cluster_labels.astype(int)).astype(str))
+
+    #### Recording the merge pairs
+    data.uns[f'{groupby}_mutualpairs'] = merge_pairs
+
+    if verbose:
+        print(f"Added data.uns['{groupby}_mutualpairs']")
+        print(f"Added data.obs['{key_added}']")
 
 ##### Getting MNNs based on the scores
 def merge_clusters_single(data: sc.AnnData, groupby: str, key_added: str,
                           k: int = 15, knn: int = None, random_state=20,
-                          p_cut: float=.1, verbose: bool = True):
+                          p_cut: float=.1, score_group_method: 'kmeans',
+                          p_adjust: bool=False, p_adjust_method: 'fdr_bh',
+                          verbose: bool = True):
     """ Gets pairs of clusters which are not significantly different from one
         another based on the enrichment score.
     """
@@ -114,9 +164,11 @@ def merge_clusters_single(data: sc.AnnData, groupby: str, key_added: str,
         print(
             "Getting pairs of clusters where atleast in one direction not significantly different from one another.")
 
-    kmeans = KMeans(n_clusters=k, random_state=random_state)
+    if score_group_method=='kmeans':
+        kmeans = KMeans(n_clusters=k, random_state=random_state)
+    else:
+        kmeans = None
 
-    pairs = []
     ps_dict = {}
     for i, labeli in enumerate(label_set):
         for j, labelj in enumerate(label_set):
@@ -125,70 +177,50 @@ def merge_clusters_single(data: sc.AnnData, groupby: str, key_added: str,
                 labeli_labelj_scores = label_scores[j][labels == labeli]
                 labelj_labelj_scores = label_scores[j][labels == labelj]
 
-                ### Account for n cells <= k
-                if type(k)!=type(None) and len(labeli_labelj_scores) > k:
-                    groupsi = kmeans.fit_predict(
-                        labeli_labelj_scores.reshape(-1, 1))
-                    labeli_labelj_scores_mean = \
-                        [np.mean(labeli_labelj_scores[groupsi == k]) for k in
-                         np.unique(groupsi)]
-                else:
-                    labeli_labelj_scores_mean = labeli_labelj_scores
-
-                if type(k)!=type(None) and len(labelj_labelj_scores) > k:
-                    groupsj = kmeans.fit_predict(
-                        labelj_labelj_scores.reshape(-1, 1))
-                    labelj_labelj_scores_mean = \
-                        [np.mean(labelj_labelj_scores[groupsj == k]) for k in
-                         np.unique(groupsj)]
-                else:
-                    labelj_labelj_scores_mean = labelj_labelj_scores
+                ##### Performing the aggregation of scores that correct for
+                ##### bias toward pairs with higher abundance.
+                labeli_labelj_scores_mean = group_scores(labeli_labelj_scores,
+                                                         score_group_method, k,
+                                                         kmeans)
+                labelj_labelj_scores_mean = group_scores(labelj_labelj_scores,
+                                                         score_group_method, k,
+                                                         kmeans)
 
                 t, p = ttest_ind(labeli_labelj_scores_mean,
                                  labelj_labelj_scores_mean)
+
                 #### Above outputs nan if all 0's for one-case, indicate significant difference
                 if np.isnan(p) and (
                         np.all(np.array(labeli_labelj_scores_mean) == 0) or
                         np.all(np.array(labelj_labelj_scores_mean) == 0)):
-
                     p = 0
 
                 ps_dict[f'{labeli}_{labelj}'] = p
-                if p > p_cut:
-                    pairs.append((labeli, labelj))
+
+    #### Adding p-values and adjusted p-values
+    data.uns[f'{groupby}_ps'] = ps_dict
+
+    pvals = np.array(list(ps_dict.values()))
+    pairs = np.array(list(ps_dict.keys()))
+    padjs = multipletests(pvals, method=p_adjust_method)[1]
+    data.uns[f'{groupby}_padjs'] = {pair: padjs[i] for i, pair in
+                                                               enumerate(pairs)}
+
+    #### Performing the actual merge operation based on the p-values.
+    #### Function can be run after p-value calculations if wish to adjust
+    #### these later.
+    merge(data, groupby, p_cut, key_added=key_added, use_p_adjust=p_adjust,
+                                                                verbose=verbose)
 
     # Now identifying pairs which are mutually not-significant from one another;
     # i.e. cluster 1 is not signicant from cluster 2, and cluster 2 not significant from cluster 1.
     if verbose:
-        print(
-            "Getting pairs of clusters which are mutually not different from one another.")
-
-    mutual_pairs = []
-    for pairi in pairs:
-        for pairj in pairs:
-            if pairi[0] == pairj[1] and pairi[1] == pairj[0] \
-                    and pairi not in mutual_pairs and pairj not in mutual_pairs:
-                mutual_pairs.append(pairi)
-
-    data.uns[f'{groupby}_mutualpairs'] = mutual_pairs
-    data.uns[f'{groupby}_ps'] = ps_dict
-    if verbose:
-        print(f"Added data.uns['{groupby}_mutualpairs']")
         print(f"Added data.uns['{groupby}_ps']")
+        print(f"Added data.uns['{groupby}_padjs']")
         print(f"Added data.uns['{groupby}_neighbours']")
         print(f"Added data.uns['{groupby}_neighdists']")
-
-    # Now merging the non-signficant clusters #
-    cluster_map, merge_cluster_labels = merge_neighbours_v2(labels,
-                                                               mutual_pairs, )
-    data.obs[key_added] = merge_cluster_labels
-    data.obs[key_added] = data.obs[key_added].astype('category')
-    data.obs[key_added] = data.obs[key_added].cat.set_categories(
-        np.unique(merge_cluster_labels.astype(int)).astype(str))
-
-    if verbose:
-        print(f"Added data.obs['{key_added}']")
-
+        print("Getting pairs of clusters which are mutually not different from "
+              "one another.")
 
 def run_enrich(data: sc.AnnData, groupby: str, enrich_method: str,
                n_cpus: int):
