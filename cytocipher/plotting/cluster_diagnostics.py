@@ -13,6 +13,7 @@ from scanpy import AnnData
 from sklearn.preprocessing import minmax_scale
 
 import matplotlib.pyplot as plt
+import matplotlib
 import seaborn as sb
 
 from scipy.stats import spearmanr
@@ -477,6 +478,7 @@ def check_abundance_bias(data: sc.AnnData, groupby: str, p_cut: float=None,
 def check_total_abundance_bias(data: sc.AnnData, groupby: str, p_cut: float=None,
                          show_legend: bool=True, legend_loc: str='best',
                          figsize: tuple=(6,4), point_size: int=3,
+                         ax: matplotlib.axes.Axes=None,
                                show: bool=True):
     """ Checks for bias between pair significance and the TOTAL number of cells
         in the pair of clusters being compared.
@@ -500,6 +502,8 @@ def check_total_abundance_bias(data: sc.AnnData, groupby: str, p_cut: float=None
         show_legend: bool
             Whether to show the legend that highlights significant versus non-
             significant cluster pairs.
+        ax: Axes
+            Matplotlib axes on which to plot.
         show: bool
             Whether to show the plot.
     """
@@ -528,7 +532,9 @@ def check_total_abundance_bias(data: sc.AnnData, groupby: str, p_cut: float=None
 
     corr = round(spearmanr(log_counts, log10_ps)[0], 3)
 
-    fig, ax = plt.subplots(figsize=figsize)
+    if type(ax)==type(None):
+        fig, ax = plt.subplots(figsize=figsize)
+
     if type(p_cut) != type(None):
         sig_bool = pvals < p_cut
         nonsig_bool = pvals >= p_cut
@@ -537,7 +543,8 @@ def check_total_abundance_bias(data: sc.AnnData, groupby: str, p_cut: float=None
                    c='dodgerblue')
         ax.scatter(log_counts[nonsig_bool], log10_ps[nonsig_bool],
                    s=point_size, c='red')
-        ax.hlines(-np.log10(p_cut), plt.xlim()[0], plt.xlim()[1], colors='red')
+        ax.hlines(-np.log10(p_cut), ax.get_xlim()[0], ax.get_xlim()[1],
+                                                                   colors='red')
 
         legend = [f'Significant pairs ({sum(sig_bool)})',
                   f'Non-significant pairs ({sum(nonsig_bool)})']
@@ -555,7 +562,7 @@ def check_total_abundance_bias(data: sc.AnnData, groupby: str, p_cut: float=None
     if show_legend:
         ax.legend(legend, loc=legend_loc)
 
-    ax.text((plt.xlim()[0] + np.min(log_counts)) / 2, np.max(log10_ps),
+    ax.text((ax.get_xlim()[0] + np.min(log_counts)) / 2, np.max(log10_ps),
             f'ρ: {corr}', c='k')
 
     if show:
