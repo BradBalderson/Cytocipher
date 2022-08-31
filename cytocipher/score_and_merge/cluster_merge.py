@@ -118,9 +118,9 @@ def merge(data: sc.AnnData, groupby: str,
 
 ##### Getting MNNs based on the scores
 def merge_clusters_single(data: sc.AnnData, groupby: str, key_added: str,
-                          k: int = 15, knn: int = None, random_state=20,
-                          p_cut: float=.1, score_group_method: 'kmeans',
-                          p_adjust: bool=False, p_adjust_method: 'fdr_bh',
+                          k: int = 15, knn: int = None, random_state: int=20,
+                          p_cut: float=.1, score_group_method: str='kmeans',
+                          p_adjust: bool=False, p_adjust_method: str='fdr_bh',
                           verbose: bool = True):
     """ Gets pairs of clusters which are not significantly different from one
         another based on the enrichment score.
@@ -247,6 +247,8 @@ def merge_clusters(data: sc.AnnData, groupby: str,
                    max_iter: int = 0, knn: int = None,
                    k: int = 15, random_state=20,
                    n_cpus: int = 1,
+                   score_group_method: str='kmeans',
+                   p_adjust: bool=False, p_adjust_method: str='fdr_bh',
                    verbose: bool = True):
     """ Merges the clusters following an expectation maximisation approach.
 
@@ -294,6 +296,15 @@ def merge_clusters(data: sc.AnnData, groupby: str,
         reproducibility each time function run with same data & input params.
     n_cpus: int
         Number of cpus to perform for the computation.
+    score_group_method: str
+        One of 'kmeans', 'quantile_bin', & 'quantiles'. Determines how the
+        scores are aggregated before significance testing; reduces p-value
+        inflation & bias of significance toward larger clusters.
+    p_adjust: bool
+        True to adjust p-values, False otherwise.
+    p_adjust_method: str
+        Method to use for p-value adjustment. Options are defined by
+        statsmodels.stats.multitest.multipletests.
     verbose: bool
         Print statements during computation (True) or silent run (False).
     Returns
@@ -322,7 +333,10 @@ def merge_clusters(data: sc.AnnData, groupby: str,
 
     merge_clusters_single(data, groupby, f'{groupby}_merged',
                           k=k, knn=knn, random_state=random_state,
-                          p_cut=p_cut, verbose=False)
+                          p_cut=p_cut,
+                          score_group_method=score_group_method,
+                          p_adjust=p_adjust, p_adjust_method=p_adjust_method,
+                          verbose=False)
 
     ## Merging per iteration until convergence ##
     for i in range(max_iter):
@@ -350,9 +364,10 @@ def merge_clusters(data: sc.AnnData, groupby: str,
         old_labels = data.obs[f'{groupby}_merged'].values.astype(str)
         merge_clusters_single(data, f'{groupby}_merged', f'{groupby}_merged',
                               k=k, knn=knn, random_state=random_state,
+                              score_group_method = score_group_method,
+                              p_adjust = p_adjust,
+                              p_adjust_method = p_adjust_method,
                               p_cut=p_cut, verbose=False)
-
-        #sc.pl.umap(data, color=f'{groupby}_merged')
 
     ## Reached max iter, exit with current solution ##
     # Running marker gene determination #

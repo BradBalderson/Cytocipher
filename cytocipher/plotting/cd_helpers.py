@@ -3,6 +3,7 @@ Helper functions for the cluster diagnostics; mostly to prevent code duplication
 and make long-term maintence easier.
 """
 
+import sys
 import scanpy as sc
 import numpy as np
 import matplotlib

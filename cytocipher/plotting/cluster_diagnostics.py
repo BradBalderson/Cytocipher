@@ -346,13 +346,13 @@ def volcano(data: sc.AnnData, groupby: str, p_cut: float=None,
     """
 
     labels = data.obs[groupby].values.astype(str)
+    enrich_scores = data.obsm[f'{groupby}_enrich_scores']
     label_set = enrich_scores.columns.values.astype(str)
 
     #### Getting the pairs which were compared
     pvals, log10_ps, pairs, pair1s, pair2s = get_p_data(data, groupby, p_adjust)
 
     #### Determining the fold-changes
-    enrich_scores = data.obsm[f'{groupby}_enrich_scores']
     mean_scores = pd.DataFrame(average(enrich_scores, labels, label_set),
                                index=label_set, columns=label_set)
 
@@ -369,6 +369,7 @@ def volcano(data: sc.AnnData, groupby: str, p_cut: float=None,
 def check_abundance_bias(data: sc.AnnData, groupby: str, p_cut: float=None,
                          show_legend: bool=True, legend_loc: str='best',
                          figsize: tuple=(6,4), point_size: int=3,
+                         p_adjust: bool=False, ax: matplotlib.axes.Axes=None,
                          show: bool=True):
     """ Checks for bias between pair significance and the DIFFERENCE in the
         number of cells in each cluster being compared.
@@ -417,7 +418,7 @@ def check_abundance_bias(data: sc.AnnData, groupby: str, p_cut: float=None,
 def check_total_abundance_bias(data: sc.AnnData, groupby: str, p_cut: float=None,
                          show_legend: bool=True, legend_loc: str='best',
                          figsize: tuple=(6,4), point_size: int=3,
-                         ax: matplotlib.axes.Axes=None,
+                         p_adjust: bool=False, ax: matplotlib.axes.Axes=None,
                                show: bool=True):
     """ Checks for bias between pair significance and the TOTAL number of cells
         in the pair of clusters being compared.
@@ -463,7 +464,7 @@ def check_total_abundance_bias(data: sc.AnnData, groupby: str, p_cut: float=None
 
     #### Making the plot
     ylabel = "-log10(p-value)" if not p_adjust else "-log10(adjusted p-value)"
-    diagnostic_scatter(count_fcs, log10_ps, pvals, p_cut, point_size, ax,
+    diagnostic_scatter(log_counts, log10_ps, pvals, p_cut, point_size, ax,
                        "log2-cell counts in cluster pair", ylabel,
                        "TOTAL cluster pair cell abundance bias",
                        show_legend, figsize, legend_loc, show, show_corr=True)
