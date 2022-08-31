@@ -243,12 +243,12 @@ def run_enrich(data: sc.AnnData, groupby: str, enrich_method: str,
 def merge_clusters(data: sc.AnnData, groupby: str,
                    var_groups: str=None, n_top_genes: int = 6, t_cutoff: int=3,
                    marker_padj_cutoff: float=.05,
-                   enrich_method: str = 'code', p_cut: float=.1,
+                   enrich_method: str = 'code', p_cut: float=0.01,
                    max_iter: int = 0, knn: int = None,
                    k: int = 15, random_state=20,
                    n_cpus: int = 1,
-                   score_group_method: str='kmeans',
-                   p_adjust: bool=False, p_adjust_method: str='fdr_bh',
+                   score_group_method: str='quantiles',
+                   p_adjust: bool=True, p_adjust_method: str='fdr_bh',
                    verbose: bool = True):
     """ Merges the clusters following an expectation maximisation approach.
 

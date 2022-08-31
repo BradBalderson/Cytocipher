@@ -319,10 +319,10 @@ def sig_cluster_diagnostics(data: sc.AnnData, groupby: str,
         if show or type(plot_pair) == type(None):
             plt.show()
 
-def volcano(data: sc.AnnData, groupby: str, p_cut: float=None,
+def volcano(data: sc.AnnData, groupby: str, p_cut: float=1e-2,
             show_legend: bool=True, legend_loc: str='best',
             figsize: tuple=(6,5), point_size: int=3,
-            p_adjust: bool=False, ax: matplotlib.axes.Axes=None,
+            p_adjust: bool=True, ax: matplotlib.axes.Axes=None,
             show: bool=True):
     """Plots a Volcano plot showing relationship between logFC of enrichment
         values between clusters and the -log10(p-value) significance.
@@ -366,10 +366,10 @@ def volcano(data: sc.AnnData, groupby: str, p_cut: float=None,
                        "Cluster pair comparison statistics",
                        show_legend, figsize, legend_loc, show)
 
-def check_abundance_bias(data: sc.AnnData, groupby: str, p_cut: float=None,
+def check_abundance_bias(data: sc.AnnData, groupby: str, p_cut: float=1e-2,
                          show_legend: bool=True, legend_loc: str='best',
                          figsize: tuple=(6,4), point_size: int=3,
-                         p_adjust: bool=False, ax: matplotlib.axes.Axes=None,
+                         p_adjust: bool=True, ax: matplotlib.axes.Axes=None,
                          show: bool=True):
     """ Checks for bias between pair significance and the DIFFERENCE in the
         number of cells in each cluster being compared.
@@ -415,10 +415,10 @@ def check_abundance_bias(data: sc.AnnData, groupby: str, p_cut: float=None,
                        "DIFFERENCE in cluster pair cell abundance bias",
                        show_legend, figsize, legend_loc, show, show_corr=True)
 
-def check_total_abundance_bias(data: sc.AnnData, groupby: str, p_cut: float=None,
+def check_total_abundance_bias(data: sc.AnnData, groupby: str, p_cut: float=1e-2,
                          show_legend: bool=True, legend_loc: str='best',
                          figsize: tuple=(6,4), point_size: int=3,
-                         p_adjust: bool=False, ax: matplotlib.axes.Axes=None,
+                         p_adjust: bool=True, ax: matplotlib.axes.Axes=None,
                                show: bool=True):
     """ Checks for bias between pair significance and the TOTAL number of cells
         in the pair of clusters being compared.
