@@ -694,6 +694,7 @@ def get_markers(data: sc.AnnData, groupby: str,
             data_sub = sc.AnnData(X_sub)
             data_sub.obs[groupby] = data.obs[groupby].values
             data_sub.obs[groupby] = data_sub.obs[groupby].astype('category')
+            data_sub.var_names = data.var_names.values[genes_bool]
 
             sc.tl.rank_genes_groups(data_sub, groupby=groupby, use_raw=False,
                                     pts=pts)
