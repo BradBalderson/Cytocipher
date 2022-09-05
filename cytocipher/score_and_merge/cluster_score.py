@@ -683,7 +683,18 @@ def get_markers(data: sc.AnnData, groupby: str,
 
     if rerun_de:
         if type(var_groups) != type(None):
-            data_sub = data[:, data.var[var_groups]]
+            #data_sub = data[:, data.var[var_groups]]
+
+            ## Updating how the data is subsetting so prevents making a deep
+            ## copy which can cause memory issues with BIG datasets!!!!
+            genes_bool = data.var[var_groups].values
+
+            X_sub = data.X[:, genes_bool]
+
+            data_sub = sc.AnnData(X_sub)
+            data_sub.obs[groupby] = data.obs[groupby].values
+            data_sub.obs[groupby] = data_sub.obs[groupby].astype('category')
+
             sc.tl.rank_genes_groups(data_sub, groupby=groupby, use_raw=False,
                                     pts=pts)
             data.uns['rank_genes_groups'] = data_sub.uns['rank_genes_groups']
