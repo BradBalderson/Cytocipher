@@ -72,7 +72,7 @@ def merge_neighbours_v2(cluster_labels: np.array,
 
 def merge(data: sc.AnnData, groupby: str,
           p_cut: float, key_added: str=None,
-          use_p_adjust: bool=False, verbose: bool=True):
+          use_p_adjust: bool=True, verbose: bool=True):
     """ Merges clusters defined by groupby which are mutually non-significantly
         different such that comparing scores betwen clusters both scores have
         p-value or p-adjusted value >= p_cut.

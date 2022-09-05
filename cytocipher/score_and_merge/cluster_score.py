@@ -276,9 +276,9 @@ def coexpr_enrich(data: sc.AnnData, groupby: str,
         cluster_genes_List.append( cluster_genes )
 
         if len(cluster_genes)==0:
-            raise Exception(f"No marker genes for {cluster}. "
-                            f"Rerun cc.tl.mark_genes() with more relaxed "
-                            f"marker gene parameters.")
+            raise Exception(f"No marker genes for {cluster}. Relax marker gene "
+                            f"parameters in cc.tl.get_markers() or decrease "
+                            f"Leiden resolution for inputted clusters.")
 
     full_expr = data[:, all_genes].X.toarray()
 
@@ -505,7 +505,8 @@ def code_enrich(data: sc.AnnData, groupby: str,
 
         if len(cluster_genes)==0:
             raise Exception(f"No marker genes for {cluster}. Relax marker gene "
-                            f"parameters.")
+                            f"parameters in cc.tl.get_markers() or decrease "
+                            f"Leiden resolution for inputted clusters.")
 
         ### Getting genes which are different if clusters with similar genes
         cluster_diff_full = []
