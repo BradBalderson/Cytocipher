@@ -88,8 +88,16 @@ def merge(data: sc.AnnData, groupby: str,
     pvals = np.array( list(pvals_dict.values()) )
     pairs = np.array( list(pvals_dict.keys()) )
 
-    nonsig_pairs = pairs[pvals >= p_cut]
-    nonsig_pairs = [tuple(pair.split('_')) for pair in nonsig_pairs]
+    nonsig_pairs_ = pairs[pvals >= p_cut]
+    # Pair names processed so not sensitive to '_' in input names
+    #nonsig_pairs = [tuple(pair.split('_')) for pair in nonsig_pairs]
+    clusters = np.unique( data.obs[groupby].values )
+
+    nonsig_pairs = []
+    for clust1 in clusters:
+        for clust2 in clusters:
+            if f'{clust1}_{clust2}' in nonsig_pairs_:
+                nonsig_pairs.append( (clust1, clust2) )
 
     merge_pairs = []
     for pairi in nonsig_pairs:
