@@ -97,7 +97,7 @@ def merge(data: sc.AnnData, groupby: str,
     for clust1 in clusters:
         for clust2 in clusters:
             if f'{clust1}_{clust2}' in nonsig_pairs_:
-                nonsig_pairs.append( (clust1, clust2) )
+                nonsig_pairs.append( (clust2, clust1) )
 
     merge_pairs = []
     for pairi in nonsig_pairs:

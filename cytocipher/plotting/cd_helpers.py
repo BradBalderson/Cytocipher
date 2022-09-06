@@ -29,7 +29,7 @@ def get_pairs(data: sc.AnnData, groupby: str):
     pair2s = [' ' * max_clust_len] * len(pairs)
     for clust1 in clusters:
         for clust2 in clusters:
-            indices = np.where(pairs == f'{clust1}_{clust2}')[0]
+            indices = np.where(pairs == f'{clust2}_{clust1}')[0]
             if len(indices) > 0:
                 index = indices[0]
                 pair1s[index] = clust1
