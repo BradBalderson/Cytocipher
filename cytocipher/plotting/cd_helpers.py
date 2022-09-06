@@ -11,6 +11,32 @@ import matplotlib.pyplot as plt
 
 from scipy.stats import spearmanr
 
+def get_pairs(data: sc.AnnData, groupby: str):
+    """ Gets the cluster pair information in a safe way; i.e. not sensitive to
+        '_' in the cluster names.
+    """
+    pairs = np.array( list(data.uns[f'{groupby}_ps'].keys()) )
+
+    # Old method sensitive to cluster names with '_' in name.
+    # pair1s = np.array([pair.split('_')[-1] for pair in pairs])
+    # pair2s = np.array([pair.split('_')[0] for pair in pairs])
+
+    # Pair names processed so not sensitive to '_' in input names
+    clusters = np.unique( data.obs[groupby].values )
+    max_clust_len = max( [len(clust) for clust in clusters] )
+
+    pair1s = [' ' * max_clust_len] * len(pairs)
+    pair2s = [' ' * max_clust_len] * len(pairs)
+    for clust1 in clusters:
+        for clust2 in clusters:
+            indices = np.where(pairs == f'{clust1}_{clust2}')[0]
+            if len(indices) > 0:
+                index = indices[0]
+                pair1s[index] = clust1
+                pair2s[index] = clust2
+
+    return pairs, pair1s, pair2s
+
 def get_p_data(data: sc.AnnData, groupby: str, p_adjust: bool=False):
     """ Retrives log10 p-values and the respective cluster pairs.
 
@@ -28,25 +54,8 @@ def get_p_data(data: sc.AnnData, groupby: str, p_adjust: bool=False):
     log10_ps = np.array([-np.log10(pval + sys.float_info.min)
                                                              for pval in pvals])
     log10_ps[pvals == 0] = -np.log10(min_sig_nonzero)
-    pairs = np.array(list(data.uns[f'{groupby}_{suffix}'].keys()))
 
-    # Old method sensitive to cluster names with '_' in name.
-    #pair1s = np.array([pair.split('_')[-1] for pair in pairs])
-    #pair2s = np.array([pair.split('_')[0] for pair in pairs])
-
-    # Pair names processed so not sensitive to '_' in input names
-    clusters = np.unique(data.obs[groupby].values)
-    max_clust_len = max([len(clust) for clust in clusters])
-
-    pair1s = [ ' '*max_clust_len ] * len(pairs)
-    pair2s = [ ' '*max_clust_len ] * len(pairs)
-    for clust1 in clusters:
-        for clust2 in clusters:
-            indices = np.where(pairs == f'{clust1}_{clust2}')[0]
-            if len(indices) > 0:
-                index = indices[0]
-                pair1s[index] = clust1
-                pair2s[index] = clust2
+    pairs, pair1s, pair2s = get_pairs(data, groupby)
 
     return pvals, log10_ps, pairs, pair1s, pair2s
 

@@ -19,7 +19,7 @@ import seaborn as sb
 from scipy.stats import spearmanr
 
 from ..score_and_merge.cluster_merge import average
-from .cd_helpers import get_p_data, diagnostic_scatter
+from .cd_helpers import get_pairs, get_p_data, diagnostic_scatter
 
 ################################################################################
                     # Coexpression scoring plots #
@@ -188,10 +188,13 @@ def sig_cluster_diagnostics(data: sc.AnnData, groupby: str,
         pairs_to_plot = ['', '', '',
                          '']  # top_nonsig, bottom_nonsig, top_sig, bottom_sig
         scores = [0, 1, 1, 0]
-        for pair_str in ps_dict:
-            pair_ = tuple(pair_str.split('_'))
-            pair_r = tuple(pair_str.split('_')[::-1])
 
+        pairs, pair1s, pair2s = get_pairs(data, groupby)
+        for i in range(len(pairs)):
+            pair_ = (pair1s[i], pair2s[i]) #tuple(pair_str.split('_'))
+            pair_r =  (pair2s[i], pair1s[i]) #tuple(pair_str.split('_')[::-1])
+
+            pair_str = pairs[i]
             pair_str_r = '_'.join(pair_[::-1])
             p_ = ps_dict[pair_str]
             p_r = ps_dict[pair_str_r]
@@ -230,9 +233,14 @@ def sig_cluster_diagnostics(data: sc.AnnData, groupby: str,
         scores = []
         all_pairs = []
         prefixes = []
-        for pair_str in ps_dict:
-            pair_ = tuple(pair_str.split('_'))
-            pair_r = tuple(pair_str.split('_')[::-1])
+
+        pairs, pair1s, pair2s = get_pairs(data, groupby)
+        for i in range(len(pairs)):
+            pair_ = (pair1s[i], pair2s[i])  # tuple(pair_str.split('_'))
+            pair_r = (pair2s[i], pair1s[i])  # tuple(pair_str.split('_')[::-1])
+
+            pair_str = pairs[i]
+            pair_str_r = '_'.join(pair_[::-1])
 
             # Accounting for pair we already saw.
             if pair_ in all_pairs or pair_r in all_pairs:
@@ -244,7 +252,6 @@ def sig_cluster_diagnostics(data: sc.AnnData, groupby: str,
             else:
                 prefixes.append('Significant ')
 
-            pair_str_r = '_'.join(pair_[::-1])
             p_ = ps_dict[pair_str]
             if pair_str_r in ps_dict:  # Accounting if comparison not made.
                 p_r = ps_dict[pair_str_r]
