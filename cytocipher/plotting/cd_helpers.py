@@ -30,16 +30,23 @@ def get_p_data(data: sc.AnnData, groupby: str, p_adjust: bool=False):
     log10_ps[pvals == 0] = -np.log10(min_sig_nonzero)
     pairs = np.array(list(data.uns[f'{groupby}_{suffix}'].keys()))
 
-    # Pair names processed so not sensitive to '_' in input names
-    clusters = np.unique( data.obs[groupby].values )
+    # Old method sensitive to cluster names with '_' in name.
     #pair1s = np.array([pair.split('_')[-1] for pair in pairs])
     #pair2s = np.array([pair.split('_')[0] for pair in pairs])
-    pair1s, pair2s = [], []
+
+    # Pair names processed so not sensitive to '_' in input names
+    clusters = np.unique(data.obs[groupby].values)
+    max_clust_len = max([len(clust) for clust in clusters])
+
+    pair1s = [ ' '*max_clust_len ] * len(pairs)
+    pair2s = [ ' '*max_clust_len ] * len(pairs)
     for clust1 in clusters:
         for clust2 in clusters:
-            if f'{clust1}_{clust2}' in pairs:
-                pair1s.append( clust1 )
-                pair2s.append( clust2 )
+            indices = np.where(pairs == f'{clust1}_{clust2}')[0]
+            if len(indices) > 0:
+                index = indices[0]
+                pair1s[index] = clust1
+                pair2s[index] = clust2
 
     return pvals, log10_ps, pairs, pair1s, pair2s
 

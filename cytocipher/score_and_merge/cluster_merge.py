@@ -105,7 +105,7 @@ def merge(data: sc.AnnData, groupby: str,
             if pairi[0] == pairj[1] and pairi[1] == pairj[0] \
                     and pairi not in merge_pairs and pairj not in merge_pairs:
 
-                merge_pairs.append(pairi)
+                merge_pairs.append( pairi )
 
     #### Now merging..
     labels = data.obs[groupby].values.astype(str)
