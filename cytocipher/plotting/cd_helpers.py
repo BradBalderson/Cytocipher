@@ -48,7 +48,9 @@ def get_p_data(data: sc.AnnData, groupby: str, p_adjust: bool=False):
                 pair1s[index] = clust1
                 pair2s[index] = clust2
 
-    print("here")
+    print(pairs)
+    print(pair1s)
+    print(pair2s)
     return pvals, log10_ps, pairs, pair1s, pair2s
 
 def diagnostic_scatter(xs: np.array, log10_ps: np.array,
