@@ -138,7 +138,8 @@ def enrich_heatmap(data: AnnData, groupby: str, per_cell: bool=True,
 ################################################################################
      # Diagnostics pre-testing for significantly different clusters #
 ################################################################################
-def k_optimisation(data: sc.AnnData, groupby: str, show=True,
+def k_optimisation(data: sc.AnnData, groupby: str,
+                   show_fit: bool=True, show=True,
                   ):
     """ Plots the results from performing k-optimisation; optimum k shown as
         vertical magenta line!
@@ -148,29 +149,37 @@ def k_optimisation(data: sc.AnnData, groupby: str, show=True,
     k_opt = results['k_opt']
     ks = results['ks']
     mean_dists = results['mean_dists']
-    mean_dists_pred = results['mean_dists_pred']
     std_dists = results['std_dists']
-    std_dists_pred = results['std_dists_pred']
 
-    fig, axes = plt.subplots(ncols=2, figsize=(20, 5))
-    fig.suptitle("Enrichment score statistic distances "
-                 "before and after summarisation")
+    fig, axes = plt.subplots(ncols=1, figsize=(6, 4))
+    fig.suptitle("Enrichment score summarisation k-optimisation")
 
-    axes[0].scatter(ks, mean_dists, color='k')
-    axes[0].plot(ks, mean_dists_pred, color='deepskyblue')
-    axes[0].set_xlabel("k-value for enrichment summarisation")
-    axes[0].set_ylabel("Distance between means")
-    axes[1].scatter(ks, mean_stds, color='k')
-    axes[1].plot(ks, mean_dists_std, color='plum')
-    axes[1].set_xlabel("k-value for enrichment summarisation")
-    axes[1].set_ylabel("Distance between stds")
+    # axes[0].scatter(ks, mean_dists, color='k')
+    # axes[0].set_xlabel("k-value for enrichment summarisation")
+    # axes[0].set_ylabel("|orig mean-grouped mean|+.1 * k")
+    # axes[0].scatter(ks, std_dists, color='k')
+    # axes[0].set_xlabel("k-value for enrichment summarisation")
+    # axes[0].set_ylabel("|orig std-grouped std|+.1 * k")
+    axes.scatter(ks, std_dists, color='k')
+    axes.plot(ks, std_dists, color='plum')
+    axes.set_xlabel("k-value for enrichment summarisation")
+    axes.set_ylabel("|orig std-grouped std|+.1 * k")
+
+    # if show_fit:
+    #     mean_dists_pred = results['mean_dists_pred']
+    #     std_dists_pred = results['std_dists_pred']
+    #     axes[0].plot(ks, mean_dists_pred, color='deepskyblue')
+    #     axes[1].plot(ks, std_dists_pred, color='plum')
 
     #### Adding labels for optimum K!
-    axes[0].vlines(k_opt, 0, axes[0].get_ylim()[1] / 3, color='magenta')
-    axes[0].text(k_opt, axes[0].get_ylim()[1] / 3, f'k-opt: {k_opt}')
-
-    axes[1].vlines(k_opt, 0, axes[1].get_ylim()[1] / 3, color='magenta')
-    axes[1].text(k_opt, axes[1].get_ylim()[1] / 3, f'k-opt: {k_opt}')
+    # axes[0].vlines(k_opt, 0, axes[0].get_ylim()[1] / 3, color='magenta')
+    # axes[0].text(k_opt, axes[0].get_ylim()[1] / 3, f'k-opt: {k_opt}')
+    #
+    # axes[1].vlines(k_opt, 0, axes[1].get_ylim()[1] / 3, color='magenta')
+    # axes[1].text(k_opt, axes[1].get_ylim()[1] / 3, f'k-opt: {k_opt}')
+    axes.vlines(k_opt, axes.get_ylim()[0], axes.get_ylim()[1] /4,
+                color='magenta')
+    axes.text(k_opt, axes.get_ylim()[1] / 4, f'k-opt: {k_opt}')
 
     if show:
         plt.show()
