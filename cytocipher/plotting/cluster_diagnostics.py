@@ -10,6 +10,7 @@ import pandas as pd
 import scanpy as sc
 from scanpy import AnnData
 
+from sklearn.cluster import KMeans
 from sklearn.preprocessing import minmax_scale
 
 import matplotlib.pyplot as plt
@@ -19,6 +20,7 @@ import seaborn as sb
 from scipy.stats import spearmanr
 
 from ..score_and_merge.cluster_merge import average
+from ..score_and_merge._group_methods import group_scores
 from .cd_helpers import get_pairs, get_p_data, diagnostic_scatter
 
 ################################################################################
@@ -132,6 +134,104 @@ def enrich_heatmap(data: AnnData, groupby: str, per_cell: bool=True,
 
     if show:
         plt.show()
+
+################################################################################
+     # Diagnostics pre-testing for significantly different clusters #
+################################################################################
+def k_optimisation(data: sc.AnnData, groupby: str, show=True,
+                  ):
+    """ Plots the results from performing k-optimisation; optimum k shown as
+        vertical magenta line!
+    """
+    #### Retrieving the stored results from optimisation...
+    results = data.uns[f'k-opt_{groupby}_results']
+    k_opt = results['k_opt']
+    ks = results['ks']
+    mean_dists = results['mean_dists']
+    mean_dists_pred = results['mean_dists_pred']
+    std_dists = results['std_dists']
+    std_dists_pred = results['std_dists_pred']
+
+    fig, axes = plt.subplots(ncols=2, figsize=(20, 5))
+    fig.suptitle("Enrichment score statistic distances "
+                 "before and after summarisation")
+
+    axes[0].scatter(ks, mean_dists, color='k')
+    axes[0].plot(ks, mean_dists_pred, color='deepskyblue')
+    axes[0].set_xlabel("k-value for enrichment summarisation")
+    axes[0].set_ylabel("Distance between means")
+    axes[1].scatter(ks, mean_stds, color='k')
+    axes[1].plot(ks, mean_dists_std, color='plum')
+    axes[1].set_xlabel("k-value for enrichment summarisation")
+    axes[1].set_ylabel("Distance between stds")
+
+    #### Adding labels for optimum K!
+    axes[0].vlines(k_opt, 0, axes[0].get_ylim()[1] / 3, color='magenta')
+    axes[0].text(k_opt, axes[0].get_ylim()[1] / 3, f'k-opt: {k_opt}')
+
+    axes[1].vlines(k_opt, 0, axes[1].get_ylim()[1] / 3, color='magenta')
+    axes[1].text(k_opt, axes[1].get_ylim()[1] / 3, f'k-opt: {k_opt}')
+
+    if show:
+        plt.show()
+
+def plot_violin(scores: list, score_labels: list, ax=None, show=True):
+    """ Violin plot of inputted scores.
+    """
+    scores_by_cluster = np.array(scores, dtype='object').transpose()
+
+    if type(ax) == type(None):
+        fig, ax = plt.subplots(figsize=(5, 5))
+
+    sb.stripplot(data=scores, ax=ax,
+                 edgecolor='k', linewidth=1)
+    sb.violinplot(data=scores, inner=None, color='.8', ax=ax)
+    ax.set_xticklabels(score_labels, rotation=0)
+
+    if show:
+        plt.show()
+
+def compare_stats_for_k(data: sc.AnnData, groupby: str, k: int=None,
+                        score_group_method: str='quantiles', show=True):
+    """ Violin plots of the within cluster enrichment score statistics before
+        & after summarisation; checking to ensure these have equivalent
+        distributions.
+    """
+    if type(k)==type(None):
+        k = data.uns[f'k-opt_{groupby}_results']['k_opt']
+
+    ###### Getting reuired info
+    if score_group_method == 'kmeans':
+        kmeans = KMeans(n_clusters=k, random_state=random_state)
+    else:
+        kmeans = None
+
+    ###### Getting the scores...
+    labels = data.obs[groupby].values
+    enrich_scores = data.obsm[f'{groupby}_enrich_scores']
+    label_set = enrich_scores.columns.values
+
+    label_means = np.zeros((len(label_set)))
+    label_stds = np.zeros((len(label_set)))
+    label_grouped_means = np.zeros((len(label_set)))
+    label_grouped_stds = np.zeros((len(label_set)))
+    for i, labeli in enumerate(label_set):
+        ### The original scores
+        label_scores = enrich_scores.values[labels == labeli, i]
+        label_means[i] = np.mean(label_scores)
+        label_stds[i] = np.std(label_scores)
+
+        ### The grouped scores
+        label_scores_grouped = group_scores(label_scores, score_group_method,
+                                                                      k, kmeans)
+        label_grouped_means[i] = np.mean(label_scores_grouped)
+        label_grouped_stds[i] = np.std(label_scores_grouped)
+
+    fig, axes = plt.subplots(ncols=2, figsize=(12, 5))
+    plot_violin([list(label_means), list(label_grouped_means)],
+                ['Original means', 'Grouped means'], ax=axes[0], show=False)
+    plot_violin([list(label_stds), list(label_grouped_stds)],
+                ['Original stds', 'Grouped stds'], ax=axes[1], show=show)
 
 ################################################################################
      # Diagnostics after testing for significantly different clusters #

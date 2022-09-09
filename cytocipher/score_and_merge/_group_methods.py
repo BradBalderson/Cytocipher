@@ -33,7 +33,7 @@ def group_scores(labeli_labelj_scores: np.array, method: str,
 
     else:
         raise Exception(f"For score_group_method, got {method} but expected one"
-                        f" of ['none', 'kmeans', 'quantile_bin', 'quantiles'].")
+                        f" of ['kmeans', 'quantile_bin', 'quantiles'].")
 
 def kmeans_group(labeli_labelj_scores: np.array, kmeans_obj: object):
     """ Groups by first performing KMeans on the scores, then averages cells
