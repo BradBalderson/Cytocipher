@@ -134,6 +134,8 @@ def enrich_heatmap(data: AnnData, groupby: str, per_cell: bool=True,
 
     if show:
         plt.show()
+    else:
+        return ax
 
 ################################################################################
      # Diagnostics pre-testing for significantly different clusters #
