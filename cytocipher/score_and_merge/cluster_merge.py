@@ -231,7 +231,7 @@ def merge_clusters_single(data: sc.AnnData, groupby: str, key_added: str,
               "one another.")
 
 def run_enrich(data: sc.AnnData, groupby: str, enrich_method: str,
-               n_cpus: int):
+               n_cpus: int, squash_exception: bool=False):
     """ Runs desired enrichment method.
     """
     enrich_options = ['code', 'coexpr', 'giotto']
@@ -240,7 +240,8 @@ def run_enrich(data: sc.AnnData, groupby: str, enrich_method: str,
        f"Got enrich_method={enrich_method}; expected one of : {enrich_options}")
 
     if enrich_method == 'code':
-        code_enrich(data, groupby, n_cpus=n_cpus, verbose=False)
+        code_enrich(data, groupby, n_cpus=n_cpus, verbose=False,
+                    squash_exception=squash_exception)
     elif enrich_method == 'coexpr':
         coexpr_enrich(data, groupby, n_cpus=n_cpus, verbose=False)
     elif enrich_method == 'giotto':
@@ -257,6 +258,7 @@ def merge_clusters(data: sc.AnnData, groupby: str,
                    n_cpus: int = 1,
                    score_group_method: str='quantiles',
                    p_adjust: bool=True, p_adjust_method: str='fdr_bh',
+                   squash_exception: bool=False,
                    verbose: bool = True):
     """ Merges the clusters following an expectation maximisation approach.
 
@@ -335,7 +337,8 @@ def merge_clusters(data: sc.AnnData, groupby: str,
     get_markers(data, groupby, n_top=n_top_genes, verbose=False,
                 var_groups=var_groups, t_cutoff=t_cutoff,
                 padj_cutoff=marker_padj_cutoff,)
-    run_enrich(data, groupby, enrich_method, n_cpus)
+    run_enrich(data, groupby, enrich_method, n_cpus,
+               squash_exception=squash_exception)
 
     old_labels = data.obs[groupby].values.astype(str)
 
@@ -355,7 +358,8 @@ def merge_clusters(data: sc.AnnData, groupby: str,
                         padj_cutoff=marker_padj_cutoff,)
 
         # Running the enrichment scoring #
-        run_enrich(data, f'{groupby}_merged', enrich_method, n_cpus)
+        run_enrich(data, f'{groupby}_merged', enrich_method, n_cpus,
+                   squash_exception=squash_exception)
 
         # Checking if we have converged #
         new_labels = data.obs[f'{groupby}_merged'].values.astype(str)
@@ -384,7 +388,8 @@ def merge_clusters(data: sc.AnnData, groupby: str,
                 padj_cutoff=marker_padj_cutoff,)
 
     # Running the enrichment scoring #
-    run_enrich(data, f'{groupby}_merged', enrich_method, n_cpus)
+    run_enrich(data, f'{groupby}_merged', enrich_method, n_cpus,
+               squash_exception=squash_exception)
 
     if verbose:
         print(f"Added data.obs[f'{groupby}_merged']")
