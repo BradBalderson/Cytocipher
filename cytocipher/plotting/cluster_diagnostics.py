@@ -203,7 +203,8 @@ def plot_violin(scores: list, score_labels: list, ax=None, show=True):
         plt.show()
 
 def compare_stats_for_k(data: sc.AnnData, groupby: str, k: int=None,
-                        score_group_method: str='quantiles', show=True):
+                        score_group_method: str='quantiles',
+                        random_state=20, show=True):
     """ Violin plots of the within cluster enrichment score statistics before
         & after summarisation; checking to ensure these have equivalent
         distributions.
