@@ -507,6 +507,8 @@ def volcano(data: sc.AnnData, groupby: str, p_cut: float=1e-2,
 
     if show:
         plt.show()
+    else:
+        return ax
 
 def check_abundance_bias(data: sc.AnnData, groupby: str, p_cut: float=1e-2,
                          show_legend: bool=True, legend_loc: str='best',

@@ -107,8 +107,8 @@ def diagnostic_scatter(xs: np.array, log10_ps: np.array,
 
     if show:
         plt.show()
-    else:
-        return ax
+
+    return ax
 
 
 
