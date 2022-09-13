@@ -484,6 +484,11 @@ def volcano(data: sc.AnnData, groupby: str, p_cut: float=1e-2,
 
     #### Making the plot
     ylabel = "-log10(p-value)" if not p_adjust else "-log10(adjusted p-value)"
+    ax = diagnostic_scatter(fcs, log10_ps, pvals, p_cut, point_size, ax,
+                       "log-FC of enrichment scores", ylabel,
+                       "Cluster pair comparison statistics",
+                       show_legend, figsize, legend_loc, False)
+
     if type(highlight_pairs)!=type(None):
         pairs_ = [pair for pair in highlight_pairs if pair in pairs]
         if len(pairs_) < len(highlight_pairs):
@@ -493,17 +498,12 @@ def volcano(data: sc.AnnData, groupby: str, p_cut: float=1e-2,
             print("All highlight pairs not tested.")
 
         pair_indices = [np.where(pairs==pair)[0][0] for pair in pairs_]
-        ax = diagnostic_scatter(fcs[pair_indices], log10_ps[pair_indices],
+        diagnostic_scatter(fcs[pair_indices], log10_ps[pair_indices],
                            pvals[pair_indices], None, point_size, ax,
                            "log-FC of enrichment scores", ylabel,
                            "Cluster pair comparison statistics",
-                           show_legend, figsize, legend_loc, False,
+                           False, figsize, legend_loc, False,
                            point_color=highlight_color)
-
-    ax = diagnostic_scatter(fcs, log10_ps, pvals, p_cut, point_size, ax,
-                       "log-FC of enrichment scores", ylabel,
-                       "Cluster pair comparison statistics",
-                       show_legend, figsize, legend_loc, False)
 
     if show:
         plt.show()
