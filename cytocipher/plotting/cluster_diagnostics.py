@@ -209,11 +209,8 @@ def compare_stats_for_k(data: sc.AnnData, groupby: str, k: int=None,
         & after summarisation; checking to ensure these have equivalent
         distributions.
     """
-    if type(k)==type(None):
-        k = data.uns[f'k-opt_{groupby}_results']['k_opt']
-
     ###### Getting reuired info
-    if score_group_method == 'kmeans':
+    if score_group_method == 'kmeans' and type(k)!=type(None):
         kmeans = KMeans(n_clusters=k, random_state=random_state)
     else:
         kmeans = None
