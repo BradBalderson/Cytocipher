@@ -491,7 +491,7 @@ def volcano(data: sc.AnnData, groupby: str, p_cut: float=1e-2,
 
     if type(highlight_pairs)!=type(None):
         pairs_ = [pair for pair in highlight_pairs if pair in pairs]
-        if len(pairs_) < highlight_pairs:
+        if len(pairs_) < len(highlight_pairs):
             print("Warning missing pairs: ", [pair for pair in highlight_pairs
                                               if pair not in pairs_])
         elif len(pairs_)==0:
