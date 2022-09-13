@@ -442,7 +442,7 @@ def volcano(data: sc.AnnData, groupby: str, p_cut: float=1e-2,
             show_legend: bool=True, legend_loc: str='best',
             figsize: tuple=(6,5), point_size: int=3,
             p_adjust: bool=True, ax: matplotlib.axes.Axes=None,
-            highlight_pairs: list=None,
+            highlight_pairs: list=None, highlight_color: str='lime',
             show: bool=True):
     """Plots a Volcano plot showing relationship between logFC of enrichment
         values between clusters and the -log10(p-value) significance.
@@ -503,7 +503,7 @@ def volcano(data: sc.AnnData, groupby: str, p_cut: float=1e-2,
                            "log-FC of enrichment scores", ylabel,
                            "Cluster pair comparison statistics",
                            show_legend, figsize, legend_loc, False,
-                           point_color='magenta')
+                           point_color=highlight_color)
 
     if show:
         plt.show()
