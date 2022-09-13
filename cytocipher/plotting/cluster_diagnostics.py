@@ -442,6 +442,7 @@ def volcano(data: sc.AnnData, groupby: str, p_cut: float=1e-2,
             show_legend: bool=True, legend_loc: str='best',
             figsize: tuple=(6,5), point_size: int=3,
             p_adjust: bool=True, ax: matplotlib.axes.Axes=None,
+            highlight_pairs: list=None,
             show: bool=True):
     """Plots a Volcano plot showing relationship between logFC of enrichment
         values between clusters and the -log10(p-value) significance.
@@ -460,6 +461,9 @@ def volcano(data: sc.AnnData, groupby: str, p_cut: float=1e-2,
             significant cluster pairs.
         fig_size: tuple
             Size of figure to plot.
+        highlight_pairs: list
+            List of pairs to highlight in plot, in order to help set cutoffs.
+            In format ['pair1_pari2', 'pair2_pair1'].
         show: bool
             Whether to show the plot.
     """
@@ -480,10 +484,29 @@ def volcano(data: sc.AnnData, groupby: str, p_cut: float=1e-2,
 
     #### Making the plot
     ylabel = "-log10(p-value)" if not p_adjust else "-log10(adjusted p-value)"
-    diagnostic_scatter(fcs, log10_ps, pvals, p_cut, point_size, ax,
+    ax = diagnostic_scatter(fcs, log10_ps, pvals, p_cut, point_size, ax,
                        "log-FC of enrichment scores", ylabel,
                        "Cluster pair comparison statistics",
-                       show_legend, figsize, legend_loc, show)
+                       show_legend, figsize, legend_loc, False)
+
+    if type(highlight_pairs)!=type(None):
+        pairs_ = [pair for pair in highlight_pairs if pair in pairs]
+        if len(pair_) < highlight_pairs:
+            print("Warning missing pairs: ", [pair for pair in highlight_pairs
+                                              if pair not in pairs_])
+        elif len(pair_)==0:
+            print("All highlight pairs not tested.")
+
+        pair_indices = [np.where(pairs==pair)[0][0] for pair in pairs_]
+        diagnostic_scatter(fcs[pair_indices], log10_ps[pair_indices],
+                           pvals[pair_indices], None, point_size, ax,
+                           "log-FC of enrichment scores", ylabel,
+                           "Cluster pair comparison statistics",
+                           show_legend, figsize, legend_loc, False,
+                           point_color='magenta')
+
+    if show:
+        plt.show()
 
 def check_abundance_bias(data: sc.AnnData, groupby: str, p_cut: float=1e-2,
                          show_legend: bool=True, legend_loc: str='best',

@@ -64,7 +64,8 @@ def diagnostic_scatter(xs: np.array, log10_ps: np.array,
                         ax: matplotlib.axes.Axes,
                        xlabel: str, ylabel: str, title: str,
                        show_legend: bool, figsize: tuple, legend_loc: str,
-                       show: bool, show_corr: bool=False):
+                       show: bool, show_corr: bool=False,
+                       point_color: str='orchid'):
     """Scatter plot comparing significance levels to some other metric, e.g.
         log-FC, difference in cell numbers between pairs, log cell abundance.
     """
@@ -87,7 +88,7 @@ def diagnostic_scatter(xs: np.array, log10_ps: np.array,
         legend = [f'Significant pairs ({sum(sig_bool)})',
                   f'Non-significant pairs ({sum(nonsig_bool)})']
     else:
-        ax.scatter(xs, log10_ps, s=point_size, c='orchid')
+        ax.scatter(xs, log10_ps, s=point_size, c=point_color)
 
         legend = [f'Cluster pairs ({len(xs)})']
 
@@ -106,6 +107,8 @@ def diagnostic_scatter(xs: np.array, log10_ps: np.array,
 
     if show:
         plt.show()
+    else:
+        return ax
 
 
 
