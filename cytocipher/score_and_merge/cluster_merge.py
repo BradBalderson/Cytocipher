@@ -351,7 +351,7 @@ def merge_clusters(data: sc.AnnData, groupby: str,
     get_markers(data, groupby, n_top=n_top_genes, verbose=False,
                 var_groups=var_groups, t_cutoff=t_cutoff,
                 padj_cutoff=marker_padj_cutoff,
-                gene_order=gene_order)
+                gene_order=gene_order, min_de=min_de)
     run_enrich(data, groupby, enrich_method, n_cpus,
                squash_exception=squash_exception)
 
@@ -371,7 +371,7 @@ def merge_clusters(data: sc.AnnData, groupby: str,
         get_markers(data, f'{groupby}_merged', n_top=n_top_genes,
                        verbose=False, var_groups=var_groups, t_cutoff=t_cutoff,
                         padj_cutoff=marker_padj_cutoff,
-                        gene_order=gene_order)
+                        gene_order=gene_order, min_de=min_de)
 
         # Running the enrichment scoring #
         run_enrich(data, f'{groupby}_merged', enrich_method, n_cpus,
@@ -402,7 +402,7 @@ def merge_clusters(data: sc.AnnData, groupby: str,
     get_markers(data, f'{groupby}_merged', n_top=n_top_genes, verbose=False,
                 var_groups=var_groups, t_cutoff=t_cutoff,
                 padj_cutoff=marker_padj_cutoff,
-                gene_order=gene_order)
+                gene_order=gene_order, min_de=min_de)
 
     # Running the enrichment scoring #
     run_enrich(data, f'{groupby}_merged', enrich_method, n_cpus,
