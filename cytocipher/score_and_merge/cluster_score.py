@@ -631,7 +631,7 @@ def get_markers(data: sc.AnnData, groupby: str,
                 logfc_cutoff: float = 0, padj_cutoff: float = .05,
                 t_cutoff: float=3,
                 n_top: int = 5, rerun_de: bool = True, gene_order=None,
-                pts: bool=False, #min_de: int=0,
+                pts: bool=False, min_de: int=0,
                 verbose: bool = True):
     """ Gets marker genes per cluster.
 
@@ -724,8 +724,8 @@ def get_markers(data: sc.AnnData, groupby: str,
         else:
             up_rank = up_indices[0:n_top]
 
-        #if len(up_indices)==0 and min_de>0:
-
+        if len(up_indices)==0 and min_de>0:
+            up_rank = list(range(min_de))
 
         cluster_genes[cluster] = genes_rank.values[up_rank, i]
 

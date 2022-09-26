@@ -260,6 +260,7 @@ def run_enrich(data: sc.AnnData, groupby: str, enrich_method: str,
 def merge_clusters(data: sc.AnnData, groupby: str,
                    var_groups: str=None, n_top_genes: int = 6, t_cutoff: int=3,
                    marker_padj_cutoff: float=.05, gene_order: str=None,
+                   min_de: int=0,
                    enrich_method: str = 'code', p_cut: float=0.01,
                    max_iter: int = 0, knn: int = None,
                    k: int = 15, random_state=20,
@@ -293,6 +294,8 @@ def merge_clusters(data: sc.AnnData, groupby: str,
     gene_order: str
         Statistic to rank top genes per cluster by; None is t-value, 'logfc'
         indicates to rank by log-FC when taking the top N de genes per cluster.
+    min_de: int
+        Minimum no. of marker genes to use for each cluster.
     enrich_method: str
         Enrichment method to use for scoring cluster membership.
         Must be one of 'code', 'coexpr', or 'giotto'.
