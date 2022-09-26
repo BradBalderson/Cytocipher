@@ -246,7 +246,7 @@ def compare_stats_for_k(data: sc.AnnData, groupby: str, k: int=15,
 ################################################################################
      # Diagnostics after testing for significantly different clusters #
 ################################################################################
-def merge_sankey(data sc.AnnData, groupby: str,
+def merge_sankey(data: sc.AnnData, groupby: str,
                 aspect: int=5, fontsize: int=8):
     """ Plots a Sankey diagram indicating which clusters are merged together.
 
