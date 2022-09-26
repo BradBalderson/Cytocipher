@@ -16,6 +16,7 @@ from sklearn.preprocessing import minmax_scale
 import matplotlib.pyplot as plt
 import matplotlib
 import seaborn as sb
+import pySankey as pys
 
 from scipy.stats import spearmanr
 
@@ -202,7 +203,7 @@ def plot_violin(scores: list, score_labels: list, ax=None, show=True):
     if show:
         plt.show()
 
-def compare_stats_for_k(data: sc.AnnData, groupby: str, k: int=None,
+def compare_stats_for_k(data: sc.AnnData, groupby: str, k: int=15,
                         score_group_method: str='quantiles',
                         random_state=20, show=True):
     """ Violin plots of the within cluster enrichment score statistics before
@@ -245,6 +246,59 @@ def compare_stats_for_k(data: sc.AnnData, groupby: str, k: int=None,
 ################################################################################
      # Diagnostics after testing for significantly different clusters #
 ################################################################################
+def merge_sankey(data sc.AnnData, groupby: str,
+                aspect: int=5, fontsize: int=8):
+    """ Plots a Sankey diagram indicating which clusters are merged together.
+
+    Parameters
+        ----------
+        data: AnnData
+            Single cell data on which cc.tl.merge_clusters has been performed.
+        groupby: str
+            Column in data.obs specifying pre-merged clusters input
+                                                        to cc.tl.merge_clusters.
+    """
+
+    #### Getting colors
+    clust1, clust2 = groupby, f'{groupby}_merged'
+
+    color_dict = {name: color for name, color in
+                  zip(list(data.obs[clust1].cat.categories),
+                      data.uns[f'{clust1}_colors'])}
+    for name, color in zip(list(data.obs[clust2].cat.categories),
+                           data.uns[f'{clust2}_colors']):
+        color_dict[name] = color
+
+    #### Getting order of the labels, so can show the clusters being merged
+    #### the most first, and the ones the least last.
+    clust1_set = np.unique(data.obs[clust1].values.astype(str))
+    clust2_set = np.unique(data.obs[clust2].values.astype(str))
+
+    clust1_counts = np.zeros((len(clust1_set)))
+    clust2_counts = np.zeros((len(clust2_set)))
+
+    subclusts_dict = {}
+    for i, clust in enumerate(clust2_set):
+        subclusts = np.unique(
+            data.obs[clust1].values[data.obs[clust2].values == clust])
+        subclusts_dict[clust] = subclusts
+        subclust_indices = [np.where(clust1_set == subclust)[0][0] for subclust in
+                            subclusts]
+
+        clust1_counts[subclust_indices] = len(subclusts)
+        clust2_counts[i] = len(subclusts)
+
+    # clust1_ordered = list(clust1_set[np.argsort(clust1_counts)])
+    clust2_ordered = list(clust2_set[np.argsort(clust2_counts)])
+    clust1_ordered = []
+    for clust in clust2_ordered:
+        clust1_ordered.extend(subclusts_dict[clust])
+
+    ##### Actually plotting the Sankey diagram.
+    pys.sankey.sankey(data.obs[clust1].values, data.obs[clust2].values,
+       aspect=aspect, colorDict=color_dict, fontsize=fontsize,
+                 leftLabels=clust1_ordered, rightLabels=clust2_ordered)
+
 def sig_cluster_diagnostics(data: sc.AnnData, groupby: str,
                             plot_pair: tuple=None,
                             plot_examples: bool=True,

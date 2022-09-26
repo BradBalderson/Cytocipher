@@ -435,7 +435,7 @@ def get_code_scores(full_expr: np.ndarray, all_genes: np.array,
 def code_enrich(data: sc.AnnData, groupby: str,
                   cluster_marker_key: str = None,
                   n_cpus: int=1, min_counts: int = 2,
-                  squash_exception: bool=False,
+                  squash_exception: bool=True,
                   verbose: bool = True):
     """ Runs code enrichment for cluster markers.
         Assumes have ran get_markers() with the same 'groupby' input.
