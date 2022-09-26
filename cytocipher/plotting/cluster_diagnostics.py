@@ -246,21 +246,25 @@ def compare_stats_for_k(data: sc.AnnData, groupby: str, k: int=15,
 ################################################################################
      # Diagnostics after testing for significantly different clusters #
 ################################################################################
-def merge_sankey(data: sc.AnnData, groupby: str,
+def merge_sankey(data: sc.AnnData, groupby: str, groupby2: str=None,
                 aspect: int=5, fontsize: int=8):
     """ Plots a Sankey diagram indicating which clusters are merged together.
 
     Parameters
         ----------
         data: AnnData
-            Single cell data on which cc.tl.merge_clusters has been performed.
+            Single cell data.
         groupby: str
             Column in data.obs specifying pre-merged clusters input
                                                         to cc.tl.merge_clusters.
+        groupby2: str
+            Column in data.obs specifying the merged clusters. If not provieded
+            assumed to be f'{groupby}_merged'.
     """
 
     #### Getting colors
-    clust1, clust2 = groupby, f'{groupby}_merged'
+    clust1 = groupby
+    clust2 = f'{groupby}_merged' if type(groupby2)==type(None) else groupby2
 
     color_dict = {name: color for name, color in
                   zip(list(data.obs[clust1].cat.categories),
