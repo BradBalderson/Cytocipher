@@ -631,7 +631,7 @@ def get_markers(data: sc.AnnData, groupby: str,
                 logfc_cutoff: float = 0, padj_cutoff: float = .05,
                 t_cutoff: float=3,
                 n_top: int = 5, rerun_de: bool = True, gene_order=None,
-                pts: bool=False,
+                pts: bool=False, #min_de: int=0,
                 verbose: bool = True):
     """ Gets marker genes per cluster.
 
@@ -672,6 +672,8 @@ def get_markers(data: sc.AnnData, groupby: str,
         pts: bool
             Whether to calculate percentage cells expressing gene within/without
             of each cluster. Only relevant if rerun_de=True.
+        min_de: int
+            Minimum number of genes to use as markers, if not criteria met.
         verbose: bool
             Print statements during computation (True) or silent run (False).
         Returns
@@ -717,9 +719,13 @@ def get_markers(data: sc.AnnData, groupby: str,
     for i, cluster in enumerate(genes_rank.columns):
         up_indices = np.where(up_bool[:, i])[0]
         if gene_order == 'logfc':
-            up_rank = np.argsort(-logfcs_rank.values[up_indices, i])[0:n_top]
+            order = np.argsort(-logfcs_rank.values[up_indices, i])
+            up_rank = up_indices[order[0:n_top]]
         else:
             up_rank = up_indices[0:n_top]
+
+        #if len(up_indices)==0 and min_de>0:
+
 
         cluster_genes[cluster] = genes_rank.values[up_rank, i]
 

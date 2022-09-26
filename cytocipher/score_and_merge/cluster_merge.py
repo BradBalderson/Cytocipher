@@ -259,7 +259,7 @@ def run_enrich(data: sc.AnnData, groupby: str, enrich_method: str,
 # The key function #
 def merge_clusters(data: sc.AnnData, groupby: str,
                    var_groups: str=None, n_top_genes: int = 6, t_cutoff: int=3,
-                   marker_padj_cutoff: float=.05,
+                   marker_padj_cutoff: float=.05, gene_order: str=None,
                    enrich_method: str = 'code', p_cut: float=0.01,
                    max_iter: int = 0, knn: int = None,
                    k: int = 15, random_state=20,
@@ -290,6 +290,9 @@ def merge_clusters(data: sc.AnnData, groupby: str,
     marker_padj_cutoff: float
         Adjusted p-value (Benjamini-Hochberg correction) below which a gene
         can be considered a marker gene.
+    gene_order: str
+        Statistic to rank top genes per cluster by; None is t-value, 'logfc'
+        indicates to rank by log-FC when taking the top N de genes per cluster.
     enrich_method: str
         Enrichment method to use for scoring cluster membership.
         Must be one of 'code', 'coexpr', or 'giotto'.
@@ -344,7 +347,8 @@ def merge_clusters(data: sc.AnnData, groupby: str,
 
     get_markers(data, groupby, n_top=n_top_genes, verbose=False,
                 var_groups=var_groups, t_cutoff=t_cutoff,
-                padj_cutoff=marker_padj_cutoff,)
+                padj_cutoff=marker_padj_cutoff,
+                gene_order=gene_order)
     run_enrich(data, groupby, enrich_method, n_cpus,
                squash_exception=squash_exception)
 
@@ -363,7 +367,8 @@ def merge_clusters(data: sc.AnnData, groupby: str,
         # Running marker gene determination #
         get_markers(data, f'{groupby}_merged', n_top=n_top_genes,
                        verbose=False, var_groups=var_groups, t_cutoff=t_cutoff,
-                        padj_cutoff=marker_padj_cutoff,)
+                        padj_cutoff=marker_padj_cutoff,
+                        gene_order=gene_order)
 
         # Running the enrichment scoring #
         run_enrich(data, f'{groupby}_merged', enrich_method, n_cpus,
@@ -393,7 +398,8 @@ def merge_clusters(data: sc.AnnData, groupby: str,
     # Running marker gene determination #
     get_markers(data, f'{groupby}_merged', n_top=n_top_genes, verbose=False,
                 var_groups=var_groups, t_cutoff=t_cutoff,
-                padj_cutoff=marker_padj_cutoff,)
+                padj_cutoff=marker_padj_cutoff,
+                gene_order=gene_order)
 
     # Running the enrichment scoring #
     run_enrich(data, f'{groupby}_merged', enrich_method, n_cpus,
