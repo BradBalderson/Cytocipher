@@ -16,7 +16,7 @@ from sklearn.preprocessing import minmax_scale
 import matplotlib.pyplot as plt
 import matplotlib
 import seaborn as sb
-import pySankey as pys
+from pySankey import sankey
 
 from scipy.stats import spearmanr
 
@@ -295,7 +295,7 @@ def merge_sankey(data: sc.AnnData, groupby: str,
         clust1_ordered.extend(subclusts_dict[clust])
 
     ##### Actually plotting the Sankey diagram.
-    pys.sankey.sankey(data.obs[clust1].values, data.obs[clust2].values,
+    sankey.sankey(data.obs[clust1].values, data.obs[clust2].values,
        aspect=aspect, colorDict=color_dict, fontsize=fontsize,
                  leftLabels=clust1_ordered, rightLabels=clust2_ordered)
 
