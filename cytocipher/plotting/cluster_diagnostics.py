@@ -287,7 +287,7 @@ def merge_sankey(data: sc.AnnData, groupby: str, groupby2: str=None,
     clust1_set = np.unique(data.obs[clust1].values.astype(str))
     clust2_set = np.unique(data.obs[clust2].values.astype(str))
 
-    clust1_counts = np.zeros((len(clust1_set)))
+    clust2_counts = np.zeros((len(clust2_set)))
 
     subclusts_dict = {}
     for i, clust in enumerate(clust2_set):
