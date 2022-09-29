@@ -247,7 +247,8 @@ def compare_stats_for_k(data: sc.AnnData, groupby: str, k: int=15,
      # Diagnostics after testing for significantly different clusters #
 ################################################################################
 def merge_sankey(data: sc.AnnData, groupby: str, groupby2: str=None,
-                aspect: int=5, fontsize: int=8, n_top: int=None):
+                aspect: int=5, fontsize: int=8, n_top: int=None,
+                 show_range: tuple=None):
     """ Plots a Sankey diagram indicating which clusters are merged together.
 
     Parameters
@@ -265,6 +266,9 @@ def merge_sankey(data: sc.AnnData, groupby: str, groupby2: str=None,
             from which they are derived. The top merged clusters are those with
             the highest number of original clusters which were merged to create
             the merged cluster.
+        show_range: tuple
+            Which indices in the merge clusters ordered by the number of
+            subclusters to show. In format (start, end).
     """
 
     #### Getting colors
@@ -284,23 +288,23 @@ def merge_sankey(data: sc.AnnData, groupby: str, groupby2: str=None,
     clust2_set = np.unique(data.obs[clust2].values.astype(str))
 
     clust1_counts = np.zeros((len(clust1_set)))
-    clust2_counts = np.zeros((len(clust2_set)))
 
     subclusts_dict = {}
     for i, clust in enumerate(clust2_set):
         subclusts = np.unique(
             data.obs[clust1].values[data.obs[clust2].values == clust])
         subclusts_dict[clust] = subclusts
-        subclust_indices = [np.where(clust1_set == subclust)[0][0] for subclust in
-                            subclusts]
+        subclust_indices = [np.where(clust1_set == subclust)[0][0]
+                            for subclust in subclusts]
 
-        clust1_counts[subclust_indices] = len(subclusts)
         clust2_counts[i] = len(subclusts)
 
     # clust1_ordered = list(clust1_set[np.argsort(clust1_counts)])
     clust2_ordered = list(clust2_set[np.argsort(-clust2_counts)])
     if type(n_top)!=type(None):
         clust2_ordered = clust2_ordered[0:n_top]
+    elif type(show_range)!=type(None):
+        clust2_ordered = clust2_ordered[ list(range(start, end)) ]
 
     clust1_ordered = []
     for clust in clust2_ordered:
