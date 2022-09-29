@@ -300,12 +300,13 @@ def merge_sankey(data: sc.AnnData, groupby: str, groupby2: str=None,
         clust2_counts[i] = len(subclusts)
 
     # clust1_ordered = list(clust1_set[np.argsort(clust1_counts)])
-    clust2_ordered = list(clust2_set[np.argsort(-clust2_counts)])
+    clust2_ordered = clust2_set[np.argsort(-clust2_counts)]
     if type(n_top)!=type(None):
         clust2_ordered = clust2_ordered[0:n_top]
     elif type(show_range)!=type(None):
         start, end = show_range
         clust2_ordered = clust2_ordered[ list(range(start, end)) ]
+    clust2_ordered = list(clust2_ordered)
 
     clust1_ordered = []
     for clust in clust2_ordered:
