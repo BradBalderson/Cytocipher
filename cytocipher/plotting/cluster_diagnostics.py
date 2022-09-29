@@ -304,6 +304,7 @@ def merge_sankey(data: sc.AnnData, groupby: str, groupby2: str=None,
     if type(n_top)!=type(None):
         clust2_ordered = clust2_ordered[0:n_top]
     elif type(show_range)!=type(None):
+        start, end = show_range
         clust2_ordered = clust2_ordered[ list(range(start, end)) ]
 
     clust1_ordered = []
