@@ -247,7 +247,7 @@ def compare_stats_for_k(data: sc.AnnData, groupby: str, k: int=15,
      # Diagnostics after testing for significantly different clusters #
 ################################################################################
 def merge_sankey(data: sc.AnnData, groupby: str, groupby2: str=None,
-                aspect: int=5, fontsize: int=8):
+                aspect: int=5, fontsize: int=8, n_top: int=None):
     """ Plots a Sankey diagram indicating which clusters are merged together.
 
     Parameters
@@ -260,6 +260,11 @@ def merge_sankey(data: sc.AnnData, groupby: str, groupby2: str=None,
         groupby2: str
             Column in data.obs specifying the merged clusters. If not provieded
             assumed to be f'{groupby}_merged'.
+        n_top: int
+            Specifies the number of merged clusters to show the original clusters
+            from which they are derived. The top merged clusters are those with
+            the highest number of original clusters which were merged to create
+            the merged cluster.
     """
 
     #### Getting colors
@@ -294,6 +299,9 @@ def merge_sankey(data: sc.AnnData, groupby: str, groupby2: str=None,
 
     # clust1_ordered = list(clust1_set[np.argsort(clust1_counts)])
     clust2_ordered = list(clust2_set[np.argsort(clust2_counts)])
+    if type(n_top)!=type(None):
+        clust2_ordered = clust2_ordered[0:n_top]
+        
     clust1_ordered = []
     for clust in clust2_ordered:
         clust1_ordered.extend(subclusts_dict[clust])
