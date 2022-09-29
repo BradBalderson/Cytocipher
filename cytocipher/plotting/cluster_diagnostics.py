@@ -299,9 +299,11 @@ def merge_sankey(data: sc.AnnData, groupby: str, groupby2: str=None,
         clust1_ordered.extend(subclusts_dict[clust])
 
     ##### Actually plotting the Sankey diagram.
+    original_font = plt.rcParams['font.family'] # Sankey library switches...
     sankey.sankey(data.obs[clust1].values, data.obs[clust2].values,
        aspect=aspect, colorDict=color_dict, fontsize=fontsize,
                  leftLabels=clust1_ordered, rightLabels=clust2_ordered)
+    plt.rc('font', family=original_font)  # Switch back to default font
 
 def sig_cluster_diagnostics(data: sc.AnnData, groupby: str,
                             plot_pair: tuple=None,
