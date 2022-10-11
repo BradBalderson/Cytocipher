@@ -289,6 +289,9 @@ def coexpr_enrich(data: sc.AnnData, groupby: str,
     ###### Adding to AnnData
     cluster_scores = pd.DataFrame(cell_scores, index=data.obs_names,
                                   columns=list(cluster_genes_dict.keys()))
+    # Making sure is the same order as the categories...
+    cluster_set_ordered = list(data.obs[groupby].cat.categories)
+    cluster_scores = cluster_scores.loc[:, cluster_set_ordered]
     data.obsm[f'{groupby}_enrich_scores'] = cluster_scores
 
     if verbose:
