@@ -248,7 +248,8 @@ def compare_stats_for_k(data: sc.AnnData, groupby: str, k: int=15,
 ################################################################################
 def merge_sankey(data: sc.AnnData, groupby: str, groupby2: str=None,
                 aspect: int=5, fontsize: int=8, n_top: int=None,
-                 show_range: tuple=None):
+                 show_range: tuple=None,
+                 show_groups: list=None, show_groups2: list=None):
     """ Plots a Sankey diagram indicating which clusters are merged together.
 
     Parameters
@@ -268,7 +269,16 @@ def merge_sankey(data: sc.AnnData, groupby: str, groupby2: str=None,
             the merged cluster.
         show_range: tuple
             Which indices in the merge clusters ordered by the number of
-            subclusters to show. In format (start, end).
+            subclusters to show. In format (start, end). Only used if show_groups
+            and show_groups2 not specified.
+        show_groups: list
+            List of labels cells can take in data.obs[groupby] to show how they
+            were merged to create groupby2. Only used if show_range and show_groups2
+            not specified.
+        show_groups2: list
+            List of labels cells can take in data.obs[groupby2] to show which
+            labels were merged to create these labels from groupby. Only used
+            if show_range and show_groups not specified.
     """
 
     #### Getting colors
@@ -286,6 +296,14 @@ def merge_sankey(data: sc.AnnData, groupby: str, groupby2: str=None,
     #### the most first, and the ones the least last.
     clust1_set = np.unique(data.obs[clust1].values.astype(str))
     clust2_set = np.unique(data.obs[clust2].values.astype(str))
+    if type(show_groups)!=type(None) and type(show_range)==type(None) and \
+        type(show_groups2)==type(None):
+        clust1_set = np.array([group for group in show_groups
+                               if group in clust1_set])
+    if type(show_groups)==type(None) and type(show_range)==type(None) and \
+        type(show_groups2)!=type(None):
+        clust2_set = np.array([group for group in show_groups2
+                               if group in clust2_set])
 
     clust2_counts = np.zeros((len(clust2_set)))
 
