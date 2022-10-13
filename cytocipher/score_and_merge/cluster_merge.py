@@ -29,17 +29,12 @@ def average(expr: pd.DataFrame, labels: np.array, label_set: np.array):
 
     return avg_data
 
-##### Merging the clusters....
-def merge_neighbours_v2(cluster_labels: np.array,
-                        label_pairs: np.array):
-    """ Merges pairs of clusters specified in label pairs, giving a new set
-        of labels per cell with the clusters merged, as well as a dictionary
-        mapping the original cluster label to the merged cluster labels.
+def get_merge_groups(label_pairs: list):
+    """Examines the pairs to be merged, and groups them into large groups of
+        of clusters to be merged. This implementation will merge cluster pairs
+        if there exists a mutual cluster they are both non-significantly
+        different from.
     """
-    ##### Getting the neighbours of each cluster based on average expression
-    label_set = np.unique(cluster_labels)
-
-    #### Getting groups of clusters which will be merged...
     merge_groups = []  # List of lists, specifying groups of clusters to merge
     for pair in label_pairs:
         added = False
@@ -52,6 +47,20 @@ def merge_neighbours_v2(cluster_labels: np.array,
 
         if not added:  # Make new group if unmerged group and need to be added
             merge_groups.append(list(pair))
+
+    return merge_groups
+
+##### Merging the clusters....
+def merge_neighbours_v2(cluster_labels: np.array,
+                        label_pairs: list):
+    """ Merges pairs of clusters specified in label pairs, giving a new set
+        of labels per cell with the clusters merged, as well as a dictionary
+        mapping the original cluster label to the merged cluster labels.
+    """
+    label_set = np.unique(cluster_labels)
+
+    #### Getting groups of clusters which will be merged...
+    merge_groups = get_merge_groups( label_pairs )
 
     #### Getting mapping from current clusters to merge clusters
     cluster_map = {}
