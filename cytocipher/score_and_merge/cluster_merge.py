@@ -48,6 +48,7 @@ def get_merge_groups(label_pairs: list):
         if not added:  # Make new group if unmerged group and need to be added
             merge_groups.append(list(pair))
 
+    merge_groups = [np.unique(merge_group) for merge_group in merge_groups]
     return merge_groups
 
 ##### Merging the clusters....
