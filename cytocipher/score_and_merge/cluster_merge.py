@@ -180,7 +180,7 @@ def filter_pairs(label_pairs: list, nonsig_overlap_cutoff: float):
     overlap_props = pd.DataFrame(overlap_props, index=merge_clusts,
                                  columns=merge_clusts)
 
-    return filter_merge_pairs, overlap_props
+    return filt_merge_pairs, overlap_props
 
 def merge(data: sc.AnnData, groupby: str,
           p_cut: float, key_added: str=None,
