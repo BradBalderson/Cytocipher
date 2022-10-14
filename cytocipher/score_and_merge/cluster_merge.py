@@ -11,6 +11,7 @@ from statsmodels.stats.multitest import multipletests
 
 from sklearn.cluster import KMeans
 
+from collections import defaultdict
 from numba.typed import List
 
 from ..utils.general import summarise_data_fast
@@ -29,11 +30,13 @@ def average(expr: pd.DataFrame, labels: np.array, label_set: np.array):
 
     return avg_data
 
-def get_merge_groups(label_pairs: list):
+def get_merge_groups_v1(label_pairs: list):
     """Examines the pairs to be merged, and groups them into large groups of
         of clusters to be merged. This implementation will merge cluster pairs
         if there exists a mutual cluster they are both non-significantly
-        different from.
+        different from. This version also has a kind of 'race-condition' bug,
+        where order of the pairs and clusters in each of the merge groups
+        effects the final merged clusters. Is corrected in the latest version.
     """
     merge_groups = []  # List of lists, specifying groups of clusters to merge
     for pair in label_pairs:
@@ -49,6 +52,57 @@ def get_merge_groups(label_pairs: list):
             merge_groups.append(list(pair))
 
     #merge_groups = [np.unique(merge_group) for merge_group in merge_groups]
+    return merge_groups
+
+def get_merge_groups(label_pairs: list):
+    """Examines the pairs to be merged, and groups them into large groups of
+        of clusters to be merged. This implementation will merge cluster pairs
+        if there exists a mutual cluster they are both non-significantly
+        different from. Can be mediated by filtering the pairs based on the
+        overlap of clusters they are both non-significantly different from
+        (which is performed in a separate function).
+    """
+    #### Using a syncing strategy with a dictionary.
+    clust_groups = defaultdict(list)
+    all_match_bool = [False] * len(label_pairs)
+    for pairi, pair in enumerate(label_pairs):
+        # NOTE we only need to do it for one clust of pair,
+        # since below syncs for other clust
+        clust_groups[pair[0]].extend(pair)
+        clust_groups[pair[0]] = list(np.unique(clust_groups[pair[0]]))
+
+        # Pull in the clusts from each other clust.
+        for clust in clust_groups[pair[0]]:  # Syncing across clusters.
+            clust_groups[pair[0]].extend(clust_groups[clust])
+            clust_groups[pair[0]] = list(np.unique(clust_groups[pair[0]]))
+
+        # Update each other clust with this clusters clusts to merge
+        for clust in clust_groups[pair[0]]:  # Syncing across clusters.
+            clust_groups[clust].extend(clust_groups[pair[0]])
+            clust_groups[clust] = list(np.unique(clust_groups[clust]))
+
+        # Checking to make sure they now all represent the same thing....
+        clusts = clust_groups[pair[0]]
+        match_bool = [False] * len(clusts)
+        for i, clust in enumerate(clusts):
+            match_bool[i] = np.all(
+                np.array(clust_groups[clust]) == np.array(clusts))
+
+        all_match_bool[pairi] = np.all(match_bool)
+
+    # Just for testing purposes...
+    #print(np.all(all_match_bool))
+
+    # Getting the merge groups now.
+    merge_groups = []
+    merge_groups_str = []
+    all_groups = list(clust_groups.values())
+    for group in all_groups:
+        group_str = '_'.join(group)
+        if group_str not in merge_groups_str:
+            merge_groups.append( group )
+            merge_groups_str.append( group_str )
+
     return merge_groups
 
 ##### Merging the clusters....
@@ -80,9 +134,59 @@ def merge_neighbours_v2(cluster_labels: np.array,
 
     return cluster_map, merge_cluster_labels
 
+def filter_pairs(label_pairs: list, nonsig_overlap_cutoff: float):
+    """ Filters the pairs to be merged based on the proportion of overlapping
+        non-significantly different clusters each pair has in common. This is
+        used to mediate the degree of cluster merging due to clusters
+        having one or more mutual clusters from which they are non-significantly,
+        but the two clusters themselves are signficantly different. Setting
+        to nonsig_overlap_cutoff to 1 would mean two clusters would need to have
+        all of the same nonsig clusters to be merged. 0.5 would mean half
+        overlapping, etc.
+    """
+    # First, for each cluster, get the set of other clusters it is not
+    # significantly different from.
+    clust_groups = defaultdict(list)
+    for pairi, pair in enumerate(label_pairs):
+        clust_groups[pair[0]].extend(pair)
+        clust_groups[pair[0]] = list(np.unique(clust_groups[pair[0]]))
+
+        clust_groups[pair[1]].extend(pair)
+        clust_groups[pair[1]] = list(np.unique(clust_groups[pair[1]]))
+
+    # Second, get overlaps proportion between two pairs of nonsig clusters
+    merge_clusts = np.array(list(clust_groups.keys()))
+    overlap_props = np.zeros((len(merge_clusts), len(merge_clusts)))
+    filt_merge_pairs = []
+    for i, clust in enumerate(merge_clusts):
+        clust_clusts = clust_groups[clust]
+        for merge_clust in clust_clusts:
+
+            j = np.where(merge_clusts == merge_clust)[0][0]
+            if j >= i:  # Is identical across diagonal.
+                continue
+
+            merge_clust_clusts = clust_groups[merge_clust]
+            overlap = [clust_ for clust_ in clust_clusts if
+                       clust_ in merge_clust_clusts]
+            total = len(np.unique(clust_clusts + merge_clust_clusts))
+
+            overlap_props[i, j] = len(overlap) / total
+            overlap_props[j, i] = overlap_props[i, j]
+
+            if overlap_props[i, j] > nonsig_overlap_cutoff:
+                filt_merge_pairs.append((clust, merge_clust))
+
+    overlap_props = pd.DataFrame(overlap_props, index=merge_clusts,
+                                 columns=merge_clusts)
+
+    return filter_merge_pairs, overlap_props
+
 def merge(data: sc.AnnData, groupby: str,
           p_cut: float, key_added: str=None,
-          use_p_adjust: bool=True, verbose: bool=True):
+          use_p_adjust: bool=True,
+          nonsig_overlap_cutoff: float=0,
+          verbose: bool=True):
     """ Merges clusters defined by groupby which are mutually non-significantly
         different such that comparing scores betwen clusters both scores have
         p-value or p-adjusted value >= p_cut.
@@ -116,6 +220,10 @@ def merge(data: sc.AnnData, groupby: str,
                     and pairi not in merge_pairs and pairj not in merge_pairs:
 
                 merge_pairs.append( pairi )
+
+    # Can filter the merge_pairs by how many overlapping nonsig clusters they have
+    if nonsig_overlap_cutoff > 0 : #If it's zero, same as not filtering...
+        merge_pairs, _ = filter_pairs(merge_pairs, nonsig_overlap_cutoff)
 
     #### Now merging..
     labels = data.obs[groupby].values.astype(str)
