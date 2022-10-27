@@ -187,9 +187,31 @@ def merge(data: sc.AnnData, groupby: str,
           use_p_adjust: bool=True,
           nonsig_overlap_cutoff: float=0,
           verbose: bool=True):
-    """ Merges clusters defined by groupby which are mutually non-significantly
-        different such that comparing scores betwen clusters both scores have
-        p-value or p-adjusted value >= p_cut.
+    """ Updates the merged clusters using internally stored p-values in data
+        with different merge parameters.
+
+        Parameters
+        ----------
+        data: AnnData
+            Single cell data on which cc.tl.merge_clusters has been performed.
+        groupby: str
+            The overclusters which were merged.
+        p_cut: float
+            The p-value cutoff to use to perform merging again.
+        use_p_adjust: bool
+            Whether to use the adjusted p-values (FDR adjusted).
+        nonsig_overlap_cutoff: float
+            This deals with the case where clusters which ARE significantly
+            different can be merged IF they are mutually non-significantly
+            different from a different cluster. This value indicates the
+            proportion of the same clusters two clusters must BOTH be
+            non-significantly different from to be merged. Takes value from 0 to
+            1; with 0 indicating to merge clusters if they have ANY cluster
+            they are both mutually non-significnalty different from, and 1
+            indicating clusters must have the SAME set of clusters they are
+            mutually significantly different from for them to be merged.
+        verbose: bool
+            Write operation details to standard out?
     """
     if type(key_added)==type(None):
         key_added = f'{groupby}_merged'
