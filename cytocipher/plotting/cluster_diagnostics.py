@@ -16,7 +16,7 @@ from sklearn.preprocessing import minmax_scale
 import matplotlib.pyplot as plt
 import matplotlib
 import seaborn as sb
-from pySankey import sankey
+from . import sankey
 
 from scipy.stats import spearmanr
 

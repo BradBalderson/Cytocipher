@@ -1,3 +1,5 @@
+tutorials/.ipynb_checkpoints/
+../tutorials/.ipynb_checkpoints/
 cytocipher/cluster/rogue.py
 .DS_Store
 cytocipher/__pycache__/*
