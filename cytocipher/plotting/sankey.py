@@ -113,17 +113,18 @@ def sankey(left, right, leftWeight=None, rightWeight=None, colorDict=None,
     # Identify all labels that appear 'left' or 'right'
     allLabels = pd.Series(np.r_[dataFrame.left.unique(), dataFrame.right.unique()]).unique()
 
+    #### Commented out below from original code, is buggy.
     # Identify left labels
-    if len(leftLabels) == 0:
-        leftLabels = pd.Series(dataFrame.left.unique()).unique()
-    else:
-        check_data_matches_labels(leftLabels, dataFrame['left'], 'left')
+    #if len(leftLabels) == 0:
+    #    leftLabels = pd.Series(dataFrame.left.unique()).unique()
+    #else:
+    #    check_data_matches_labels(leftLabels, dataFrame['left'], 'left')
 
     # Identify right labels
-    if len(rightLabels) == 0:
-        rightLabels = pd.Series(dataFrame.right.unique()).unique()
-    else:
-        check_data_matches_labels(leftLabels, dataFrame['right'], 'right')
+    #if len(rightLabels) == 0:
+    #    rightLabels = pd.Series(dataFrame.right.unique()).unique()
+    #else:
+    #    check_data_matches_labels(leftLabels, dataFrame['right'], 'right')
     # If no colorDict given, make one
     if colorDict is None:
         colorDict = {}
