@@ -4,12 +4,76 @@ Functions for determining which clusters to compare.
 
 import numpy as np
 import pandas as pd
+import scanpy as sc
 
 import scipy.spatial as spatial
 
 from numba.typed import List
 from ..utils.general import summarise_data_fast
 
+def general_neighbours(data: sc.AnnData,
+                       labels: np.array, label_set: np.array,
+                       neigh_key: str, mnn_frac_cutoff: float):
+    """Relies on scanpy run beforehand to determine the neighbourhood graph
+        between individual observations. Then gets the cluster neighbours by
+        determining the number of cells belonging to each cluster which are MNNs
+        and using a proportion of MNNs as a cutoff on which clusters to compare.
+    """
+    knn_adj_matrix = data.uns[neigh_key]['connectivities'].toarray() > 0
+
+    return get_neighs_FAST(labels, label_set, knn_adj_matrix, mnn_frac_cutoff)
+
+def get_neighs_FAST(labels: np.array, label_set: np.array,
+                    knn_adj_matrix: np.ndarray,
+                    mnn_frac_cutoff: float):
+    """ Get's the neighbourhoods using method described in doc-string
+        of general_neighbours, VERY quickly.
+    """
+
+    ### Counting the MNNs for each cluster ###
+    clust_dists = np.zeros((len(label_set), len(label_set)), dtype=np.float64)
+    for i, labeli in enumerate(label_set):
+
+        labeli_indices = np.where(labels == labeli)[0]
+
+        labeli_knns = knn_adj_matrix[labeli_indices, :]
+
+        for labelj in label_set[(i + 1):]:
+            j = np.where(label_set == labelj)[0][0]
+
+            labelj_indices = np.where(labels == labelj)[0]
+
+            labelj_knns = knn_adj_matrix[labelj_indices,]
+
+            nn_ij = labeli_knns[:, labelj_indices]
+            nn_ji = labelj_knns[:, labeli_indices].transpose()
+            mnn_bool = np.logical_and(nn_ij, nn_ji)
+
+            mnn_dist = mnn_bool.sum() / \
+                                     (len(labeli_indices) + len(labelj_indices))
+
+            clust_dists[i, j] = mnn_dist
+            clust_dists[j, i] = mnn_dist
+
+    ##### Now converting this into neighbourhood information....
+    neighbours = List()
+    dists = List()
+    for i, label in enumerate(label_set):
+        neigh_bool = clust_dists[i, :] > mnn_frac_cutoff
+        neighbours.append( label_set[neigh_bool] )
+        dists.append( clust_dists[i, neigh_bool] )
+
+    return neighbours, dists, clust_dists
+
+################################################################################
+   # The below are old cluster neighbourhood determining functions
+   # This has been re-implemented in a general way above, allowing for
+   # usage of scanpy to determine the neighbourhood graph, and then
+   # getting the cluster neighbours by determine the number of cells belonging
+   # to each cluster which are MNNs and using a proportion of MNN as a cutoff
+   # on which clusters to compare.
+
+################################################################################
 def average(expr: pd.DataFrame, labels: np.array, label_set: np.array):
     """Averages the expression by label.
     """
