@@ -30,7 +30,7 @@ def general_neighbours(data: sc.AnnData,
     return list(neighbours), list(dists), \
            pd.DataFrame(clust_dists, index=label_set, columns=label_set)
 
-#@jit(parallel=True, forceobj=True, nopython=False)
+@jit(parallel=True, forceobj=True, nopython=False)
 def get_neighs_FAST(labels: np.array, label_set: np.array,
                     knn_adj_matrix: np.ndarray,
                     mnn_frac_cutoff: float):
