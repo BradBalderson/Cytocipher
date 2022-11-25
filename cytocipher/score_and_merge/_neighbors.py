@@ -13,13 +13,15 @@ from ..utils.general import summarise_data_fast
 
 def general_neighbours(data: sc.AnnData,
                        labels: np.array, label_set: np.array,
-                       neigh_key: str, mnn_frac_cutoff: float):
+                       #neigh_key: str, #Removing since will be depracated.
+                       mnn_frac_cutoff: float):
     """Relies on scanpy run beforehand to determine the neighbourhood graph
         between individual observations. Then gets the cluster neighbours by
         determining the number of cells belonging to each cluster which are MNNs
         and using a proportion of MNNs as a cutoff on which clusters to compare.
     """
-    knn_adj_matrix = data.uns[neigh_key]['connectivities'].toarray() > 0
+    #knn_adj_matrix = data.uns[neigh_key]['connectivities'].toarray() > 0
+    knn_adj_matrix = data.obsp['connectivities'].toarray() > 0
 
     return get_neighs_FAST(labels, label_set, knn_adj_matrix, mnn_frac_cutoff)
 
