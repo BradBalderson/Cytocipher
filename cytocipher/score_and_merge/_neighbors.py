@@ -58,7 +58,7 @@ def get_neighs_FAST(labels: np.array, label_set: np.array,
             nn_ji = labelj_knns[:, labeli_bool].transpose()
             mnn_bool = np.logical_and(nn_ij, nn_ji)
 
-            n_total = np.logical_and(labeli_bool, labelj_bool).sum()
+            n_total = np.logical_or(labeli_bool, labelj_bool).sum()
             mnn_dist = mnn_bool.sum() / n_total
 
             clust_dists[i, j] = mnn_dist
