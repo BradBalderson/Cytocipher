@@ -18,7 +18,7 @@ from numba.typed import List
 from .cluster_score import giotto_page_enrich, code_enrich, coexpr_enrich, \
                                                                      get_markers
 from ._group_methods import group_scores
-from ._neighbors import enrich_neighbours, all_neighbours
+from ._neighbors import enrich_neighbours, all_neighbours, general_neighbours
 
 def get_merge_groups_v1(label_pairs: list):
     """Examines the pairs to be merged, and groups them into large groups of
@@ -256,7 +256,10 @@ def merge(data: sc.AnnData, groupby: str,
 
 ##### Getting MNNs based on the scores
 def merge_clusters_single(data: sc.AnnData, groupby: str, key_added: str,
-                          k: int = 15, knn: int = None, random_state: int=20,
+                          k: int = 15,
+                          #knn: int = None,
+                          mnn_frac_cutoff: float = None,
+                          random_state: int=20,
                           p_cut: float=.1, score_group_method: str='kmeans',
                           p_adjust: bool=False, p_adjust_method: str='fdr_bh',
                           verbose: bool = True):
@@ -269,19 +272,25 @@ def merge_clusters_single(data: sc.AnnData, groupby: str, key_added: str,
     label_set = enrich_scores.columns.values
     label_scores = [enrich_scores.values[:, i] for i in range(len(label_set))]
 
+    """ ### From OLD version, limited to MNNs via enrich scores.
     if type(knn)!=type(None) and knn < (len(label_set)-1):
         ### MNNs via euclidean distance on avg enrich scores ###
         neighbours, dists = enrich_neighbours(enrich_scores, labels, label_set,
                                               knn, verbose)
+    """
+    #### General cluster neighbours, determined by prior user-run neighbours.
+    if type(mnn_frac_cutoff)!=type(None):
+        neighbours, dists, clust_dists = general_neighbours(data, labels,
+                                                     label_set, mnn_frac_cutoff)
 
     else:
         ### Pairwise cluster comparison default ###
         neighbours, dists = all_neighbours(label_set)
 
     data.uns[f'{groupby}_neighbours'] = {label: neighbours[i]
-                                         for i, label in enumerate(label_set)}
+                                           for i, label in enumerate(label_set)}
     data.uns[f'{groupby}_neighdists'] = {label: dists[i]
-                                         for i, label in enumerate(label_set)}
+                                           for i, label in enumerate(label_set)}
 
     # Now going through the MNNs and testing if their cross-scores are significantly different
     if verbose:
@@ -378,7 +387,8 @@ def merge_clusters(data: sc.AnnData, groupby: str,
                    marker_padj_cutoff: float=.05, gene_order: str=None,
                    min_de: int=0,
                    enrich_method: str = 'code', p_cut: float=0.01,
-                   max_iter: int = 0, knn: int = None,
+                   max_iter: int = 0, #knn: int = None,
+                   mnn_frac_cutoff: float = None,
                    k: int = 15, random_state=20,
                    n_cpus: int = 1,
                    score_group_method: str='quantiles',
@@ -422,10 +432,11 @@ def merge_clusters(data: sc.AnnData, groupby: str,
         Maximum number of iterations of the expectation-maximisation to perform,
         returns solution at this number of iterations or when convergence
         achieved.
-    knn: int
-        Number of nearest-neighbours for each cluster to determine, after
-        which mutual nearest neighbour clusters are compared. Default None
-        indicates to perform pair-wise comparison between clusters.
+    mnn_frac_cutoff: float
+        The proportion of cells between two clusters which are mutual
+        nearest-neighbors for the clusters to be compared. For this to work,
+        sc.pp.neighbors(data) must be run first, and can be run on different
+        representations of the data by specifying the use_rep parameter.
     k: int
         k for the k-means clustering of the enrichment scores prior to
         significance testing, to reduce group imbalance bias and inflated
@@ -474,7 +485,7 @@ def merge_clusters(data: sc.AnnData, groupby: str,
     old_labels = data.obs[groupby].values.astype(str)
 
     merge_clusters_single(data, groupby, f'{groupby}_merged',
-                          k=k, knn=knn, random_state=random_state,
+                          k=k, mnn_frac_cutoff=mnn_frac_cutoff, random_state=random_state,
                           p_cut=p_cut,
                           score_group_method=score_group_method,
                           p_adjust=p_adjust, p_adjust_method=p_adjust_method,
@@ -507,7 +518,8 @@ def merge_clusters(data: sc.AnnData, groupby: str,
         # Running new merge operation #
         old_labels = data.obs[f'{groupby}_merged'].values.astype(str)
         merge_clusters_single(data, f'{groupby}_merged', f'{groupby}_merged',
-                              k=k, knn=knn, random_state=random_state,
+                              k=k, mnn_frac_cutoff=mnn_frac_cutoff,
+                              random_state=random_state,
                               score_group_method = score_group_method,
                               p_adjust = p_adjust,
                               p_adjust_method = p_adjust_method,
