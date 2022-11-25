@@ -20,29 +20,16 @@ from .cluster_score import giotto_page_enrich, code_enrich, coexpr_enrich, \
 from ._group_methods import group_scores
 from ._neighbors import enrich_neighbours, all_neighbours, general_neighbours
 
-def get_merge_groups_v1(label_pairs: list):
-    """Examines the pairs to be merged, and groups them into large groups of
-        of clusters to be merged. This implementation will merge cluster pairs
-        if there exists a mutual cluster they are both non-significantly
-        different from. This version also has a kind of 'race-condition' bug,
-        where order of the pairs and clusters in each of the merge groups
-        effects the final merged clusters. Is corrected in the latest version.
+def average(expr: pd.DataFrame, labels: np.array, label_set: np.array):
+    """Averages the expression by label.
     """
-    merge_groups = []  # List of lists, specifying groups of clusters to merge
-    for pair in label_pairs:
-        added = False
+    label_indices = List()
+    [label_indices.append(np.where(labels == label)[0]) for label in label_set]
+    if type(expr) == pd.DataFrame:
+        expr = expr.values
+    avg_data = summarise_data_fast(expr, label_indices)
 
-        for merge_group in merge_groups:  # Check if add to existing group
-            if np.any([pair_ in merge_group for pair_ in pair]):
-                merge_group.extend(pair)
-                added = True
-                break
-
-        if not added:  # Make new group if unmerged group and need to be added
-            merge_groups.append(list(pair))
-
-    #merge_groups = [np.unique(merge_group) for merge_group in merge_groups]
-    return merge_groups
+    return avg_data
 
 def get_merge_groups(label_pairs: list):
     """Examines the pairs to be merged, and groups them into large groups of
