@@ -45,14 +45,16 @@ def get_neighs_FAST(labels: np.array, label_set: np.array,
     for i in prange( len(label_set) ):
         labeli = label_set[i]
 
-        labeli_indices = get_indices(labels, labeli)
+        #labeli_indices = get_indices(labels, labeli)
+        labeli_indices = np.where(labels==labeli)[0]
 
         labeli_knns = knn_adj_matrix[labeli_indices, :]
 
         for j in range((i + 1), len(label_set)):
             labelj = label_set[j]
 
-            labelj_indices = get_indices(labels, labelj)
+            #labelj_indices = get_indices(labels, labelj)
+            labelj_indices = np.where(labels == labelj)[0]
 
             labelj_knns = knn_adj_matrix[labelj_indices, :]
 
@@ -68,11 +70,12 @@ def get_neighs_FAST(labels: np.array, label_set: np.array,
             clust_dists[j, i] = mnn_dist
 
     ##### Now converting this into neighbourhood information....
-    neighbours = List()
-    dists = List()
+    neighbours = [] #List()
+    dists = [] #List()
     for i, label in enumerate(label_set):
         neigh_bool = clust_dists[i, :] > mnn_frac_cutoff
-        neigh_indices = get_true_indices( neigh_bool )
+        #neigh_indices = get_true_indices( neigh_bool )
+        neigh_indices = np.where(neigh_bool)[0]
 
         neighbours.append( label_set[neigh_indices] )
         dists.append( clust_dists[i,:][neigh_indices] )
