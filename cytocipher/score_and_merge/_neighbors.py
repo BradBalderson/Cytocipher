@@ -10,7 +10,7 @@ import scipy.spatial as spatial
 
 from numba import jit, njit, prange
 from numba.typed import List
-from ..utils.general import summarise_data_fast
+from ..utils.general import summarise_data_fast, get_indices
 
 def general_neighbours(data: sc.AnnData,
                        labels: np.array, label_set: np.array,
@@ -44,14 +44,14 @@ def get_neighs_FAST(labels: np.array, label_set: np.array,
     for i in prange( len(label_set) ):
         labeli = label_set[i]
 
-        labeli_indices = np.where(labels == labeli)[0]
+        labeli_indices = get_indices(labels, labeli)
 
         labeli_knns = knn_adj_matrix[labeli_indices, :]
 
         for labelj in label_set[(i + 1):]:
             j = np.where(label_set == labelj)[0][0]
 
-            labelj_indices = np.where(labels == labelj)[0]
+            labelj_indices = get_indices(labels, labelj)
 
             labelj_knns = knn_adj_matrix[labelj_indices,]
 

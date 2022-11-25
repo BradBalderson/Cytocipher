@@ -3,6 +3,23 @@ import pandas as pd
 
 from numba import njit, prange
 
+@njit
+def get_indices(labels: np.array, labeli: str):
+    """Gets the labels indices..."""
+
+    labeli_indices = np.zeros((len(labels)), dtype=np.int64)
+    labeli_indices[:] = -1
+
+    _ = 0
+    for k, label in enumerate(labels):
+        if label == labeli:
+            labeli_indices[_] = k
+            _ += 1
+
+    labeli_indices = labeli_indices[labeli_indices != -1]
+
+    return labeli_indices
+
 def summarise_data(data, labels,
                        label_set: np.array=None, average: bool=True):
     """ Formats the data such that the rows are ordered according to the \
