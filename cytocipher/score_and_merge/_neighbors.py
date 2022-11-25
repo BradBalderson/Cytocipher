@@ -8,6 +8,7 @@ import scanpy as sc
 
 import scipy.spatial as spatial
 
+from numba import njit, prange
 from numba.typed import List
 from ..utils.general import summarise_data_fast
 
@@ -23,8 +24,13 @@ def general_neighbours(data: sc.AnnData,
     #knn_adj_matrix = data.uns[neigh_key]['connectivities'].toarray() > 0
     knn_adj_matrix = data.obsp['connectivities'].toarray() > 0
 
-    return get_neighs_FAST(labels, label_set, knn_adj_matrix, mnn_frac_cutoff)
+    neighbours, dists, clust_dists = get_neighs_FAST(labels, label_set,
+                                                     knn_adj_matrix,
+                                                     mnn_frac_cutoff)
+    return list(neighbours), list(dists), \
+           pd.DataFrame(clust_dists, index=label_set, columns=label_set)
 
+@njit(parallel=True)
 def get_neighs_FAST(labels: np.array, label_set: np.array,
                     knn_adj_matrix: np.ndarray,
                     mnn_frac_cutoff: float):
@@ -34,7 +40,8 @@ def get_neighs_FAST(labels: np.array, label_set: np.array,
 
     ### Counting the MNNs for each cluster ###
     clust_dists = np.zeros((len(label_set), len(label_set)), dtype=np.float64)
-    for i, labeli in enumerate(label_set):
+    for i in prange( len(label_set) ):
+        labeli = label_set[i]
 
         labeli_indices = np.where(labels == labeli)[0]
 
