@@ -43,23 +43,23 @@ def get_neighs_FAST(labels: np.array, label_set: np.array,
     for i in prange( len(label_set) ):
         labeli = label_set[i]
 
-        labeli_indices = np.where(labels == labeli)[0]
+        labeli_bool = labels == labeli
 
-        labeli_knns = knn_adj_matrix[labeli_indices, :]
+        labeli_knns = knn_adj_matrix[labeli_bool, :]
 
         for labelj in label_set[(i + 1):]:
             j = np.where(label_set == labelj)[0][0]
 
-            labelj_indices = np.where(labels == labelj)[0]
+            labelj_bool = labels == labelj
 
-            labelj_knns = knn_adj_matrix[labelj_indices,]
+            labelj_knns = knn_adj_matrix[labelj_bool,]
 
-            nn_ij = labeli_knns[:, labelj_indices]
-            nn_ji = labelj_knns[:, labeli_indices].transpose()
+            nn_ij = labeli_knns[:, labelj_bool]
+            nn_ji = labelj_knns[:, labeli_bool].transpose()
             mnn_bool = np.logical_and(nn_ij, nn_ji)
 
-            mnn_dist = mnn_bool.sum() / \
-                                     (len(labeli_indices) + len(labelj_indices))
+            n_total = np.logical_and(labeli_bool, labelj_bool).sum()
+            mnn_dist = mnn_bool.sum() / nn_total
 
             clust_dists[i, j] = mnn_dist
             clust_dists[j, i] = mnn_dist
