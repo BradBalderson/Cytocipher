@@ -74,7 +74,7 @@ def get_neighs_FAST(labels: np.array, label_set: np.array,
         neigh_indices = get_true_indices( neigh_bool )
 
         neighbours.append( label_set[neigh_indices] )
-        dists.append( clust_dists[i, neigh_indices] )
+        dists.append( clust_dists[i,:][neigh_indices] )
 
     return neighbours, dists, clust_dists
 
