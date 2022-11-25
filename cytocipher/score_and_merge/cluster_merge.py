@@ -14,11 +14,11 @@ from sklearn.cluster import KMeans
 from collections import defaultdict
 from numba.typed import List
 
-
 from .cluster_score import giotto_page_enrich, code_enrich, coexpr_enrich, \
                                                                      get_markers
 from ._group_methods import group_scores
 from ._neighbors import enrich_neighbours, all_neighbours, general_neighbours
+from ..utils.general import summarise_data_fast
 
 def average(expr: pd.DataFrame, labels: np.array, label_set: np.array):
     """Averages the expression by label.
