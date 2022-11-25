@@ -32,7 +32,7 @@ def general_neighbours(data: sc.AnnData,
 
 #@jit(parallel=True, forceobj=True, nopython=False)
 #@njit #(parallel=True)
-@jit(parallel=False, forceobj=True, nopython=False)
+#@jit(parallel=False, forceobj=True, nopython=False)
 def get_neighs_FAST(labels: np.array, label_set: np.array,
                     knn_adj_matrix: np.ndarray,
                     mnn_frac_cutoff: float):
