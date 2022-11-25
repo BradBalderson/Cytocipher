@@ -48,12 +48,12 @@ def get_neighs_FAST(labels: np.array, label_set: np.array,
 
         labeli_knns = knn_adj_matrix[labeli_indices, :]
 
-        for labelj in label_set[(i + 1):]:
-            j = np.where(label_set == labelj)[0][0]
+        for j in range((i + 1), len(label_set)):
+            labelj = label_set[j]
 
             labelj_indices = get_indices(labels, labelj)
 
-            labelj_knns = knn_adj_matrix[labelj_indices,]
+            labelj_knns = knn_adj_matrix[labelj_indices, :]
 
             nn_ij = labeli_knns[:, labelj_indices]
             nn_ji = labelj_knns[:, labeli_indices].transpose()
