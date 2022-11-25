@@ -5,7 +5,7 @@ import numpy as np
 import pandas as pd
 import scanpy as sc
 
-import scipy.spatial as spatial
+
 from scipy.stats import ttest_ind
 from statsmodels.stats.multitest import multipletests
 
@@ -14,21 +14,11 @@ from sklearn.cluster import KMeans
 from collections import defaultdict
 from numba.typed import List
 
-from ..utils.general import summarise_data_fast
+
 from .cluster_score import giotto_page_enrich, code_enrich, coexpr_enrich, \
                                                                      get_markers
 from ._group_methods import group_scores
-
-def average(expr: pd.DataFrame, labels: np.array, label_set: np.array):
-    """Averages the expression by label.
-    """
-    label_indices = List()
-    [label_indices.append(np.where(labels == label)[0]) for label in label_set]
-    if type(expr) == pd.DataFrame:
-        expr = expr.values
-    avg_data = summarise_data_fast(expr, label_indices)
-
-    return avg_data
+from ._neighbors import enrich_neighbours, all_neighbours
 
 def get_merge_groups_v1(label_pairs: list):
     """Examines the pairs to be merged, and groups them into large groups of
@@ -279,28 +269,14 @@ def merge_clusters_single(data: sc.AnnData, groupby: str, key_added: str,
     label_set = enrich_scores.columns.values
     label_scores = [enrich_scores.values[:, i] for i in range(len(label_set))]
 
-    ### Averaging data to get nearest neighbours ###
-    neighbours = []
-    dists = []
     if type(knn)!=type(None) and knn < (len(label_set)-1):
-        if verbose:
-            print("Getting nearest neighbours by enrichment scores.")
+        ### MNNs via euclidean distance on avg enrich scores ###
+        neighbours, dists = enrich_neighbours(enrich_scores, labels, label_set,
+                                              knn, verbose)
 
-        avg_data = average(enrich_scores, labels, label_set)
-        point_tree = spatial.cKDTree(avg_data)
-        for i, labeli in enumerate(label_set):
-            nearest_info = point_tree.query(avg_data[i, :], k=knn + 1)
-            nearest_indexes = nearest_info[1]
-            dists_ = nearest_info[0]
-
-            neighbours.append([label_set[index] for index in nearest_indexes
-                               if label_set[index]!=labeli])
-            dists.append( [dist for i_, dist in enumerate(dists_)
-                           if label_set[nearest_indexes[i_]]!=labeli] )
     else:
-        for label in label_set:
-            neighbours.append( list(label_set[label_set!=label]) )
-            dists.append( [np.nan]*(len(label_set)-1) )
+        ### Pairwise cluster comparison default ###
+        neighbours, dists = all_neighbours(label_set)
 
     data.uns[f'{groupby}_neighbours'] = {label: neighbours[i]
                                          for i, label in enumerate(label_set)}
