@@ -20,6 +20,23 @@ def get_indices(labels: np.array, labeli: str):
 
     return labeli_indices
 
+@njit
+def get_true_indices(array_bool: np.array):
+    """Gets indices that are true."""
+
+    array_indices = np.zeros(len(array_bool), dtype=np.int64)
+    array_indices[:] = -1
+
+    _ = 0
+    for i in range(len(array_bool)):
+        if array_bool[i]:
+            array_indices[_] = i
+            _ += 1
+
+    array_indices = array_indices[array_indices != -1]
+
+    return array_indices
+
 def summarise_data(data, labels,
                        label_set: np.array=None, average: bool=True):
     """ Formats the data such that the rows are ordered according to the \

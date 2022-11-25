@@ -10,7 +10,7 @@ import scipy.spatial as spatial
 
 from numba import jit, njit, prange
 from numba.typed import List
-from ..utils.general import summarise_data_fast, get_indices
+from ..utils.general import summarise_data_fast, get_true_indices
 
 def general_neighbours(data: sc.AnnData,
                        labels: np.array, label_set: np.array,
@@ -44,14 +44,14 @@ def get_neighs_FAST(labels: np.array, label_set: np.array,
     for i in prange( len(label_set) ):
         labeli = label_set[i]
 
-        labeli_indices = get_indices(labels, labeli)
+        labeli_indices = get_true_indices(labels==labeli)
 
         labeli_knns = knn_adj_matrix[labeli_indices, :]
 
         for j in range((i + 1), len(label_set)):
             labelj = label_set[j]
 
-            labelj_indices = get_indices(labels, labelj)
+            labelj_indices = get_true_indices(labels==labelj)
 
             labelj_knns = knn_adj_matrix[labelj_indices, :]
 
@@ -71,8 +71,10 @@ def get_neighs_FAST(labels: np.array, label_set: np.array,
     dists = List()
     for i, label in enumerate(label_set):
         neigh_bool = clust_dists[i, :] > mnn_frac_cutoff
-        neighbours.append( label_set[neigh_bool] )
-        dists.append( clust_dists[i, neigh_bool] )
+        neigh_indices = get_true_indices( neigh_bool )
+
+        neighbours.append( label_set[neigh_indices] )
+        dists.append( clust_dists[i, neigh_indices] )
 
     return neighbours, dists, clust_dists
 
