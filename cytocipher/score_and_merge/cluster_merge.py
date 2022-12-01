@@ -162,6 +162,7 @@ def filter_pairs(label_pairs: list, nonsig_overlap_cutoff: float):
 def merge(data: sc.AnnData, groupby: str,
           p_cut: float, key_added: str=None,
           use_p_adjust: bool=True,
+
           nonsig_overlap_cutoff: float=0,
           verbose: bool=True):
     """ Updates the merged clusters using internally stored p-values in data
