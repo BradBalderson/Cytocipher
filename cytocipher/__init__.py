@@ -2,7 +2,7 @@
 
 __author__ = """Brad Balderson"""
 __email__ = "brad.balderson@uqconnect.edu.au"
-__version__ = "0.1.3"
+__version__ = "0.1.94"
 
 from . import tl
 from . import pl

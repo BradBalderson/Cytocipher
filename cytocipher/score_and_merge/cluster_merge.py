@@ -462,7 +462,7 @@ def merge_clusters(data: sc.AnnData, groupby: str,
 
     ### Initial merge ##
     if verbose:
-        print("Initial merge.")
+        print( "Initial merge." )
 
     get_markers(data, groupby, n_top=n_top_genes, verbose=False,
                 var_groups=var_groups, t_cutoff=t_cutoff,
