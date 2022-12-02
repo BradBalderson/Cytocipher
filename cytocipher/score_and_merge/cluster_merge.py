@@ -424,7 +424,8 @@ def merge_clusters(data: sc.AnnData, groupby: str,
         The proportion of cells between two clusters which are mutual
         nearest-neighbors for the clusters to be compared. For this to work,
         sc.pp.neighbors(data) must be run first, and can be run on different
-        representations of the data by specifying the use_rep parameter.
+        representations of the data by specifying the use_rep parameter in
+        sc.pp.neighbors.
     k: int
         k for the k-means clustering of the enrichment scores prior to
         significance testing, to reduce group imbalance bias and inflated
