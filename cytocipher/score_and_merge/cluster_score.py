@@ -14,6 +14,7 @@ import numba
 from numba.typed import List
 from numba import njit, prange
 
+##### COMMON helper methods
 def calc_page_enrich_input(data):
     """ Calculates stats necessary to calculate enrichment score.
     """
@@ -26,6 +27,7 @@ def calc_page_enrich_input(data):
 
     return fcs, mean_fcs, std_fcs
 
+##### METHODs when want to score just one gene set...
 def giotto_page_enrich_min(gene_set, var_names, fcs, mean_fcs, std_fcs):
     """ Calculates enrichment scores with most values pre-calculated.
     """
@@ -48,6 +50,46 @@ def giotto_page_enrich_geneset(data, gene_set, obs_key: str=None,
         data.obs[obs_key] = giotto_scores
         if verbose:
             print(f"Added data.obs['{obs_key}']")
+
+##### METHODs for cluster scoring...
+@njit
+def giotto_page_enrich_min_FAST(gene_indices, fcs, mean_fcs, std_fcs):
+    """ Calculates enrichment scores with most values pre-calculated.
+    """
+    set_fcs = np.zeros((len(mean_fcs)), dtype=np.int64)
+
+    geneset_fcs = fcs[:, gene_indices]
+    for i in range(len(mean_fcs)):
+        set_fcs[i] = np.mean( geneset_fcs[i,:] )
+
+    giotto_scores = ((set_fcs - mean_fcs) * np.sqrt(len(gene_indices)))/std_fcs
+
+    return giotto_scores
+
+@jit(parallel=True, forceobj=True, nopython=False)
+def giotto_page_percluster(n_cells: int, cluster_genes: dict,
+                           var_names: np.array, ):
+    """ Runs Giotto PAGE enrichment per cluster!
+    """
+    cell_scores = np.zeros((n_cells, len(cluster_genes)))
+    cluster_names = list(cluster_genes.keys())
+    for i in prange(len(cluster_names)):
+
+        clusteri = cluster_names[i]
+
+        if len(cluster_genes[clusteri])==0:
+            raise Exception(f"No marker genes for {clusteri}. "
+                            f"Rerun with more relaxed marker gene parameters.")
+
+        gene_indices = np.array([np.where(var_names == gene)[0][0]
+                                 for gene in cluster_genes[clusteri]],
+                                dtype=np.int64)
+
+        cluster_scores_ = giotto_page_enrich_min_FAST(gene_indices, fcs,
+                                                     mean_fcs, std_fcs)
+        cell_scores[:, i] = cluster_scores_
+
+    return cell_scores
 
 def giotto_page_enrich(data: AnnData, groupby: str,
                        var_groups: str='highly_variable',
@@ -143,16 +185,18 @@ def giotto_page_enrich(data: AnnData, groupby: str,
     # Precalculations..
     fcs, mean_fcs, std_fcs = calc_page_enrich_input(data)
 
-    cell_scores = np.zeros((data.shape[0], len(cluster_genes)))
-    for i, clusteri in enumerate(cluster_genes):
-        if len(cluster_genes[clusteri])==0:
-            raise Exception(f"No marker genes for {clusteri}. "
-                            f"Rerun with more relaxed marker gene parameters.")
-
-        cluster_scores_ = giotto_page_enrich_min(cluster_genes[clusteri],
-                                                    data.var_names, fcs,
-                                                    mean_fcs, std_fcs)
-        cell_scores[:, i] = cluster_scores_
+    # cell_scores = np.zeros((data.shape[0], len(cluster_genes)))
+    # for i, clusteri in enumerate(cluster_genes):
+    #     if len(cluster_genes[clusteri])==0:
+    #         raise Exception(f"No marker genes for {clusteri}. "
+    #                         f"Rerun with more relaxed marker gene parameters.")
+    #
+    #     cluster_scores_ = giotto_page_enrich_min(cluster_genes[clusteri],
+    #                                                 data.var_names, fcs,
+    #                                                 mean_fcs, std_fcs)
+    #     cell_scores[:, i] = cluster_scores_
+    cell_scores = giotto_page_percluster(data.shape[0], cluster_genes,
+                                              data.var_names.values.astype(str))
 
     ###### Adding to AnnData
     cluster_scores = pd.DataFrame(cell_scores, index=data.obs_names,
