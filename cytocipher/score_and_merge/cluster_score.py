@@ -416,7 +416,7 @@ def get_neg_cells_bool(expr_bool_neg: np.ndarray, negative_indices: List,
 
     return neg_cells_bool
 
-@njit
+#@njit
 def code_score(expr: np.ndarray, in_index_end: int,
                negative_indices: List, min_counts: int = 2):
     """Enriches for the genes in the data, while controlling for genes that
@@ -491,19 +491,9 @@ def get_code_scores(full_expr: np.ndarray, all_genes: np.array,
 
         #### Getting genes should be in cluster
         gene_indices = get_item_indices(genes_, all_genes)
-        # gene_indices = np.zeros( genes_.shape, dtype=np.int_ )
-        # for gene_index, gene in enumerate( genes_ ):
-        #     for gene_index2, gene2 in enumerate( all_genes ):
-        #         if gene == gene2:
-        #             gene_indices[gene_index] = gene_index2
 
         #### Getting genes shouldn't be in cluster
         diff_indices = get_item_indices(genes_diff, all_genes)
-        # diff_indices = np.zeros(genes_diff.shape, dtype=np.int_)
-        # for gene_index, gene in enumerate( genes_diff ):
-        #     for gene_index2, gene2 in enumerate(all_genes):
-        #         if gene == gene2:
-        #             diff_indices[gene_index] = gene_index2
 
         #### Getting indices of which genes are in what cluster.
         clusts = np.unique(clusts_diff)
