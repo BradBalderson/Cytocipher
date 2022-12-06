@@ -416,7 +416,7 @@ def get_neg_cells_bool(expr_bool_neg: np.ndarray, negative_indices: List,
 
     return neg_cells_bool
 
-#@njit
+@njit
 def code_score_cell(expr: np.ndarray, coexpr_counts_all: np.ndarray,
                     coexpr_indices: np.ndarray, expr_pos: np.ndarray,
                     expr_bool_pos: np.ndarray, coexpr_counts_pos: np.ndarray):
