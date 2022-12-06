@@ -12,7 +12,7 @@ from sklearn.preprocessing import minmax_scale
 
 import numba
 from numba.typed import List
-from numba import njit, prange
+from numba import jit, njit, prange
 
 ##### COMMON helper methods
 def calc_page_enrich_input(data):
