@@ -97,7 +97,7 @@ def giotto_page_percluster(n_cells: int, cluster_genes: dict,
                            mean_fcs: np.array, std_fcs: np.array):
     """ Runs Giotto PAGE enrichment per cluster!
     """
-    cell_scores = np.zeros((n_cells, len(cluster_genes)))
+    cell_scores = np.zeros((n_cells, len(cluster_genes)), dtype=np.int64)
     cluster_names = list(cluster_genes.keys())
     for i in prange(len(cluster_names)):
 
