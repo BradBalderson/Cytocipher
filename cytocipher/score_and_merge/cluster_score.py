@@ -121,6 +121,7 @@ def giotto_page_enrich(data: AnnData, groupby: str,
                        logfc_cutoff: float=0, padj_cutoff: float=.05,
                        n_top: int=5, cluster_marker_key: str=None,
                        rerun_de: bool=True, gene_order='logfc',
+                       n_cpus: int=1,
                        verbose: bool=True):
     """ Runs Giotto PAGE enrichment for cluster markers. Imporant to note that
         by default this function will automatically determine marker genes,
@@ -167,6 +168,8 @@ def giotto_page_enrich(data: AnnData, groupby: str,
                 Cell by cell type data frame, with the coexpr enrichment scores
                 for the values.
     """
+    numba.set_num_threads( n_cpus )
+    
     n_top = data.shape[1] if type(n_top)==type(None) else n_top
 
     #### First performing differential expression...
