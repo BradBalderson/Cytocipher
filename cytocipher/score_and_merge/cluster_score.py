@@ -498,8 +498,8 @@ def get_code_scores(full_expr: np.ndarray, all_genes: np.array,
             for clusti, clust in enumerate(clusts):
                 for clustj in range(len(clusts_diff)):
                     ### Added in accounting for the end of the list...
-                    if (clusts_diff[clustj]==clust and clusts_diff[clustj+1]!=clust) or \
-                       (clusts_diff[clustj]==clust and (clustj+1)==len(clusts_diff)):
+                    if (clusts_diff[clustj]==clust and clusts_diff[clustj+1]!=clust): # or \
+                       #(clusts_diff[clustj]==clust and (clustj+1)==len(clusts_diff))\:
                         negative_indices[clusti] = clustj
                         break
 
