@@ -424,7 +424,8 @@ def code_score_cell(expr: np.ndarray, coexpr_counts_all: np.ndarray,
     """
     ### Need to check all nonzero indices to get expression level frequency.
     nonzero_indices = np.where(coexpr_counts_all > 0)[0]
-    expr_probs_ = np.zeros((expr_pos.shape[1], len(coexpr_indices)))
+    expr_probs_ = np.zeros((expr_pos.shape[1], len(coexpr_indices)),
+                           dtype=np.float64)
     cell_scores = np.zeros((expr.shape[0]), dtype=np.float64)
     for i in coexpr_indices:
         expr_probs = expr_probs_[:,i] #np.zeros((expr_pos.shape[1]))
