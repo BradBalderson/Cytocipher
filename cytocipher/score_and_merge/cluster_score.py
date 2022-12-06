@@ -242,7 +242,7 @@ def giotto_page_enrich(data: AnnData, groupby: str,
 ################################################################################
              # Functions related to Coexpression Score #
 ################################################################################
-@njit
+#@njit
 def coexpr_score(expr: np.ndarray, min_counts: int = 2):
     """Enriches for the genes in the data"""
 
@@ -269,7 +269,7 @@ def coexpr_score(expr: np.ndarray, min_counts: int = 2):
 
     return cell_scores
 
-@njit(parallel=True)
+#@njit(parallel=True)
 def get_enrich_scores(full_expr: np.ndarray, all_genes: np.array,
                       cluster_genes_List: List,
                       min_counts: int,
