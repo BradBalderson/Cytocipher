@@ -461,7 +461,7 @@ def code_score(expr: np.ndarray, in_index_end: int,
 
     return cell_scores
 
-@njit(parallel=True)
+#@njit(parallel=True)
 def get_code_scores(full_expr: np.ndarray, all_genes: np.array,
                       cluster_genes_List: List,
                       cluster_diff_List: List,
