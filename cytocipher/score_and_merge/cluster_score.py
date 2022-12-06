@@ -20,10 +20,31 @@ def calc_page_enrich_input(data):
     """
     full_expr = data.to_df().values
 
-    gene_means = full_expr.mean(axis=0)
-    fcs = np.apply_along_axis(np.subtract, 1, full_expr, gene_means)
-    mean_fcs = np.apply_along_axis(np.mean, 1, fcs)
-    std_fcs = np.apply_along_axis(np.std, 1, fcs)
+    # gene_means = full_expr.mean(axis=0)
+    # fcs = np.apply_along_axis(np.subtract, 1, full_expr, gene_means)
+    # mean_fcs = np.apply_along_axis(np.mean, 1, fcs)
+    # std_fcs = np.apply_along_axis(np.std, 1, fcs)
+
+    return calc_page_enrich_FAST( full_expr )
+
+@njit
+def calc_page_enrich_FAST(full_expr: np.ndarray):
+    """ Calculates necessary statistics for Giotto enrichment scoring....
+    """
+
+    gene_means = np.zeros((full_expr.shape[1]), dtype=np.float64)
+    for i in range(len(gene_means)):
+        gene_means[i] = np.mean( full_expr[:,i] )
+
+    n = full_expr.shape[0]
+    fcs = np.zeros((n, len(gene_means)), dtype=np.float64)
+    mean_fcs = np.zeros((n), dtype=np.float64)
+    std_fcs = np.zeros((n), dtype=np.float64)
+
+    for i in range(n):
+        fcs[i, :] = full_expr[i, :] - gene_means
+        mean_fcs[i] = np.mean( fcs[i,:] )
+        std_fcs[i] = np.std( fcs[i,:] )
 
     return fcs, mean_fcs, std_fcs
 
@@ -66,8 +87,10 @@ def giotto_page_enrich_min_FAST(gene_indices, fcs, mean_fcs, std_fcs):
 
     return giotto_scores
 
-@jit(parallel=True, #forceobj=True,
-     nopython=False)
+### Tried jit but getting errors; njit on the above function reduces run time
+### to 3 sec for 248 clusters anyhow, better off optimising elsewhere...
+#@jit(parallel=True, #forceobj=True,
+#     nopython=False)
 def giotto_page_percluster(n_cells: int, cluster_genes: dict,
                            var_names: np.array, fcs: np.array,
                            mean_fcs: np.array, std_fcs: np.array):
