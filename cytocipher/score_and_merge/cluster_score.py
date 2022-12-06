@@ -66,7 +66,8 @@ def giotto_page_enrich_min_FAST(gene_indices, fcs, mean_fcs, std_fcs):
 
     return giotto_scores
 
-@jit(parallel=True, forceobj=True, nopython=False)
+@jit(parallel=True, #forceobj=True,
+     nopython=False)
 def giotto_page_percluster(n_cells: int, cluster_genes: dict,
                            var_names: np.array, fcs: np.array,
                            mean_fcs: np.array, std_fcs: np.array):
