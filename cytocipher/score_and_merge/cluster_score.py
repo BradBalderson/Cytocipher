@@ -416,6 +416,27 @@ def get_neg_cells_bool(expr_bool_neg: np.ndarray, negative_indices: List,
 
     return neg_cells_bool
 
+def code_score_cell(expr: np.ndarray, coexpr_counts_all: np.ndarray,
+                    coexpr_indices: np.ndarray, expr_pos: np.ndarray,
+                    expr_bool_pos: np.ndarray, coexpr_counts_pos: np.ndarray):
+    """ Performs code scoring for each cell in a loop...
+    """
+    ### Need to check all nonzero indices to get expression level frequency.
+    nonzero_indices = np.where(coexpr_counts_all > 0)[0]
+    cell_scores = np.zeros((expr.shape[0]), dtype=np.float64)
+    for i in coexpr_indices:
+        expr_probs = np.zeros((expr_pos.shape[1]))
+        cell_nonzero = np.where(expr_bool_pos[i, :])[0]
+        for j, genej in enumerate(cell_nonzero):
+            expr_level_count = len(np.where(expr_pos[nonzero_indices, genej]
+                                            >= expr_pos[i, genej])[0])
+            expr_probs[j] = expr_level_count / expr.shape[0]
+
+        joint_coexpr_prob = np.prod(expr_probs[expr_probs > 0])
+        cell_scores[i] = np.log2(coexpr_counts_pos[i] / joint_coexpr_prob)
+
+    return cell_scores
+
 #@njit
 def code_score(expr: np.ndarray, in_index_end: int,
                negative_indices: List, min_counts: int = 2):
@@ -446,19 +467,20 @@ def code_score(expr: np.ndarray, in_index_end: int,
     coexpr_indices = np.where( coexpr_bool )[0]
 
     ### Need to check all nonzero indices to get expression level frequency.
-    nonzero_indices = np.where(coexpr_counts_all > 0)[0]
-    cell_scores = np.zeros((expr.shape[0]), dtype=np.float64)
-    for i in coexpr_indices:
-        expr_probs = np.zeros(( expr_pos.shape[1] ))
-        cell_nonzero = np.where( expr_bool_pos[i, :] )[0]
-        for j, genej in enumerate(cell_nonzero):
-            expr_level_count = len(np.where(expr_pos[nonzero_indices, genej]
-                                                      >= expr_pos[i, genej])[0])
-            expr_probs[j] = expr_level_count / expr.shape[0]
-
-        joint_coexpr_prob = np.prod( expr_probs[expr_probs > 0] )
-        cell_scores[i] = np.log2(coexpr_counts_pos[i] / joint_coexpr_prob)
-
+    # nonzero_indices = np.where(coexpr_counts_all > 0)[0]
+    # cell_scores = np.zeros((expr.shape[0]), dtype=np.float64)
+    # for i in coexpr_indices:
+    #     expr_probs = np.zeros(( expr_pos.shape[1] ))
+    #     cell_nonzero = np.where( expr_bool_pos[i, :] )[0]
+    #     for j, genej in enumerate(cell_nonzero):
+    #         expr_level_count = len(np.where(expr_pos[nonzero_indices, genej]
+    #                                                   >= expr_pos[i, genej])[0])
+    #         expr_probs[j] = expr_level_count / expr.shape[0]
+    #
+    #     joint_coexpr_prob = np.prod( expr_probs[expr_probs > 0] )
+    #     cell_scores[i] = np.log2(coexpr_counts_pos[i] / joint_coexpr_prob)
+    cell_scores = code_score_cell(expr, coexpr_counts_all, coexpr_indices,
+                                  expr_pos, expr_bool_pos, coexpr_counts_pos)
     return cell_scores
 
 @njit
