@@ -27,7 +27,7 @@ def calc_page_enrich_input(data):
 
     return calc_page_enrich_FAST( full_expr, gene_means )
 
-@njit
+@njit(parallel=True)
 def calc_page_enrich_FAST(full_expr: np.ndarray, gene_means: np.array):
     """ Calculates necessary statistics for Giotto enrichment scoring....
     """
@@ -41,10 +41,10 @@ def calc_page_enrich_FAST(full_expr: np.ndarray, gene_means: np.array):
     mean_fcs = np.zeros((n), dtype=np.float64)
     std_fcs = np.zeros((n), dtype=np.float64)
 
-    for i in range(n):
-        fcs[i, :] = full_expr[i, :] - gene_means
-        mean_fcs[i] = np.mean( fcs[i,:] )
-        std_fcs[i] = np.std( fcs[i,:] )
+    for i in prange(n):
+        fcs[i, :] = np.subtract(full_expr[i, :], gene_means)
+        mean_fcs[i] = np.mean( fcs[i, :] )
+        std_fcs[i] = np.std( fcs[i, :] )
 
     return fcs, mean_fcs, std_fcs
 
