@@ -461,6 +461,18 @@ def code_score(expr: np.ndarray, in_index_end: int,
 
     return cell_scores
 
+@njit
+def get_item_indices(items: List, full_items: np.array):
+    """ Gets indices of items in larger array...
+    """
+    item_indices = np.zeros(items.shape, dtype=np.int_)
+    for index, item in enumerate(items):
+        for index2, item2 in enumerate(full_items):
+            if item == item2:
+                item_indices[index] = index2
+
+    return item_indices
+
 #@njit(parallel=True)
 def get_code_scores(full_expr: np.ndarray, all_genes: np.array,
                       cluster_genes_List: List,
@@ -478,18 +490,20 @@ def get_code_scores(full_expr: np.ndarray, all_genes: np.array,
         clusts_diff = cluster_diff_cluster_List[i]
 
         #### Getting genes should be in cluster
-        gene_indices = np.zeros( genes_.shape, dtype=np.int_ )
-        for gene_index, gene in enumerate( genes_ ):
-            for gene_index2, gene2 in enumerate( all_genes ):
-                if gene == gene2:
-                    gene_indices[gene_index] = gene_index2
+        gene_indices = get_item_indices(genes_, all_genes)
+        # gene_indices = np.zeros( genes_.shape, dtype=np.int_ )
+        # for gene_index, gene in enumerate( genes_ ):
+        #     for gene_index2, gene2 in enumerate( all_genes ):
+        #         if gene == gene2:
+        #             gene_indices[gene_index] = gene_index2
 
         #### Getting genes shouldn't be in cluster
-        diff_indices = np.zeros(genes_diff.shape, dtype=np.int_)
-        for gene_index, gene in enumerate( genes_diff ):
-            for gene_index2, gene2 in enumerate(all_genes):
-                if gene == gene2:
-                    diff_indices[gene_index] = gene_index2
+        diff_indices = get_item_indices(genes_diff, all_genes)
+        # diff_indices = np.zeros(genes_diff.shape, dtype=np.int_)
+        # for gene_index, gene in enumerate( genes_diff ):
+        #     for gene_index2, gene2 in enumerate(all_genes):
+        #         if gene == gene2:
+        #             diff_indices[gene_index] = gene_index2
 
         #### Getting indices of which genes are in what cluster.
         clusts = np.unique(clusts_diff)
