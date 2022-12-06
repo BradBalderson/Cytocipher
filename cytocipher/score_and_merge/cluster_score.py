@@ -91,6 +91,7 @@ def giotto_page_enrich_min_FAST(gene_indices, fcs, mean_fcs, std_fcs):
 ### to 3 sec for 248 clusters anyhow, better off optimising elsewhere...
 #@jit(parallel=True, #forceobj=True,
 #     nopython=False)
+@jit(parallel=True)
 def giotto_page_percluster(n_cells: int, cluster_genes: dict,
                            var_names: np.array, fcs: np.array,
                            mean_fcs: np.array, std_fcs: np.array):
