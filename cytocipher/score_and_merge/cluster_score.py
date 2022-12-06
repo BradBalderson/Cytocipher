@@ -429,10 +429,12 @@ def code_score_cell(expr: np.ndarray, coexpr_counts_all: np.ndarray,
     #                        dtype=np.float64)
     cell_scores = np.zeros((expr.shape[0]), dtype=np.float64)
     for i in coexpr_indices:
-        cell_nonzero = np.where(expr_bool_pos[i, :])[0]
+        cell_expr_pos_bool = expr_bool_pos[i, :]
+        cell_expr_pos = expr_pos[i, :]
+        #cell_nonzero = np.where()[0]
 
-        cells_greater_bool = expr_pos[:, cell_nonzero] >= \
-                                                       expr_pos[i, cell_nonzero]
+        cells_greater_bool = expr_pos[:, cell_expr_pos] >= \
+                                                     cell_expr_pos[cell_nonzero]
         expr_probs = cells_greater_bool.sum( axis=1 ) / expr.shape[0]
 
         #### Old implementation
