@@ -20,21 +20,21 @@ def calc_page_enrich_input(data):
     """
     full_expr = data.to_df().values
 
-    # gene_means = full_expr.mean(axis=0)
+    gene_means = full_expr.mean(axis=0)
     # fcs = np.apply_along_axis(np.subtract, 1, full_expr, gene_means)
     # mean_fcs = np.apply_along_axis(np.mean, 1, fcs)
     # std_fcs = np.apply_along_axis(np.std, 1, fcs)
 
-    return calc_page_enrich_FAST( full_expr )
+    return calc_page_enrich_FAST( full_expr, gene_means )
 
 @njit
-def calc_page_enrich_FAST(full_expr: np.ndarray):
+def calc_page_enrich_FAST(full_expr: np.ndarray, gene_means: np.array):
     """ Calculates necessary statistics for Giotto enrichment scoring....
     """
 
-    gene_means = np.zeros((full_expr.shape[1]), dtype=np.float64)
-    for i in range(len(gene_means)):
-        gene_means[i] = np.mean( full_expr[:,i] )
+    # gene_means = np.zeros((full_expr.shape[1]), dtype=np.float64)
+    # for i in range(len(gene_means)):
+    #     gene_means[i] = np.mean( full_expr[:,i] )
 
     n = full_expr.shape[0]
     fcs = np.zeros((n, len(gene_means)), dtype=np.float64)
