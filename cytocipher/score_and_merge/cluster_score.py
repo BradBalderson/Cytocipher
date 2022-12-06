@@ -68,7 +68,8 @@ def giotto_page_enrich_min_FAST(gene_indices, fcs, mean_fcs, std_fcs):
 
 #@jit(parallel=True, forceobj=True, nopython=False)
 def giotto_page_percluster(n_cells: int, cluster_genes: dict,
-                           var_names: np.array, ):
+                           var_names: np.array, fcs: np.array,
+                           mean_fcs: np.array, std_fcs: np.array):
     """ Runs Giotto PAGE enrichment per cluster!
     """
     cell_scores = np.zeros((n_cells, len(cluster_genes)))
@@ -196,7 +197,8 @@ def giotto_page_enrich(data: AnnData, groupby: str,
     #                                                 mean_fcs, std_fcs)
     #     cell_scores[:, i] = cluster_scores_
     cell_scores = giotto_page_percluster(data.shape[0], cluster_genes,
-                                              data.var_names.values.astype(str))
+                                              data.var_names.values.astype(str),
+                                                         fcs, mean_fcs, std_fcs)
 
     ###### Adding to AnnData
     cluster_scores = pd.DataFrame(cell_scores, index=data.obs_names,
