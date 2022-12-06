@@ -104,9 +104,7 @@ def giotto_page_percluster(n_cells: int, cluster_genes: dict,
         clusteri = cluster_names[i]
 
         if len(cluster_genes[clusteri])==0:
-            return None
-            #raise Exception(f"No marker genes for {clusteri}. "
-            #                f"Rerun with more relaxed marker gene parameters.")
+            return np.zeros((2,2))
 
         gene_indices = np.array([np.where(var_names == gene)[0][0]
                                  for gene in cluster_genes[clusteri]],
@@ -225,7 +223,7 @@ def giotto_page_enrich(data: AnnData, groupby: str,
     cell_scores = giotto_page_percluster(data.shape[0], cluster_genes,
                                               data.var_names.values.astype(str),
                                                          fcs, mean_fcs, std_fcs)
-    if type(cell_scores)==type(None):
+    if not np.any( cell_scores ):
         raise Exception(f"No marker genes for a cluster detected. "
                         f"Rerun with more relaxed marker gene parameters.")
 
