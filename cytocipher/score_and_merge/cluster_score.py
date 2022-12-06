@@ -425,9 +425,8 @@ def code_score_cell(expr: np.ndarray, coexpr_counts_all: np.ndarray,
     ### Need to check all nonzero indices to get expression level frequency.
     nonzero_indices = np.where(coexpr_counts_all > 0)[0]
     expr_pos_nonzero = expr_pos[nonzero_indices, :]
-    # expr_probs_ = np.zeros((expr_pos.shape[1], len(coexpr_indices)),
-    #                        dtype=np.float64)
     cell_scores = np.zeros((expr.shape[0]), dtype=np.float64)
+
     for i in coexpr_indices:
         cell_expr_pos_bool = expr_bool_pos[i, :]
         cell_expr_pos = expr_pos[i, :]
@@ -450,7 +449,7 @@ def code_score_cell(expr: np.ndarray, coexpr_counts_all: np.ndarray,
 
     return cell_scores
 
-#@njit
+@njit
 def code_score(expr: np.ndarray, in_index_end: int,
                negative_indices: List, min_counts: int = 2):
     """Enriches for the genes in the data, while controlling for genes that
@@ -508,7 +507,7 @@ def get_item_indices(items: List, full_items: np.array):
 
     return item_indices
 
-#@njit(parallel=True)
+@njit(parallel=True)
 def get_code_scores(full_expr: np.ndarray, all_genes: np.array,
                       cluster_genes_List: List,
                       cluster_diff_List: List,
