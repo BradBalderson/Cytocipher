@@ -91,7 +91,7 @@ def giotto_page_enrich_min_FAST(gene_indices, fcs, mean_fcs, std_fcs):
 ### to 3 sec for 248 clusters anyhow, better off optimising elsewhere...
 #@jit(parallel=True, #forceobj=True,
 #     nopython=False)
-@jit(parallel=True)
+#@jit(parallel=True)
 def giotto_page_percluster(n_cells: int, cluster_genes: dict,
                            var_names: np.array, fcs: np.array,
                            mean_fcs: np.array, std_fcs: np.array):
@@ -103,8 +103,9 @@ def giotto_page_percluster(n_cells: int, cluster_genes: dict,
 
         clusteri = cluster_names[i]
 
-        # if len(cluster_genes[clusteri])==0:
-        #     return np.zeros((2,2))
+        if len(cluster_genes[clusteri])==0:
+            raise Exception(f"No marker genes for a cluster detected. "
+                             f"Rerun with more relaxed marker gene parameters.")
 
         gene_indices = np.array([np.where(var_names == gene)[0][0]
                                  for gene in cluster_genes[clusteri]],
@@ -169,7 +170,7 @@ def giotto_page_enrich(data: AnnData, groupby: str,
                 for the values.
     """
     numba.set_num_threads( n_cpus )
-    
+
     n_top = data.shape[1] if type(n_top)==type(None) else n_top
 
     #### First performing differential expression...
