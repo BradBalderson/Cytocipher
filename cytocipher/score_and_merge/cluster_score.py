@@ -434,7 +434,7 @@ def code_score_cell(expr: np.ndarray, coexpr_counts_all: np.ndarray,
         #cell_nonzero = np.where()[0]
 
         cells_greater_bool = expr_pos[:, cell_expr_pos] >= \
-                                                     cell_expr_pos[cell_nonzero]
+                                                    cell_expr_pos[cell_expr_pos]
         expr_probs = cells_greater_bool.sum( axis=1 ) / expr.shape[0]
 
         #### Old implementation
