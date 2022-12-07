@@ -244,7 +244,8 @@ def giotto_page_enrich(data: AnnData, groupby: str,
 ################################################################################
 @njit
 def coexpr_score(expr: np.ndarray, min_counts: int = 2):
-    """Enriches for the genes in the data"""
+    """Enriches for the genes in the data. Now optimised.
+    """
 
     expr_bool = expr > 0
     coexpr_counts = expr_bool.sum(axis=1)
