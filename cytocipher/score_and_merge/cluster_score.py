@@ -270,20 +270,9 @@ def coexpr_score(expr: np.ndarray, min_counts: int = 2):
         joint_coexpr_prob = np.prod( expr_probs )
         cell_scores[i] = np.log2(coexpr_counts[i] / joint_coexpr_prob)
 
-    #### OLD implementation...
-    # for i in coexpr_indices:
-    #     expr_probs = np.zeros((coexpr_counts[i]))
-    #     cell_nonzero = np.where(expr_bool[i, :])[0]
-    #     for j, genej in enumerate(cell_nonzero):
-    #         expr_probs[j] = len(
-    #             np.where(expr[nonzero_indices, genej] >= expr[i, genej])[0]) / \
-    #                         expr.shape[0]
-    #
-    #     cell_scores[i] = np.log2(coexpr_counts[i] / np.prod(expr_probs))
-
     return cell_scores
 
-#@njit(parallel=True)
+@njit(parallel=True)
 def get_enrich_scores(full_expr: np.ndarray, all_genes: np.array,
                       cluster_genes_List: List,
                       min_counts: int,
