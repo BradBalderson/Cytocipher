@@ -83,7 +83,7 @@ def get_merge_groups_SLOW(label_pairs: list):
 
     return merge_groups
 
-#@jit(parallel=False, forceobj=True, nopython=False)
+@jit(parallel=False, forceobj=True, nopython=False)
 def get_merge_groups(label_pairs: list):
     """Examines the pairs to be merged, and groups them into large groups of
         of clusters to be merged. This implementation will merge cluster pairs
@@ -98,15 +98,17 @@ def get_merge_groups(label_pairs: list):
     for pairi, pair in enumerate(label_pairs):
         # NOTE we only need to do it for one clust of pair,
         # since below syncs for other clust
-        clust_groups[pair[0]].union(pair)
+        clust_groups[pair[0]] = clust_groups[pair[0]].union(pair)
 
         # Pull in the clusts from each other clust.
         for clust in clust_groups[pair[0]]:  # Syncing across clusters.
-            clust_groups[pair[0]].union( clust_groups[clust] )
+            clust_groups[pair[0]] = clust_groups[pair[0]].union(
+                                                           clust_groups[clust] )
 
         # Update each other clust with this clusters clusts to merge
         for clust in clust_groups[pair[0]]:  # Syncing across clusters.
-            clust_groups[clust].union( clust_groups[pair[0]] )
+            clust_groups[clust] = clust_groups[clust].union(
+                                                         clust_groups[pair[0]] )
 
         # Checking to make sure they now all represent the same thing....
         clusts = clust_groups[pair[0]]
@@ -118,7 +120,7 @@ def get_merge_groups(label_pairs: list):
         all_match_bool[pairi] = np.all(match_bool)
 
     # Just for testing purposes...
-    #print(np.all(all_match_bool))
+    print(np.all(all_match_bool))
 
     # Getting the merge groups now.
     merge_groups = []
