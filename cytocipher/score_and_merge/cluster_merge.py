@@ -153,7 +153,6 @@ def merge_neighbours_v2(cluster_labels: np.array,
     for i in range(len(merge_groups)):  # For the merge groups
         for cluster in merge_groups[i]:
             cluster_map[cluster] = str(i)
-            print(cluster, i)
 
     clusti = len(merge_groups)  # New start of the cluster....
     for label in label_set:
