@@ -256,16 +256,30 @@ def coexpr_score(expr: np.ndarray, min_counts: int = 2):
     ### Must be coexpression of atleast min_count markers!
     nonzero_indices = np.where(coexpr_counts > 0)[0]
     coexpr_indices = np.where(coexpr_counts >= min_counts)[0]
+    expr_pos_nonzero = expr_pos[nonzero_indices, :]
     cell_scores = np.zeros((expr.shape[0]), dtype=np.float64)
-    for i in coexpr_indices:
-        expr_probs = np.zeros((coexpr_counts[i]))
-        cell_nonzero = np.where(expr_bool[i, :])[0]
-        for j, genej in enumerate(cell_nonzero):
-            expr_probs[j] = len(
-                np.where(expr[nonzero_indices, genej] >= expr[i, genej])[0]) / \
-                            expr.shape[0]
 
-        cell_scores[i] = np.log2(coexpr_counts[i] / np.prod(expr_probs))
+    for i in coexpr_indices:
+        cell_expr_bool = expr_bool[i, :]
+        cell_expr = expr[i, :]
+
+        cells_greater_bool = expr[:, cell_expr_bool] >= \
+                                                       cell_expr[cell_expr_bool]
+        expr_probs = cells_greater_bool.sum( axis=0 ) / expr.shape[0]
+
+        joint_coexpr_prob = np.prod( expr_probs )
+        cell_scores[i] = np.log2(coexpr_counts[i] / joint_coexpr_prob)
+
+    #### OLD implementation...
+    # for i in coexpr_indices:
+    #     expr_probs = np.zeros((coexpr_counts[i]))
+    #     cell_nonzero = np.where(expr_bool[i, :])[0]
+    #     for j, genej in enumerate(cell_nonzero):
+    #         expr_probs[j] = len(
+    #             np.where(expr[nonzero_indices, genej] >= expr[i, genej])[0]) / \
+    #                         expr.shape[0]
+    #
+    #     cell_scores[i] = np.log2(coexpr_counts[i] / np.prod(expr_probs))
 
     return cell_scores
 
