@@ -123,10 +123,12 @@ def get_merge_groups(label_pairs: list):
     #print(np.all(all_match_bool))
 
     # Getting the merge groups now.
-    merge_groups = []
+    merge_groups = [] #np.unique([tuple(group) for group in clust_groups.values()])
     merge_groups_str = []
     all_groups = list(clust_groups.values())
     for group in all_groups:
+        group = list(group)
+        group.sort()
         group_str = '_'.join(group)
         if group_str not in merge_groups_str:
             merge_groups.append( group )
@@ -151,6 +153,7 @@ def merge_neighbours_v2(cluster_labels: np.array,
     for i in range(len(merge_groups)):  # For the merge groups
         for cluster in merge_groups[i]:
             cluster_map[cluster] = str(i)
+            print(cluster, i)
 
     clusti = len(merge_groups)  # New start of the cluster....
     for label in label_set:
