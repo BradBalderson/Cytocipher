@@ -94,7 +94,7 @@ def get_merge_groups(label_pairs: list):
     """
     #### Using a syncing strategy with a dictionary.
     clust_groups = defaultdict(set)
-    all_match_bool = [False] * len(label_pairs)
+    #all_match_bool = [False] * len(label_pairs)
     for pairi, pair in enumerate(label_pairs):
         # NOTE we only need to do it for one clust of pair,
         # since below syncs for other clust
@@ -111,16 +111,16 @@ def get_merge_groups(label_pairs: list):
                                                          clust_groups[pair[0]] )
 
         # Checking to make sure they now all represent the same thing....
-        clusts = clust_groups[pair[0]]
-        match_bool = [False] * len(clusts)
-        for i, clust in enumerate(clusts):
-            match_bool[i] = np.all(
-                np.array(clust_groups[clust]) == np.array(clusts))
-
-        all_match_bool[pairi] = np.all(match_bool)
+        # clusts = clust_groups[pair[0]]
+        # match_bool = [False] * len(clusts)
+        # for i, clust in enumerate(clusts):
+        #     match_bool[i] = np.all(
+        #         np.array(clust_groups[clust]) == np.array(clusts))
+        #
+        # all_match_bool[pairi] = np.all(match_bool)
 
     # Just for testing purposes...
-    print(np.all(all_match_bool))
+    #print(np.all(all_match_bool))
 
     # Getting the merge groups now.
     merge_groups = []
