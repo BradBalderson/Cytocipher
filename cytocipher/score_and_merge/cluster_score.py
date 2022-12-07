@@ -256,14 +256,14 @@ def coexpr_score(expr: np.ndarray, min_counts: int = 2):
     ### Must be coexpression of atleast min_count markers!
     nonzero_indices = np.where(coexpr_counts > 0)[0]
     coexpr_indices = np.where(coexpr_counts >= min_counts)[0]
-    expr_pos_nonzero = expr_pos[nonzero_indices, :]
+    expr_nonzero = expr[nonzero_indices, :]
     cell_scores = np.zeros((expr.shape[0]), dtype=np.float64)
 
     for i in coexpr_indices:
         cell_expr_bool = expr_bool[i, :]
         cell_expr = expr[i, :]
 
-        cells_greater_bool = expr[:, cell_expr_bool] >= \
+        cells_greater_bool = expr_nonzero[:, cell_expr_bool] >= \
                                                        cell_expr[cell_expr_bool]
         expr_probs = cells_greater_bool.sum( axis=0 ) / expr.shape[0]
 
@@ -445,7 +445,7 @@ def code_score_cell(expr: np.ndarray, coexpr_counts_all: np.ndarray,
         cell_expr_pos_bool = expr_bool_pos[i, :]
         cell_expr_pos = expr_pos[i, :]
 
-        cells_greater_bool = expr_pos[:, cell_expr_pos_bool] >= \
+        cells_greater_bool = expr_pos_nonzero[:, cell_expr_pos_bool] >= \
                                                cell_expr_pos[cell_expr_pos_bool]
         expr_probs = cells_greater_bool.sum( axis=0 ) / expr.shape[0]
 
