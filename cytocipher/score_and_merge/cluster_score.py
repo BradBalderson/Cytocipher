@@ -77,7 +77,7 @@ def giotto_page_enrich_geneset(data, gene_set, obs_key: str=None,
 def giotto_page_enrich_min_FAST(gene_indices, fcs, mean_fcs, std_fcs):
     """ Calculates enrichment scores with most values pre-calculated.
     """
-    set_fcs = np.zeros((len(mean_fcs)), dtype=np.int64)
+    set_fcs = np.zeros((len(mean_fcs)), dtype=np.float64)
 
     geneset_fcs = fcs[:, gene_indices]
     for i in range(len(mean_fcs)):
@@ -618,8 +618,9 @@ def code_enrich(data: sc.AnnData, groupby: str,
             if cluster!=clusterj:
 
                 ##### Accounting for full overlap!!!!
-                if np.all( np.unique(cluster_genes_dict[clusterj])==\
-                                                     np.unique(cluster_genes) ):
+                #if np.all( np.unique(cluster_genes_dict[clusterj])==\
+                #                                     np.unique(cluster_genes) ):
+                if set(cluster_genes_dict[clusterj])==set(cluster_genes):
                     error = "Full overlap of + and - gene sets detected " + \
                             f"for {cluster} and {clusterj}; suggested to " + \
                             f"increase number of marker genes for scoring."

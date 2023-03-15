@@ -8,7 +8,6 @@ ro = None
 pandas2ri = None
 localconverter = None
 
-
 def rpy2_setup(r_path):
     """Sets up rpy2."""
     os.environ["R_HOME"] = r_path
