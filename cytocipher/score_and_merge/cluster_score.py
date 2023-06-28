@@ -12,20 +12,43 @@ from sklearn.preprocessing import minmax_scale
 
 import numba
 from numba.typed import List
-from numba import njit, prange
+from numba import jit, njit, prange
 
+##### COMMON helper methods
 def calc_page_enrich_input(data):
     """ Calculates stats necessary to calculate enrichment score.
     """
     full_expr = data.to_df().values
 
     gene_means = full_expr.mean(axis=0)
-    fcs = np.apply_along_axis(np.subtract, 1, full_expr, gene_means)
-    mean_fcs = np.apply_along_axis(np.mean, 1, fcs)
-    std_fcs = np.apply_along_axis(np.std, 1, fcs)
+    # fcs = np.apply_along_axis(np.subtract, 1, full_expr, gene_means)
+    # mean_fcs = np.apply_along_axis(np.mean, 1, fcs)
+    # std_fcs = np.apply_along_axis(np.std, 1, fcs)
+
+    return calc_page_enrich_FAST( full_expr, gene_means )
+
+@njit(parallel=True)
+def calc_page_enrich_FAST(full_expr: np.ndarray, gene_means: np.array):
+    """ Calculates necessary statistics for Giotto enrichment scoring....
+    """
+
+    # gene_means = np.zeros((full_expr.shape[1]), dtype=np.float64)
+    # for i in range(len(gene_means)):
+    #     gene_means[i] = np.mean( full_expr[:,i] )
+
+    n = full_expr.shape[0]
+    fcs = np.zeros((n, len(gene_means)), dtype=np.float64)
+    mean_fcs = np.zeros((n), dtype=np.float64)
+    std_fcs = np.zeros((n), dtype=np.float64)
+
+    for i in prange(n):
+        fcs[i, :] = np.subtract(full_expr[i, :], gene_means)
+        mean_fcs[i] = np.mean( fcs[i, :] )
+        std_fcs[i] = np.std( fcs[i, :] )
 
     return fcs, mean_fcs, std_fcs
 
+##### METHODs when want to score just one gene set...
 def giotto_page_enrich_min(gene_set, var_names, fcs, mean_fcs, std_fcs):
     """ Calculates enrichment scores with most values pre-calculated.
     """
@@ -49,11 +72,57 @@ def giotto_page_enrich_geneset(data, gene_set, obs_key: str=None,
         if verbose:
             print(f"Added data.obs['{obs_key}']")
 
+##### METHODs for cluster scoring...
+@njit
+def giotto_page_enrich_min_FAST(gene_indices, fcs, mean_fcs, std_fcs):
+    """ Calculates enrichment scores with most values pre-calculated.
+    """
+    set_fcs = np.zeros((len(mean_fcs)), dtype=np.float64)
+
+    geneset_fcs = fcs[:, gene_indices]
+    for i in range(len(mean_fcs)):
+        set_fcs[i] = np.mean( geneset_fcs[i,:] )
+
+    giotto_scores = ((set_fcs - mean_fcs) * np.sqrt(len(gene_indices)))/std_fcs
+
+    return giotto_scores
+
+### Tried jit but getting errors; njit on the above function reduces run time
+### to 3 sec for 248 clusters anyhow, better off optimising elsewhere...
+#@jit(parallel=True, #forceobj=True,
+#     nopython=False)
+#@jit(parallel=True)
+def giotto_page_percluster(n_cells: int, cluster_genes: dict,
+                           var_names: np.array, fcs: np.array,
+                           mean_fcs: np.array, std_fcs: np.array):
+    """ Runs Giotto PAGE enrichment per cluster!
+    """
+    cell_scores = np.zeros((n_cells, len(cluster_genes)), dtype=np.float64)
+    cluster_names = list(cluster_genes.keys())
+    for i in prange(len(cluster_names)):
+
+        clusteri = cluster_names[i]
+
+        if len(cluster_genes[clusteri])==0:
+            raise Exception(f"No marker genes for a cluster detected. "
+                             f"Rerun with more relaxed marker gene parameters.")
+
+        gene_indices = np.array([np.where(var_names == gene)[0][0]
+                                 for gene in cluster_genes[clusteri]],
+                                dtype=np.int64)
+
+        cluster_scores_ = giotto_page_enrich_min_FAST(gene_indices, fcs,
+                                                     mean_fcs, std_fcs)
+        cell_scores[:, i] = cluster_scores_
+
+    return cell_scores
+
 def giotto_page_enrich(data: AnnData, groupby: str,
                        var_groups: str='highly_variable',
                        logfc_cutoff: float=0, padj_cutoff: float=.05,
                        n_top: int=5, cluster_marker_key: str=None,
                        rerun_de: bool=True, gene_order='logfc',
+                       n_cpus: int=1,
                        verbose: bool=True):
     """ Runs Giotto PAGE enrichment for cluster markers. Imporant to note that
         by default this function will automatically determine marker genes,
@@ -100,6 +169,8 @@ def giotto_page_enrich(data: AnnData, groupby: str,
                 Cell by cell type data frame, with the coexpr enrichment scores
                 for the values.
     """
+    numba.set_num_threads( n_cpus )
+
     n_top = data.shape[1] if type(n_top)==type(None) else n_top
 
     #### First performing differential expression...
@@ -143,16 +214,22 @@ def giotto_page_enrich(data: AnnData, groupby: str,
     # Precalculations..
     fcs, mean_fcs, std_fcs = calc_page_enrich_input(data)
 
-    cell_scores = np.zeros((data.shape[0], len(cluster_genes)))
-    for i, clusteri in enumerate(cluster_genes):
-        if len(cluster_genes[clusteri])==0:
-            raise Exception(f"No marker genes for {clusteri}. "
-                            f"Rerun with more relaxed marker gene parameters.")
-
-        cluster_scores_ = giotto_page_enrich_min(cluster_genes[clusteri],
-                                                    data.var_names, fcs,
-                                                    mean_fcs, std_fcs)
-        cell_scores[:, i] = cluster_scores_
+    # cell_scores = np.zeros((data.shape[0], len(cluster_genes)))
+    # for i, clusteri in enumerate(cluster_genes):
+    #     if len(cluster_genes[clusteri])==0:
+    #         raise Exception(f"No marker genes for {clusteri}. "
+    #                         f"Rerun with more relaxed marker gene parameters.")
+    #
+    #     cluster_scores_ = giotto_page_enrich_min(cluster_genes[clusteri],
+    #                                                 data.var_names, fcs,
+    #                                                 mean_fcs, std_fcs)
+    #     cell_scores[:, i] = cluster_scores_
+    cell_scores = giotto_page_percluster(data.shape[0], cluster_genes,
+                                              data.var_names.values.astype(str),
+                                                         fcs, mean_fcs, std_fcs)
+    # if not np.any( cell_scores ):
+    #     raise Exception(f"No marker genes for a cluster detected. "
+    #                     f"Rerun with more relaxed marker gene parameters.")
 
     ###### Adding to AnnData
     cluster_scores = pd.DataFrame(cell_scores, index=data.obs_names,
@@ -167,7 +244,8 @@ def giotto_page_enrich(data: AnnData, groupby: str,
 ################################################################################
 @njit
 def coexpr_score(expr: np.ndarray, min_counts: int = 2):
-    """Enriches for the genes in the data"""
+    """Enriches for the genes in the data. Now optimised.
+    """
 
     expr_bool = expr > 0
     coexpr_counts = expr_bool.sum(axis=1)
@@ -179,16 +257,19 @@ def coexpr_score(expr: np.ndarray, min_counts: int = 2):
     ### Must be coexpression of atleast min_count markers!
     nonzero_indices = np.where(coexpr_counts > 0)[0]
     coexpr_indices = np.where(coexpr_counts >= min_counts)[0]
+    expr_nonzero = expr[nonzero_indices, :]
     cell_scores = np.zeros((expr.shape[0]), dtype=np.float64)
-    for i in coexpr_indices:
-        expr_probs = np.zeros((coexpr_counts[i]))
-        cell_nonzero = np.where(expr_bool[i, :])[0]
-        for j, genej in enumerate(cell_nonzero):
-            expr_probs[j] = len(
-                np.where(expr[nonzero_indices, genej] >= expr[i, genej])[0]) / \
-                            expr.shape[0]
 
-        cell_scores[i] = np.log2(coexpr_counts[i] / np.prod(expr_probs))
+    for i in coexpr_indices:
+        cell_expr_bool = expr_bool[i, :]
+        cell_expr = expr[i, :]
+
+        cells_greater_bool = expr_nonzero[:, cell_expr_bool] >= \
+                                                       cell_expr[cell_expr_bool]
+        expr_probs = cells_greater_bool.sum( axis=0 ) / expr.shape[0]
+
+        joint_coexpr_prob = np.prod( expr_probs )
+        cell_scores[i] = np.log2(coexpr_counts[i] / joint_coexpr_prob)
 
     return cell_scores
 
@@ -340,6 +421,30 @@ def get_neg_cells_bool(expr_bool_neg: np.ndarray, negative_indices: List,
     return neg_cells_bool
 
 @njit
+def code_score_cell(expr: np.ndarray, coexpr_counts_all: np.ndarray,
+                    coexpr_indices: np.ndarray, expr_pos: np.ndarray,
+                    expr_bool_pos: np.ndarray, coexpr_counts_pos: np.ndarray):
+    """ Performs code scoring for each cell in a loop...
+    """
+    ### Need to check all nonzero indices to get expression level frequency.
+    nonzero_indices = np.where(coexpr_counts_all > 0)[0]
+    expr_pos_nonzero = expr_pos[nonzero_indices, :]
+    cell_scores = np.zeros((expr.shape[0]), dtype=np.float64)
+
+    for i in coexpr_indices:
+        cell_expr_pos_bool = expr_bool_pos[i, :]
+        cell_expr_pos = expr_pos[i, :]
+
+        cells_greater_bool = expr_pos_nonzero[:, cell_expr_pos_bool] >= \
+                                               cell_expr_pos[cell_expr_pos_bool]
+        expr_probs = cells_greater_bool.sum( axis=0 ) / expr.shape[0]
+
+        joint_coexpr_prob = np.prod( expr_probs )
+        cell_scores[i] = np.log2(coexpr_counts_pos[i] / joint_coexpr_prob)
+
+    return cell_scores
+
+@njit
 def code_score(expr: np.ndarray, in_index_end: int,
                negative_indices: List, min_counts: int = 2):
     """Enriches for the genes in the data, while controlling for genes that
@@ -369,20 +474,21 @@ def code_score(expr: np.ndarray, in_index_end: int,
     coexpr_indices = np.where( coexpr_bool )[0]
 
     ### Need to check all nonzero indices to get expression level frequency.
-    nonzero_indices = np.where(coexpr_counts_all > 0)[0]
-    cell_scores = np.zeros((expr.shape[0]), dtype=np.float64)
-    for i in coexpr_indices:
-        expr_probs = np.zeros(( expr_pos.shape[1] ))
-        cell_nonzero = np.where( expr_bool_pos[i, :] )[0]
-        for j, genej in enumerate(cell_nonzero):
-            expr_level_count = len(np.where(expr_pos[nonzero_indices, genej]
-                                                      >= expr_pos[i, genej])[0])
-            expr_probs[j] = expr_level_count / expr.shape[0]
-
-        joint_coexpr_prob = np.prod( expr_probs[expr_probs > 0] )
-        cell_scores[i] = np.log2(coexpr_counts_pos[i] / joint_coexpr_prob)
-
+    cell_scores = code_score_cell(expr, coexpr_counts_all, coexpr_indices,
+                                  expr_pos, expr_bool_pos, coexpr_counts_pos)
     return cell_scores
+
+@njit
+def get_item_indices(items: List, full_items: np.array):
+    """ Gets indices of items in larger array...
+    """
+    item_indices = np.zeros(items.shape, dtype=np.int_)
+    for index, item in enumerate(items):
+        for index2, item2 in enumerate(full_items):
+            if item == item2:
+                item_indices[index] = index2
+
+    return item_indices
 
 @njit(parallel=True)
 def get_code_scores(full_expr: np.ndarray, all_genes: np.array,
@@ -401,18 +507,10 @@ def get_code_scores(full_expr: np.ndarray, all_genes: np.array,
         clusts_diff = cluster_diff_cluster_List[i]
 
         #### Getting genes should be in cluster
-        gene_indices = np.zeros( genes_.shape, dtype=np.int_ )
-        for gene_index, gene in enumerate( genes_ ):
-            for gene_index2, gene2 in enumerate( all_genes ):
-                if gene == gene2:
-                    gene_indices[gene_index] = gene_index2
+        gene_indices = get_item_indices(genes_, all_genes)
 
         #### Getting genes shouldn't be in cluster
-        diff_indices = np.zeros(genes_diff.shape, dtype=np.int_)
-        for gene_index, gene in enumerate( genes_diff ):
-            for gene_index2, gene2 in enumerate(all_genes):
-                if gene == gene2:
-                    diff_indices[gene_index] = gene_index2
+        diff_indices = get_item_indices(genes_diff, all_genes)
 
         #### Getting indices of which genes are in what cluster.
         clusts = np.unique(clusts_diff)
@@ -420,8 +518,10 @@ def get_code_scores(full_expr: np.ndarray, all_genes: np.array,
         if len(clusts) > 0:
             for clusti, clust in enumerate(clusts):
                 for clustj in range(len(clusts_diff)):
-                    if clusts_diff[clustj]==clust and \
-                            clusts_diff[clustj+1]!=clust:
+                    ### Added in accounting for the end of the list...
+                    ###### Turns out this only happens if
+                    if (clusts_diff[clustj]==clust and (clustj+1)==len(clusts_diff)) or \
+                       (clusts_diff[clustj]==clust and clusts_diff[clustj+1]!=clust):
                         negative_indices[clusti] = clustj
                         break
 
@@ -518,8 +618,9 @@ def code_enrich(data: sc.AnnData, groupby: str,
             if cluster!=clusterj:
 
                 ##### Accounting for full overlap!!!!
-                if np.all( np.unique(cluster_genes_dict[clusterj])==\
-                                                     np.unique(cluster_genes) ):
+                #if np.all( np.unique(cluster_genes_dict[clusterj])==\
+                #                                     np.unique(cluster_genes) ):
+                if set(cluster_genes_dict[clusterj])==set(cluster_genes):
                     error = "Full overlap of + and - gene sets detected " + \
                             f"for {cluster} and {clusterj}; suggested to " + \
                             f"increase number of marker genes for scoring."

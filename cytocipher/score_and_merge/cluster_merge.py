@@ -13,6 +13,7 @@ from sklearn.cluster import KMeans
 
 from collections import defaultdict
 from numba.typed import List
+from numba import jit
 
 from .cluster_score import giotto_page_enrich, code_enrich, coexpr_enrich, \
                                                                      get_markers
@@ -31,7 +32,7 @@ def average(expr: pd.DataFrame, labels: np.array, label_set: np.array):
 
     return avg_data
 
-def get_merge_groups(label_pairs: list):
+def get_merge_groups_SLOW(label_pairs: list):
     """Examines the pairs to be merged, and groups them into large groups of
         of clusters to be merged. This implementation will merge cluster pairs
         if there exists a mutual cluster they are both non-significantly
@@ -75,6 +76,59 @@ def get_merge_groups(label_pairs: list):
     merge_groups_str = []
     all_groups = list(clust_groups.values())
     for group in all_groups:
+        group_str = '_'.join(group)
+        if group_str not in merge_groups_str:
+            merge_groups.append( group )
+            merge_groups_str.append( group_str )
+
+    return merge_groups
+
+@jit(parallel=False, forceobj=True, nopython=False)
+def get_merge_groups(label_pairs: list):
+    """Examines the pairs to be merged, and groups them into large groups of
+        of clusters to be merged. This implementation will merge cluster pairs
+        if there exists a mutual cluster they are both non-significantly
+        different from. Can be mediated by filtering the pairs based on the
+        overlap of clusters they are both non-significantly different from
+        (which is performed in a separate function).
+    """
+    #### Using a syncing strategy with a dictionary.
+    clust_groups = defaultdict(set)
+    #all_match_bool = [False] * len(label_pairs)
+    for pairi, pair in enumerate(label_pairs):
+        # NOTE we only need to do it for one clust of pair,
+        # since below syncs for other clust
+        clust_groups[pair[0]] = clust_groups[pair[0]].union(pair)
+
+        # Pull in the clusts from each other clust.
+        for clust in clust_groups[pair[0]]:  # Syncing across clusters.
+            clust_groups[pair[0]] = clust_groups[pair[0]].union(
+                                                           clust_groups[clust] )
+
+        # Update each other clust with this clusters clusts to merge
+        for clust in clust_groups[pair[0]]:  # Syncing across clusters.
+            clust_groups[clust] = clust_groups[clust].union(
+                                                         clust_groups[pair[0]] )
+
+        # Checking to make sure they now all represent the same thing....
+        # clusts = clust_groups[pair[0]]
+        # match_bool = [False] * len(clusts)
+        # for i, clust in enumerate(clusts):
+        #     match_bool[i] = np.all(
+        #         np.array(clust_groups[clust]) == np.array(clusts))
+        #
+        # all_match_bool[pairi] = np.all(match_bool)
+
+    # Just for testing purposes...
+    #print(np.all(all_match_bool))
+
+    # Getting the merge groups now.
+    merge_groups = [] #np.unique([tuple(group) for group in clust_groups.values()])
+    merge_groups_str = []
+    all_groups = list(clust_groups.values())
+    for group in all_groups:
+        group = list(group)
+        group.sort()
         group_str = '_'.join(group)
         if group_str not in merge_groups_str:
             merge_groups.append( group )
@@ -293,6 +347,7 @@ def merge_clusters_single(data: sc.AnnData, groupby: str, key_added: str,
     ps_dict = {}
     for i, labeli in enumerate(label_set):
         for j, labelj in enumerate(label_set):
+            ### Only compare mutual neighbours ###
             if labelj in neighbours[i] and labeli in neighbours[j]:
 
                 labeli_labelj_scores = label_scores[j][labels == labeli]

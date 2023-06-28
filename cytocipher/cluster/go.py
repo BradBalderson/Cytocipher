@@ -1,9 +1,19 @@
 """ Wrapper for performing the LR GO analysis.
+
+To get this to work, needed to make the following environment (did NOT work with python 3.8.12):
+
+    conda create -n rpy2_env python=3.9
+    conda activate rpy2_env
+    pip install rpy2
 """
 
 import os
 #from ..utils.r_helpers import rpy2_setup, ro, localconverter, pandas2ri
-import neurotools.utils.r_helpers as rhs
+#import neurotools.utils.r_helpers as rhs
+#import cytocipher.utils.r_helpers as rhs
+#from ..utils import r_helpers as rhs
+import r_helpers as rhs
+
 
 def run_GO(genes, bg_genes, species, r_path, p_cutoff=0.01, q_cutoff=0.5, onts="BP"):
     """Running GO term analysis."""
