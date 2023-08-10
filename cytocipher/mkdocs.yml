@@ -1,0 +1,11 @@
+site_name: Cytocipher
+nav:
+    - Home: index.md
+    - Tutorials:
+        - Pancreas development: cytocipher_pancreas.ipynb
+
+plugins:
+    - mknotebooks:
+
+theme: readthedocs
+
