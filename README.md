@@ -1,8 +1,6 @@
 # Cytocipher - detection of significantly different cell populations in scRNA-seq
 ![title](https://github.com/BradBalderson/Cytocipher/blob/main/img/cytocipher_icon.png?raw=true)
 
-## For a complete tutorial that installs cytocipher & reproduces the pancreas development analysis, please see [here](https://github.com/BradBalderson/Cytocipher/tree/main/tutorials/cytocipher_pancreas.ipynb).
-
 ## Installation 
 
 ```
@@ -12,7 +10,7 @@
 import cytocipher as cc
 ```
 
-See online documentation [here](https://bradbalderson.github.io/Cytocipher/).
+***See online documentation [here](https://bradbalderson.github.io/Cytocipher/).***
 
 ## Expected Input
 An AnnData object, *data*, that has been processed similarly to the 
