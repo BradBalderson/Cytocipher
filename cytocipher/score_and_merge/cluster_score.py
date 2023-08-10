@@ -565,9 +565,13 @@ def code_enrich(data: sc.AnnData, groupby: str,
         squash_exception: bool
             Whether to ignore the edge-case where there is complete overlap of
             marker genes between two clusters, thus these two clusters will be
-            score exactly the same having the same set of marker genes. By
+            scored exactly the same having the same set of marker genes. By
             default is false, prompting the using to relax the marker gene
-            parameters so additional genes may differentiate clusters.
+            parameters so additional genes may differentiate clusters. If they do full overlap,
+            they will only be called as significantly different if there is a magnitude of
+            different between the two clusters in terms of expression.
+            With over-clusters, it is actually expected they would have the same set of marker
+            genes, so it is not an issue.
         verbose: bool
             Print statements during computation (True) or silent run (False).
         Returns
@@ -621,9 +625,8 @@ def code_enrich(data: sc.AnnData, groupby: str,
                 #if np.all( np.unique(cluster_genes_dict[clusterj])==\
                 #                                     np.unique(cluster_genes) ):
                 if set(cluster_genes_dict[clusterj])==set(cluster_genes):
-                    error = "Full overlap of + and - gene sets detected " + \
-                            f"for {cluster} and {clusterj}; suggested to " + \
-                            f"increase number of marker genes for scoring."
+                    error = "NOTE full overlap of + and - gene sets detected " + \
+                            f"for {cluster} and {clusterj}."
                     if not squash_exception:
                         raise Exception(error)
                     else:
@@ -735,7 +738,7 @@ def get_markers(data: sc.AnnData, groupby: str,
                 logfc_cutoff: float = 0, padj_cutoff: float = .05,
                 t_cutoff: float=3,
                 n_top: int = 5, rerun_de: bool = True, gene_order=None,
-                pts: bool=False, min_de: int=0,
+                pts: bool=False, min_de: int=1,
                 verbose: bool = True):
     """ Gets marker genes per cluster.
 
@@ -777,7 +780,7 @@ def get_markers(data: sc.AnnData, groupby: str,
             Whether to calculate percentage cells expressing gene within/without
             of each cluster. Only relevant if rerun_de=True.
         min_de: int
-            Minimum number of genes to use as markers, if not criteria met.
+            Minimum number of genes to use as markers, if criteria met.
         verbose: bool
             Print statements during computation (True) or silent run (False).
         Returns

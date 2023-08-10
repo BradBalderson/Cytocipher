@@ -428,7 +428,7 @@ def run_enrich(data: sc.AnnData, groupby: str, enrich_method: str,
 def merge_clusters(data: sc.AnnData, groupby: str,
                    var_groups: str=None, n_top_genes: int = 6, t_cutoff: int=3,
                    marker_padj_cutoff: float=.05, gene_order: str=None,
-                   min_de: int=0,
+                   min_de: int=1,
                    enrich_method: str = 'code', p_cut: float=0.01,
                    max_iter: int = 0, #knn: int = None,
                    mnn_frac_cutoff: float = None,
@@ -436,7 +436,7 @@ def merge_clusters(data: sc.AnnData, groupby: str,
                    n_cpus: int = 1,
                    score_group_method: str='quantiles',
                    p_adjust: bool=True, p_adjust_method: str='fdr_bh',
-                   squash_exception: bool=False,
+                   squash_exception: bool=True,
                    verbose: bool = True):
     """ Merges the clusters following an expectation maximisation approach.
 
@@ -500,6 +500,18 @@ def merge_clusters(data: sc.AnnData, groupby: str,
     p_adjust_method: str
         Method to use for p-value adjustment. Options are defined by
         statsmodels.stats.multitest.multipletests.
+    squash_exception: bool
+            Whether to ignore the edge-case where there is complete overlap of
+            marker genes between two clusters, thus these two clusters will be
+            scored exactly the same having the same set of marker genes. By
+            default is false, prompting the using to relax the marker gene
+            parameters so additional genes may differentiate clusters. If they do full overlap,
+            they will only be called as significantly different if there is a magnitude of
+            different between the two clusters in terms of expression.
+            With over-clusters, it is actually expected they would have the same set of marker
+            genes, so it is not an issue.
+    min_de: int
+            Minimum number of genes to use as markers, if criteria met.
     verbose: bool
         Print statements during computation (True) or silent run (False).
     Returns
