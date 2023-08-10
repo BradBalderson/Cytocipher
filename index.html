@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="description" content="None" />
+      <link rel="shortcut icon" href="img/favicon.ico" />
+    <title>Cytocipher</title>
+    <link rel="stylesheet" href="css/theme.css" />
+    <link rel="stylesheet" href="css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+        <link href="css/ansi-colours.css" rel="stylesheet" />
+        <link href="css/jupyter-cells.css" rel="stylesheet" />
+        <link href="css/pandas-dataframe.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Home";
+        var mkdocs_page_input_path = "index.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="." class="icon icon-home"> Cytocipher
+        </a>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+                <li class="toctree-l1 current"><a class="reference internal current" href=".">Home</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#installation">Installation</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#expected-input">Expected Input</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#code-scoring-minimal-example">Code Scoring Minimal Example</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#cluster-merging-minimal-example">Cluster Merging Minimal Example</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#issues">Issues</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#citation">Citation</a>
+    </li>
+    </ul>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Tutorials</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="cytocipher_pancreas/">Pancreas development</a>
+                  </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href=".">Cytocipher</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="." class="icon icon-home" aria-label="Docs"></a> &raquo;</li>
+      <li class="breadcrumb-item active">Home</li>
+    <li class="wy-breadcrumbs-aside">
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="cytocipher-detection-of-significantly-different-cell-populations-in-scrna-seq">Cytocipher - detection of significantly different cell populations in scRNA-seq</h1>
+<p><img alt="title" src="https://github.com/BradBalderson/Cytocipher/blob/main/img/cytocipher_icon.png?raw=true" /></p>
+<h2 id="installation">Installation</h2>
+<pre><code>!pip install cytocipher
+</code></pre>
+<pre><code>import cytocipher as cc
+</code></pre>
+<h2 id="expected-input">Expected Input</h2>
+<p>An AnnData object, <em>data</em>, that has been processed similarly to the 
+<a href="https://scanpy-tutorials.readthedocs.io/en/latest/pbmc3k.html">scanpy standard workflow</a>
+to produce log-cpm normalised data with tentative cluster labels 
+(e.g. from Leiden clustering). It's better if the Leiden resolution is high,
+ so that there is alot of over-clustering. 
+ Cytocipher merges the non-significantly different clusters.</p>
+<h2 id="code-scoring-minimal-example">Code Scoring Minimal Example</h2>
+<p>Functions below run the marker gene identification, code scoring, &amp; 
+subsequent visualisation of the resulting cell by cluster enrichment scores. </p>
+<pre><code>cc.tl.get_markers(data, 'leiden')
+cc.tl.code_enrich(data, 'leiden')
+cc.pl.enrich_heatmap(data, 'leiden')
+</code></pre>
+<p><img alt="title" src="https://github.com/BradBalderson/Cytocipher/blob/main/img/example_heatmap.png?raw=true" /></p>
+<p>In a jupyter notebook, you can see documentation using, for example:</p>
+<pre><code>?cc.tl.get_markers
+</code></pre>
+<h2 id="cluster-merging-minimal-example">Cluster Merging Minimal Example</h2>
+<p>Below runs the cluster merging and visualises the heatmap of enrichment 
+scores per cell for each of the new merged clusters.</p>
+<pre><code>cc.tl.merge_clusters(data, 'leiden')
+cc.pl.enrich_heatmap(data, 'leiden_merged')
+</code></pre>
+<p>To visualise the scores being compared for a given pair of clusters,
+the following visualises the scores as violin plots of the enrichment scores
+&amp; prints the p-values determined by comparing the scores:</p>
+<pre><code>cc.pl.sig_cluster_diagnostics(data, 'leiden', plot_pair=('3', '9'))
+</code></pre>
+<p><span style="color:grey">
+Input pair ('3', '9')<br />
+p=0.9132771265170103 (3 cells; 3 scores) vs (9 cells; 3 scores)<br />
+p=0.8128313109661132 (3 cells; 9 scores) vs (9 cells; 9 scores)<br />
+</span></p>
+<p><img alt="title" src="https://github.com/BradBalderson/Cytocipher/blob/main/img/enrichscore_violin_example.png?raw=true" /></p>
+<p>To get an sense of the upper- and lower- bounds for what is considered
+a significant cluster, default parameters plot the violins illustrated above 
+for the upper- and lower- bounds of
+significant versus non-significant cluster pairs:</p>
+<pre><code>cc.pl.sig_cluster_diagnostics(data, 'leiden')
+</code></pre>
+<p>See the <a href="https://github.com/BradBalderson/Cytocipher/tree/main/tutorials/cytocipher_pancreas.ipynb">pancreas tutorial</a> 
+for more example Cytocipher functionality, including; visual bias checks, 
+Sankey diagrams to visualise cluster merging, volcano plots, and more!</p>
+<h2 id="issues">Issues</h2>
+<p>Please feel free to post an issue on the <a href="https://github.com/BradBalderson/Cytocipher/issues">github</a> 
+if there is a problem, &amp; I'll help you out ASAP.</p>
+<h2 id="citation">Citation</h2>
+<p>If you use Cytocipher in your work, please cite:</p>
+<p><span style="color:grey">
+Brad Balderson and others, Cytocipher determines significantly different populations of cells in single-cell RNA-seq data, 
+Bioinformatics, Volume 39, Issue 7, July 2023, btad435, https://doi.org/10.1093/bioinformatics/btad435
+</span></p>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="cytocipher_pancreas/" class="btn btn-neutral float-right" title="Pancreas development">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+    
+    
+      <span><a href="cytocipher_pancreas/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = ".";</script>
+    <script src="js/theme_extra.js"></script>
+    <script src="js/theme.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>
+
+<!--
+MkDocs version : 1.5.2
+Build Date UTC : 2023-08-10 04:23:06.151823+00:00
+-->
