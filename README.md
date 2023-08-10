@@ -12,7 +12,7 @@
 import cytocipher as cc
 ```
 
-See online documentation here: [here](https://bradbalderson.github.io/Cytocipher/).
+See online documentation [here](https://bradbalderson.github.io/Cytocipher/).
 
 ## Expected Input
 An AnnData object, *data*, that has been processed similarly to the 
